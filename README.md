@@ -1,6 +1,9 @@
-# Protokit starter-kit
+# ZeroPoll
 
-This repository is a monorepo aimed at kickstarting application chain development using the Protokit framework.
+A private voting system powered by zero-knowledge proofs
+___
+
+This project is based on [Protokit framework](https://protokit.dev) and was set up with [`proto-kit/starter-kit`](https://github.com/proto-kit/starter-kit).
 
 ## Quick start
 
@@ -22,8 +25,8 @@ For running with persistance / deploying on a server
 ## Setup
 
 ```zsh
-git clone https://github.com/proto-kit/starter-kit my-chain
-cd my-chain
+git clone https://github.com/anarkrypto/zeropoll zeropoll
+cd zeropoll
 
 # ensures you have the right node.js version
 nvm use
