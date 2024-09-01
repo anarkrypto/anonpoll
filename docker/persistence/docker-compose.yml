@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:14-alpine
-    container_name: starterkit-postgres
+    container_name: zeropoll-postgres
     profiles:
       - db
     ports:
@@ -23,7 +23,7 @@ services:
 
   redis:
     image: redis:6.2-alpine
-    container_name: starterkit-redis
+    container_name: zeropoll-redis
     profiles:
       - db
       - worker

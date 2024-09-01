@@ -40,6 +40,6 @@ yarn-error.log*
 
 # intellij
 .idea
-starter-kit.iml
+zeropoll.iml
 
 docker/data
