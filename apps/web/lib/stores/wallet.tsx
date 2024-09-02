@@ -9,13 +9,14 @@ import truncateMiddle from "truncate-middle";
 import { usePrevious } from "@uidotdev/usehooks";
 import { useClientStore } from "./client";
 import { useChainStore } from "./chain";
-import { Bool, Field, PublicKey, Signature, UInt64 } from "o1js";
+import { Field, Nullifier, PublicKey, Signature, UInt64 } from "o1js";
 
 export interface WalletState {
   wallet?: string;
   initializeWallet: () => Promise<void>;
   connectWallet: () => Promise<void>;
   observeWalletChange: () => void;
+  createNullifier: (message: number[]) => Promise<Nullifier>
 
   pendingTransactions: PendingTransaction[];
   addPendingTransaction: (pendingTransaction: PendingTransaction) => void;
@@ -56,6 +57,12 @@ export const useWalletStore = create<WalletState, [["zustand/immer", never]]>(
           state.wallet = wallet;
         });
       });
+    },
+    createNullifier: async (message) => {
+      if (typeof mina === "undefined") {
+        throw new Error("Auro wallet not installed");
+      }
+      return mina.createNullifier({ message });
     },
 
     pendingTransactions: [] as PendingTransaction[],
