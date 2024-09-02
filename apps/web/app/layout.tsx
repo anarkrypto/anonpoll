@@ -1,7 +1,7 @@
 "use client";
 import "./globals.css";
 import { Inter as FontSans } from "next/font/google";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/cn";
 
 import AsyncLayoutDynamic from "@/containers/async-layout-dynamic";
 
