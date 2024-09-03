@@ -1,4 +1,4 @@
-import { UInt64 } from "@proto-kit/library";
+import { UInt32 } from "@proto-kit/library";
 import {
 	runtimeModule,
 	state,
@@ -17,8 +17,8 @@ import {
 } from "o1js";
 
 export class Votes extends Struct({
-	yayes: UInt64,
-	nays: UInt64
+	yayes: UInt32,
+	nays: UInt32
 }) {}
 
 export class PollPublicOutput extends Struct({
@@ -93,12 +93,12 @@ export class Poll extends RuntimeModule {
 
         await this.nullifiers.set(poolProof.publicOutput.nullifier, Bool(true));
 
-		const currentVotes = (await this.votes.get()).orElse(new Votes({ yayes: new UInt64({value: Field(0)}), nays: new UInt64({value: Field(0)}) }));
+		const currentVotes = (await this.votes.get()).orElse(new Votes({ yayes: new UInt32({value: Field(0)}), nays: new UInt32({value: Field(0)}) }));
 
 		await this.votes.set(
 			new Votes({
-				yayes: new UInt64({ value: currentVotes.yayes.value.add(vote.toField()) }),
-				nays: new UInt64({ value: currentVotes.nays.value.add(vote.not().toField()) })
+				yayes: new UInt32 ({ value: currentVotes.yayes.value.add(vote.toField()) }),
+				nays: new UInt32({ value: currentVotes.nays.value.add(vote.not().toField()) })
 			})
 		);
 	}
