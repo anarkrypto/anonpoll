@@ -97,8 +97,8 @@ export class Poll extends RuntimeModule {
 
 		await this.votes.set(
 			new Votes({
-				yayes: new UInt32 ({ value: currentVotes.yayes.value.add(vote.toField()) }),
-				nays: new UInt32({ value: currentVotes.nays.value.add(vote.not().toField()) })
+				yayes: UInt32.Unsafe.fromField(currentVotes.yayes.value.add(vote.toField())),
+				nays: UInt32.Unsafe.fromField(currentVotes.nays.value.add(vote.not().toField()))
 			})
 		);
 	}
