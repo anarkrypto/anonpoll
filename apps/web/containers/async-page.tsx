@@ -1,16 +1,17 @@
 "use client";
 
 import { Poll } from "@/components/poll";
-import { usePoll } from "@/lib/stores/poll";
+import { useObservePoll, usePoll } from "@/lib/stores/poll";
 import { useWalletStore } from "@/lib/stores/wallet";
 
 export default function Home() {
   const wallet = useWalletStore();
 
-  const { vote, votes, loading } = usePoll();
+  useObservePoll(1);
+  const { vote, votes, loading } = usePoll(1);
 
   return (
-    <div className="flex flex-col flex-1 justify-center items-center p-4 md:p-8">
+    <div className="flex flex-1 flex-col items-center justify-center p-4 md:p-8">
       <Poll
         wallet={wallet.wallet}
         onConnectWallet={wallet.connectWallet}

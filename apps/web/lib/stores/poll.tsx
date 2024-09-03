@@ -18,6 +18,7 @@ import {
   message,
 } from "chain/dist/runtime/modules/poll";
 import { mockProof } from "../utils";
+import { UInt32 } from "@proto-kit/library";
 
 export interface PollState {
   loading: boolean;
@@ -25,10 +26,12 @@ export interface PollState {
   loadPoll: (
     client: Client,
     address: string,
+    id: number,
   ) => Promise<PendingTransaction | void>;
   vote: (
     client: Client,
     wallet: WalletState,
+    id: number,
     vote: boolean,
   ) => Promise<PendingTransaction>;
 }
@@ -47,13 +50,16 @@ export const usePollStore = create<PollState, [["zustand/immer", never]]>(
       yayes: BigInt(0),
       nays: BigInt(0),
     },
-    async loadPoll(client: Client, address: string) {
+    async loadPoll(client: Client, address: string, id: number) {
+
+      const pollId = UInt32.from(id);
+
       const sender = PublicKey.fromBase58(address);
 
       const poll = client.runtime.resolve("Poll");
 
       const currentCommitment =
-        await client.query.runtime.Poll.commitment.get();
+        await client.query.runtime.Poll.commitments.get(UInt32.from(pollId));
 
       if (!currentCommitment) {
         const publicKey = PublicKey.fromBase58(address);
@@ -62,7 +68,7 @@ export const usePollStore = create<PollState, [["zustand/immer", never]]>(
         map.set(hashKey, Bool(true).toField());
 
         const tx = await client.transaction(sender, async () => {
-          await poll.setCommitment(map.getRoot());
+          await poll.createPoll(map.getRoot());
         });
         await tx.sign();
         await tx.send();
@@ -76,7 +82,7 @@ export const usePollStore = create<PollState, [["zustand/immer", never]]>(
         return tx.transaction;
       }
 
-      const pollData = await client.query.runtime.Poll.votes.get()
+      const pollData = await client.query.runtime.Poll.votes.get(pollId)
 
       set((state) => {
         state.loading = false;
@@ -87,7 +93,10 @@ export const usePollStore = create<PollState, [["zustand/immer", never]]>(
       });
     },
 
-    async vote(client: Client, wallet: WalletState, vote: boolean) {
+    async vote(client: Client, wallet: WalletState, id: number, vote: boolean) {
+
+      const pollId = UInt32.from(id);
+
       if (!wallet.wallet) {
         throw new Error("Wallet not initialized");
       }
@@ -116,7 +125,7 @@ export const usePollStore = create<PollState, [["zustand/immer", never]]>(
       const pollProof = await mockProof(publicOutput);
 
       const tx = await client.transaction(sender, async () => {
-        await poll.vote(Bool(vote), pollProof);
+        await poll.vote(pollId, Bool(vote), pollProof);
       });
 
       await tx.sign();
@@ -128,7 +137,7 @@ export const usePollStore = create<PollState, [["zustand/immer", never]]>(
   })),
 );
 
-export const useObservePoll = () => {
+export const useObservePoll = (id: number) => {
   const client = useClientStore();
   const chain = useChainStore();
   const wallet = useWalletStore();
@@ -136,7 +145,7 @@ export const useObservePoll = () => {
 
   const loadPoll = async () => {
     if (!client.client || !wallet.wallet) return;
-    const pendingTransaction = await pollStore.loadPoll(client.client, wallet.wallet);
+    const pendingTransaction = await pollStore.loadPoll(client.client, wallet.wallet, id);
     if (pendingTransaction) {
       wallet.addPendingTransaction(pendingTransaction);
     }
@@ -147,7 +156,7 @@ export const useObservePoll = () => {
   }, [client.client, chain.block?.height]);
 };
 
-export const usePoll = () => {
+export const usePoll = (id: number) => {
   const client = useClientStore();
   const pollStore = usePollStore();
   const wallet = useWalletStore();
@@ -159,6 +168,7 @@ export const usePoll = () => {
       const pendingTransaction = await pollStore.vote(
         client.client,
         wallet,
+        id,
         bool,
       );
 
