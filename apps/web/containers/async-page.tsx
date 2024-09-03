@@ -10,18 +10,14 @@ export default function Home() {
   const { vote, votes, loading } = usePoll();
 
   return (
-    <div className="mx-auto -mt-32 h-full pt-16">
-      <div className="flex h-full w-full items-center justify-center pt-16">
-        <div className="flex basis-4/12 flex-col items-center justify-center 2xl:basis-3/12">
-          <Poll
-            wallet={wallet.wallet}
-            onConnectWallet={wallet.connectWallet}
-            onVote={vote}
-            loading={loading}
-            votes={votes}
-          />
-        </div>
-      </div>
+    <div className="flex flex-col flex-1 justify-center items-center p-4 md:p-8">
+      <Poll
+        wallet={wallet.wallet}
+        onConnectWallet={wallet.connectWallet}
+        onVote={vote}
+        loading={loading}
+        votes={votes}
+      />
     </div>
   );
 }
