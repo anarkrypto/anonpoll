@@ -25,7 +25,7 @@ export function Poll({
   loading,
 }: PollProps) {
   return (
-    <Card className="w-full p-4">
+    <Card className="w-full max-w-xl p-4">
       <CardHeader>
         <CardTitle>ZeroPoll</CardTitle>
         <CardDescription>
@@ -36,7 +36,7 @@ export function Poll({
         {wallet ? (
           <>
             <div className="flex items-center gap-2">
-              <div className="rounded-md font-semibold border px-2 py-1 text-xl">
+              <div className="w-12 rounded-md border px-2 py-1 text-center text-xl font-semibold">
                 {votes.yayes.toString()}
               </div>
               <Button
@@ -44,12 +44,13 @@ export function Poll({
                 className="w-full"
                 loading={loading}
                 onClick={() => onVote(true)}
+                variant="outline"
               >
                 Vote True ✅
               </Button>
             </div>
-            <div className="flex items-center gap-2 mt-2">
-              <div className="rounded-md font-semibold border px-2 py-1 text-xl">
+            <div className="mt-2 flex items-center gap-2">
+              <div className="w-12 rounded-md border px-2 py-1 text-center text-xl font-semibold">
                 {votes.nays.toString()}
               </div>
               <Button
@@ -57,6 +58,7 @@ export function Poll({
                 className="w-full"
                 loading={loading}
                 onClick={() => onVote(false)}
+                variant="outline"
               >
                 Vote False ❌
               </Button>
@@ -65,7 +67,7 @@ export function Poll({
         ) : (
           <Button
             size="lg"
-            className="mt-6 w-full"
+            className="w-full"
             loading={loading}
             onClick={onConnectWallet}
           >
