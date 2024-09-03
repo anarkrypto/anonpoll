@@ -1,11 +1,16 @@
 import { Button } from "@/components/ui/button";
-import protokit from "@/public/protokit-zinc.svg";
-import Image from "next/image";
 // @ts-ignore
 import truncateMiddle from "truncate-middle";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Chain } from "./chain";
 import { Separator } from "./ui/separator";
+import { Montserrat } from "next/font/google";
+import { cn } from "@/lib/cn";
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+});
 
 export interface HeaderProps {
   loading: boolean;
@@ -25,39 +30,30 @@ export default function Header({
   blockHeight,
 }: HeaderProps) {
   return (
-    <div className="flex items-center justify-between border-b p-2 shadow-sm">
-      <div className="container flex">
-        <div className="flex basis-6/12 items-center justify-start">
-          <Image className="h-8 w-8" src={protokit} alt={"Protokit logo"} />
+    <header className="flex justify-center border-b p-2 shadow-sm">
+      <div className="w-full max-w-7xl flex justify-between items-center">
+        <div className="flex items-center">
+          <h1 className={cn(montserrat.className, 'text-xl font-semibold')}>Zero<span className="text-primary font-bold">Poll</span></h1>
           <Separator className="mx-4 h-8" orientation={"vertical"} />
-          <div className="flex grow">
+          <div className="flex-grow">
             <Chain height={blockHeight} />
           </div>
         </div>
-        <div className="flex basis-6/12 flex-row items-center justify-end">
-          {/* balance */}
-          {wallet && (
-            <div className="mr-4 flex shrink flex-col items-end justify-center">
-              <div>
-                <p className="text-xs">Your balance</p>
+        <div>
+          {/* wallet */}
+          <Button loading={loading} onClick={onConnectWallet}>
+            {wallet ? (
+              <div className="text-xs sm:text-sm">
+                {truncateMiddle(wallet, 7, 7, "...")}
               </div>
-              <div className="w-32 pt-0.5 text-right">
-                {balanceLoading && balance === undefined ? (
-                  <Skeleton className="h-4 w-full" />
-                ) : (
-                  <p className="text-xs font-bold">{balance} MINA</p>
-                )}
+            ) : (
+              <div className="text-sm">
+                Connect wallet
               </div>
-            </div>
-          )}
-          {/* connect wallet */}
-          <Button loading={loading} className="w-44" onClick={onConnectWallet}>
-            <div>
-              {wallet ? truncateMiddle(wallet, 7, 7, "...") : "Connect wallet"}
-            </div>
+            )}
           </Button>
         </div>
       </div>
-    </div>
+    </header>
   );
 }
