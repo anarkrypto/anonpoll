@@ -28,7 +28,6 @@ export class PollPublicOutput extends Struct({
 
 export const message: Field[] = [Field(0)];
 
-
 export async function canVote(
 	witness: MerkleMapWitness,
 	nullifier: Nullifier
@@ -62,23 +61,30 @@ export class PollProof extends ZkProgram.Proof(pollProgram) {}
 
 @runtimeModule()
 export class Poll extends RuntimeModule {
-	@state() public commitment = State.from<Field>(Field);
+	@state() public commitments = StateMap.from<UInt32, Field>(UInt32, Field);
     @state() public nullifiers = StateMap.from<Field, Bool>(Field, Bool);
-	@state() public votes = State.from<Votes>(Votes);
+	@state() public votes = StateMap.from<UInt32, Votes>(UInt32, Votes);
+	@state() public lastPollId = State.from<UInt32>(UInt32);
 
 	@runtimeMethod()
-	public async setCommitment(commitment: Field) {
-	  await this.commitment.set(commitment);
+	public async createPoll(commitment: Field) {
+	  const lastId = (await this.lastPollId.get()).orElse(UInt32.from(0));
+	  const newId = UInt32.Unsafe.fromField(lastId.add(1).value);
+	  await this.commitments.set(newId, commitment);
+	  await this.lastPollId.set(newId);
 	}
 
 	@runtimeMethod()
 	async vote(
+		pollId: UInt32,
 		vote: Bool,
 		poolProof: PollProof
 	) {
 		poolProof.verify();
 
-		const commitment = await this.commitment.get();
+		const commitment = await this.commitments.get(pollId);
+
+		assert(commitment.isSome, "Poll does not exist");
 
 		assert(
 			poolProof.publicOutput.root.equals(commitment.value),
@@ -93,9 +99,10 @@ export class Poll extends RuntimeModule {
 
         await this.nullifiers.set(poolProof.publicOutput.nullifier, Bool(true));
 
-		const currentVotes = (await this.votes.get()).orElse(new Votes({ yayes: new UInt32({value: Field(0)}), nays: new UInt32({value: Field(0)}) }));
+		const currentVotes = (await this.votes.get(pollId)).orElse(new Votes({ yayes: new UInt32({value: Field(0)}), nays: new UInt32({value: Field(0)}) }));
 
 		await this.votes.set(
+			pollId,
 			new Votes({
 				yayes: UInt32.Unsafe.fromField(currentVotes.yayes.value.add(vote.toField())),
 				nays: UInt32.Unsafe.fromField(currentVotes.nays.value.add(vote.not().toField()))
