@@ -12,20 +12,28 @@ import { Pickles } from "o1js/dist/node/snarky";
 import { dummyBase64Proof } from "o1js/dist/node/lib/proof-system/zkprogram";
 import { log } from "@proto-kit/common";
 import { Balances } from "../../../src/runtime/modules/balances";
-import { UInt64 } from "@proto-kit/library";
+import { UInt64, UInt32 } from "@proto-kit/library";
 
 log.setLevel("ERROR");
 
 describe("Poll", () => {
-	let appChain: ReturnType<
-		typeof TestingAppChain.fromRuntime<{
-			Poll: typeof Poll;
-			Balances: typeof Balances;
-		}>
-	>;
+	const appChain = TestingAppChain.fromRuntime({
+		Balances,
+		Poll
+	});
+
+	appChain.configurePartial({
+		Runtime: {
+			Balances: {
+				totalSupply: UInt64.from(10000)
+			},
+			Poll: {}
+		}
+	});
 
 	let poll: Poll;
 	let commitmentRoot: Field;
+	const pollId = UInt32.from(1);
 
 	const alicePrivateKey = PrivateKey.fromBigInt(BigInt(1));
 	const alicePublicKey = alicePrivateKey.toPublicKey();
@@ -54,40 +62,29 @@ describe("Poll", () => {
 		});
 	}
 
-	async function setupPollWithCommitment() {
-		const tx = await appChain.transaction(alicePublicKey, async () => {
-			await poll.setCommitment(commitmentRoot);
-		});
-		await tx.sign();
-		await tx.send();
-		await appChain.produceBlock();
-	}
-
 	beforeAll(async () => {
-		appChain = TestingAppChain.fromRuntime({
-			Balances,
-			Poll
-		});
-
-		appChain.configurePartial({
-			Runtime: {
-				Balances: {
-					totalSupply: UInt64.from(10000)
-				},
-				Poll: {}
-			}
-		});
-
 		await appChain.start();
+	});
+
+	it("should create a poll with the commitment root", async () => {
 		appChain.setSigner(alicePrivateKey);
 		poll = appChain.runtime.resolve("Poll");
 
 		commitmentRoot = map.getRoot();
-		await setupPollWithCommitment();
-	});
 
-	it("should correctly set the poll commitment root", async () => {
-		const commitment = await appChain.query.runtime.Poll.commitment.get();
+		const tx = await appChain.transaction(alicePublicKey, async () => {
+			await poll.createPoll(commitmentRoot);
+		});
+
+		await tx.sign();
+		await tx.send();
+		await appChain.produceBlock();
+
+		const lastPollId = await appChain.query.runtime.Poll.lastPollId.get();
+		expect(lastPollId?.toBigInt()).toBe(pollId.toBigInt());
+
+		const commitment =
+			await appChain.query.runtime.Poll.commitments.get(pollId);
 		expect(commitment?.toBigInt()).toBe(commitmentRoot.toBigInt());
 	});
 
@@ -100,7 +97,7 @@ describe("Poll", () => {
 		const pollProof = await mockProof(publicOutput);
 
 		const tx = await appChain.transaction(alicePublicKey, async () => {
-			await poll.vote(Bool(true), pollProof);
+			await poll.vote(pollId, Bool(true), pollProof);
 		});
 
 		await tx.sign();
@@ -125,7 +122,7 @@ describe("Poll", () => {
 		const pollProof = await mockProof(publicOutput);
 
 		const tx = await appChain.transaction(alicePublicKey, async () => {
-			await poll.vote(Bool(true), pollProof);
+			await poll.vote(pollId, Bool(true), pollProof);
 		});
 
 		await tx.sign();
@@ -156,7 +153,7 @@ describe("Poll", () => {
 		const pollProof = await mockProof(publicOutput);
 
 		const tx = await appChain.transaction(bobPublicKey, async () => {
-			await poll.vote(Bool(false), pollProof);
+			await poll.vote(pollId, Bool(false), pollProof);
 		});
 
 		await tx.sign();
@@ -172,35 +169,29 @@ describe("Poll", () => {
 		expect(storedNullifier?.toBoolean()).toBe(true);
 	});
 
-	it("should correctly count votes", async () => {
-		const votes = await appChain.query.runtime.Poll.votes.get();
-		expect(votes?.yayes.toBigInt()).toBe(1n);
-		expect(votes?.nays.toBigInt()).toBe(1n);
-	});
-
 	it("should not allow invalid participant proof", async () => {
-		const bobPrivateKey = PrivateKey.random();
-		const bobPublicKey = bobPrivateKey.toPublicKey();
+		const charliePrivateKey = PrivateKey.random();
+		const charliePublicKey = charliePrivateKey.toPublicKey();
 
-		appChain.setSigner(bobPrivateKey);
+		appChain.setSigner(charliePrivateKey);
 		poll = appChain.runtime.resolve("Poll");
 
 		const map = new MerkleMap();
-		const bobHashKey = Poseidon.hash(bobPublicKey.toFields());
-		map.set(bobHashKey, Bool(true).toField());
+		const charlieHashKey = Poseidon.hash(charliePublicKey.toFields());
+		map.set(charlieHashKey, Bool(true).toField());
 
-		const bobWitness = map.getWitness(bobHashKey);
+		const charlieWitness = map.getWitness(charlieHashKey);
 
 		const nullifier = Nullifier.fromJSON(
-			Nullifier.createTestNullifier(message, bobPrivateKey)
+			Nullifier.createTestNullifier(message, charliePrivateKey)
 		);
 
-		const publicOutput = await canVote(bobWitness, nullifier);
+		const publicOutput = await canVote(charlieWitness, nullifier);
 
 		const pollProof = await mockProof(publicOutput);
 
-		const tx = await appChain.transaction(bobPublicKey, async () => {
-			await poll.vote(Bool(true), pollProof);
+		const tx = await appChain.transaction(charliePublicKey, async () => {
+			await poll.vote(pollId, Bool(true), pollProof);
 		});
 
 		await tx.sign();
@@ -212,5 +203,11 @@ describe("Poll", () => {
 		expect(block?.transactions[0].statusMessage).toMatch(
 			/Poll proof does not contain the correct commitment/
 		);
+	});
+
+	it("should correctly count votes", async () => {
+		const votes = await appChain.query.runtime.Poll.votes.get(pollId);
+		expect(votes?.yayes.toBigInt()).toBe(1n);
+		expect(votes?.nays.toBigInt()).toBe(1n);
 	});
 });
