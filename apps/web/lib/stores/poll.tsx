@@ -1,33 +1,20 @@
 import { create } from "zustand";
 import { Client, useClientStore } from "./client";
-import { WalletState } from "./wallet";
+import { useConfirmedTransactions, WalletState } from "./wallet";
 import { immer } from "zustand/middleware/immer";
 import { PendingTransaction, UnsignedTransaction } from "@proto-kit/sequencer";
-import {
-  PublicKey,
-  Bool,
-  MerkleMap,
-  Poseidon,
-  Nullifier,
-} from "o1js";
-import { useCallback, useEffect } from "react";
+import { PublicKey, Bool, MerkleMap, Poseidon, Nullifier } from "o1js";
+import { useCallback, useEffect, useState } from "react";
 import { useChainStore } from "./chain";
 import { useWalletStore } from "./wallet";
-import {
-  canVote,
-  message,
-} from "chain/dist/runtime/modules/poll";
+import { canVote, message } from "chain/dist/runtime/modules/poll";
 import { mockProof } from "../utils";
 import { UInt32 } from "@proto-kit/library";
 
 export interface PollState {
   loading: boolean;
   votes: { yayes: BigInt; nays: BigInt };
-  loadPoll: (
-    client: Client,
-    address: string,
-    id: number,
-  ) => Promise<PendingTransaction | void>;
+  loadPoll: (client: Client, id: number) => Promise<void>;
   vote: (
     client: Client,
     wallet: WalletState,
@@ -50,39 +37,18 @@ export const usePollStore = create<PollState, [["zustand/immer", never]]>(
       yayes: BigInt(0),
       nays: BigInt(0),
     },
-    async loadPoll(client: Client, address: string, id: number) {
-
+    async loadPoll(client: Client, id: number) {
       const pollId = UInt32.from(id);
 
-      const sender = PublicKey.fromBase58(address);
-
-      const poll = client.runtime.resolve("Poll");
-
-      const currentCommitment =
-        await client.query.runtime.Poll.commitments.get(UInt32.from(pollId));
+      const currentCommitment = await client.query.runtime.Poll.commitments.get(
+        UInt32.from(pollId),
+      );
 
       if (!currentCommitment) {
-        const publicKey = PublicKey.fromBase58(address);
-        const map = new MerkleMap();
-        const hashKey = Poseidon.hash(publicKey.toFields());
-        map.set(hashKey, Bool(true).toField());
-
-        const tx = await client.transaction(sender, async () => {
-          await poll.createPoll(map.getRoot());
-        });
-        await tx.sign();
-        await tx.send();
-
-        isPendingTransaction(tx.transaction);
-
-        set((state) => {
-          state.loading = false;
-        });
-
-        return tx.transaction;
+        throw new Error("Poll not found");
       }
 
-      const pollData = await client.query.runtime.Poll.votes.get(pollId)
+      const pollData = await client.query.runtime.Poll.votes.get(pollId);
 
       set((state) => {
         state.loading = false;
@@ -94,7 +60,6 @@ export const usePollStore = create<PollState, [["zustand/immer", never]]>(
     },
 
     async vote(client: Client, wallet: WalletState, id: number, vote: boolean) {
-
       const pollId = UInt32.from(id);
 
       if (!wallet.wallet) {
@@ -121,7 +86,6 @@ export const usePollStore = create<PollState, [["zustand/immer", never]]>(
 
       const publicOutput = await canVote(witness, nullifier);
 
-      
       const pollProof = await mockProof(publicOutput);
 
       const tx = await client.transaction(sender, async () => {
@@ -143,17 +107,10 @@ export const useObservePoll = (id: number) => {
   const wallet = useWalletStore();
   const pollStore = usePollStore();
 
-  const loadPoll = async () => {
-    if (!client.client || !wallet.wallet) return;
-    const pendingTransaction = await pollStore.loadPoll(client.client, wallet.wallet, id);
-    if (pendingTransaction) {
-      wallet.addPendingTransaction(pendingTransaction);
-    }
-  };
-
   useEffect(() => {
-    loadPoll();
-  }, [client.client, chain.block?.height]);
+    if (!client.client || !wallet.wallet) return;
+    pollStore.loadPoll(client.client, id);
+  }, [client.client, chain.block?.height, wallet.wallet]);
 };
 
 export const usePoll = (id: number) => {
@@ -178,4 +135,68 @@ export const usePoll = (id: number) => {
   );
 
   return { vote, votes: pollStore.votes, loading: pollStore.loading };
+};
+
+export const useCreatePoll = ({
+  onError,
+}: {
+  onError?: (message: string) => void;
+} = {}) => {
+  const { client } = useClientStore();
+  const { wallet, addPendingTransaction } = useWalletStore();
+  const confirmedTransactions = useConfirmedTransactions();
+  const [transaction, setTransaction] = useState<PendingTransaction | null>(
+    null,
+  );
+  const [pollId, setPollId] = useState<number | null>(null);
+
+  const createPoll = useCallback(
+    async (votersAddresses: string[]) => {
+      if (!client || !wallet) return;
+
+      const poll = client.runtime.resolve("Poll");
+
+      const sender = PublicKey.fromBase58(wallet);
+
+      const map = new MerkleMap();
+
+      votersAddresses.forEach((address) => {
+        const publicKey = PublicKey.fromBase58(address);
+        const hashKey = Poseidon.hash(publicKey.toFields());
+        map.set(hashKey, Bool(true).toField());
+      });
+
+      const tx = await client.transaction(sender, async () => {
+        await poll.createPoll(map.getRoot());
+      });
+      await tx.sign();
+      await tx.send();
+
+      isPendingTransaction(tx.transaction);
+
+      addPendingTransaction(tx.transaction);
+
+      setTransaction(tx.transaction);
+    },
+    [client, wallet],
+  );
+
+  useEffect(() => {
+    if (!transaction || !client) return;
+    const confirmed = confirmedTransactions.find(
+      (tx) => tx.tx.hash().toString() === transaction.hash().toString(),
+    );
+
+    if (confirmed) {
+      client.query.runtime.Poll.lastPollId.get().then((id) => {
+        if (!id) {
+          onError?.("Could not get poll id");
+          return;
+        }
+        setPollId(Number(id.toBigInt()));
+      });
+    }
+  }, [confirmedTransactions, transaction]);
+
+  return { createPoll, pollId, transaction };
 };
