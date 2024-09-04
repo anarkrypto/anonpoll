@@ -15,7 +15,7 @@ export interface WalletState {
   initializeWallet: () => Promise<void>;
   connectWallet: () => Promise<void>;
   observeWalletChange: () => void;
-  createNullifier: (message: number[]) => Promise<Nullifier>
+  createNullifier: (message: number[]) => Promise<Nullifier>;
 
   pendingTransactions: PendingTransaction[];
   addPendingTransaction: (pendingTransaction: PendingTransaction) => void;
@@ -81,9 +81,46 @@ export const useWalletStore = create<WalletState, [["zustand/immer", never]]>(
   })),
 );
 
+export const useConfirmedTransactions = () => {
+  const chain = useChainStore();
+  const wallet = useWalletStore();
+
+  const confirmedTransactions = useMemo(
+    () =>
+      (chain.block?.txs || []).map(({ tx, status, statusMessage }) => {
+        return {
+          tx: new PendingTransaction({
+            methodId: Field(tx.methodId),
+            nonce: UInt64.from(tx.nonce),
+            isMessage: false,
+            sender: PublicKey.fromBase58(tx.sender),
+            argsFields: tx.argsFields.map((arg) => Field(arg)),
+            auxiliaryData: [],
+            signature: Signature.fromJSON({
+              r: tx.signature.r,
+              s: tx.signature.s,
+            }),
+          }),
+          status,
+          statusMessage,
+        };
+      }),
+    [chain.block],
+  );
+
+  const confirmedPendingTransactions = useMemo(() => {
+    return confirmedTransactions?.filter(({ tx }) => {
+      return wallet.pendingTransactions?.find((pendingTransaction) => {
+        return pendingTransaction.hash().toString() === tx.hash().toString();
+      });
+    });
+  }, [confirmedTransactions, wallet.pendingTransactions]);
+
+  return confirmedPendingTransactions;
+};
+
 export const useNotifyTransactions = () => {
   const wallet = useWalletStore();
-  const chain = useChainStore();
   const { toast } = useToast();
   const client = useClientStore();
 
@@ -145,44 +182,11 @@ export const useNotifyTransactions = () => {
   }, [newPendingTransactions, notifyTransaction]);
 
   // notify about transaction success or failure
+  const confirmedTransactions = useConfirmedTransactions();
   useEffect(() => {
-    const confirmedTransactions = chain.block?.txs?.map(
-      ({ tx, status, statusMessage }) => {
-        return {
-          tx: new PendingTransaction({
-            methodId: Field(tx.methodId),
-            nonce: UInt64.from(tx.nonce),
-            isMessage: false,
-            sender: PublicKey.fromBase58(tx.sender),
-            argsFields: tx.argsFields.map((arg) => Field(arg)),
-            auxiliaryData: [],
-            signature: Signature.fromJSON({
-              r: tx.signature.r,
-              s: tx.signature.s,
-            }),
-          }),
-          status,
-          statusMessage,
-        };
-      },
-    );
-
-    const confirmedPendingTransactions = confirmedTransactions?.filter(
-      ({ tx }) => {
-        return wallet.pendingTransactions?.find((pendingTransaction) => {
-          return pendingTransaction.hash().toString() === tx.hash().toString();
-        });
-      },
-    );
-
-    confirmedPendingTransactions?.forEach(({ tx, status }) => {
+    confirmedTransactions?.forEach(({ tx, status }) => {
       wallet.removePendingTransaction(tx);
       notifyTransaction(status ? "SUCCESS" : "FAILURE", tx);
     });
-  }, [
-    chain.block,
-    wallet.pendingTransactions,
-    client.client,
-    notifyTransaction,
-  ]);
+  }, [wallet.pendingTransactions, confirmedTransactions, notifyTransaction]);
 };
