@@ -2,8 +2,10 @@
 import "./globals.css";
 import { Inter as FontSans } from "next/font/google";
 import { cn } from "@/lib/cn";
-
-import AsyncLayoutDynamic from "@/containers/async-layout-dynamic";
+import { Toaster } from "@/components/ui/toaster";
+import { useEffect } from "react";
+import { useChain } from "@/hooks/useChain";
+import Header from "@/components/header";
 
 export const fontSans = FontSans({
   subsets: ["latin"],
@@ -15,15 +17,23 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { init } = useChain();
+
+  useEffect(() => {
+    init();
+  }, []);
+
   return (
     <html lang="en" className="h-full">
       <body
         className={cn(
-          "h-full bg-background font-sans antialiased flex flex-col",
+          "flex h-full flex-col bg-background font-sans antialiased",
           fontSans.variable,
         )}
       >
-        <AsyncLayoutDynamic>{children}</AsyncLayoutDynamic>
+        <Header />
+        {children}
+        <Toaster />
       </body>
     </html>
   );
