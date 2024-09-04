@@ -1,12 +1,11 @@
 import { Button } from "@/components/ui/button";
-// @ts-ignore
-import truncateMiddle from "truncate-middle";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Chain } from "./chain";
 import { Separator } from "./ui/separator";
 import { Montserrat } from "next/font/google";
 import { cn } from "@/lib/cn";
 import { useChain } from "@/hooks/useChain";
+import { truncateWalletAddress } from "@/lib/utils";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -41,7 +40,7 @@ export default function Header() {
           <Button loading={client.loading} onClick={wallet.connectWallet}>
             {wallet.wallet ? (
               <div className="text-xs sm:text-sm">
-                {truncateMiddle(wallet.wallet, 7, 7, "...")}
+                {truncateWalletAddress(wallet.wallet)}
               </div>
             ) : (
               <div className="text-sm">

@@ -11,3 +11,7 @@ export const mockProof = async (
     publicOutput,
   });
 }
+
+export const truncateWalletAddress = (address: string) => {
+  return `${address.slice(0, 7)}...${address.slice(-7)}`;
+};
