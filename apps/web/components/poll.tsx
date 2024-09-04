@@ -12,7 +12,7 @@ import { Button } from "./ui/button";
 export interface PollProps {
   wallet?: string;
   loading: boolean;
-  votes: { yayes: BigInt; nays: BigInt };
+  votes: { yayes: number; nays: number };
   onConnectWallet: () => void;
   onVote: (bool: boolean) => void;
 }

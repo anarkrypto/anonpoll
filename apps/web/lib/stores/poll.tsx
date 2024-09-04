@@ -13,7 +13,7 @@ import { UInt32 } from "@proto-kit/library";
 
 export interface PollState {
   loading: boolean;
-  votes: { yayes: BigInt; nays: BigInt };
+  votes: { yayes: number; nays: number };
   loadPoll: (client: Client, id: number) => Promise<void>;
   vote: (
     client: Client,
@@ -34,8 +34,8 @@ export const usePollStore = create<PollState, [["zustand/immer", never]]>(
   immer((set) => ({
     loading: true,
     votes: {
-      yayes: BigInt(0),
-      nays: BigInt(0),
+      yayes: 0,
+      nays: 0,
     },
     async loadPoll(client: Client, id: number) {
       const pollId = UInt32.from(id);
@@ -53,8 +53,8 @@ export const usePollStore = create<PollState, [["zustand/immer", never]]>(
       set((state) => {
         state.loading = false;
         state.votes = {
-          yayes: pollData?.yayes.toBigInt() ?? BigInt(0),
-          nays: pollData?.nays.toBigInt() ?? BigInt(0),
+          yayes: Number(pollData?.yayes.toBigInt() ?? BigInt(0)),
+          nays: Number(pollData?.nays.toBigInt() ?? BigInt(0)),
         };
       });
     },
