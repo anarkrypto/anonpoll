@@ -1,8 +1,8 @@
 import { PollProof, PollPublicOutput } from "chain/dist/runtime/modules/poll";
 
-export async function mockProof(
+export const mockProof = async (
   publicOutput: PollPublicOutput,
-): Promise<PollProof> {
+): Promise<PollProof> => {
   const dummy = await PollProof.dummy([], [""], 2);
   return new PollProof({
     proof: dummy.proof,
