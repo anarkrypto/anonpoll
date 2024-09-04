@@ -188,6 +188,8 @@ export const useCreatePoll = ({
     );
 
     if (confirmed) {
+      // TODO: find a better way to get the poll id, this way is not reliable
+      // since the last poll created might not be the one we just created
       client.query.runtime.Poll.lastPollId.get().then((id) => {
         if (!id) {
           onError?.("Could not get poll id");
