@@ -12,6 +12,13 @@ export const mockProof = async (
   });
 }
 
+export const truncateMiddle = (str: string, start: number, end: number, separator: string = "...") => {
+  if (str.length <= start + end) {
+    return str;
+  }
+  return `${str.slice(0, start)}${separator}${str.slice(-end)}`;
+};
+
 export const truncateWalletAddress = (address: string) => {
-  return `${address.slice(0, 7)}...${address.slice(-7)}`;
+  return truncateMiddle(address, 7, 7);
 };
