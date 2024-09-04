@@ -117,6 +117,8 @@ export const usePoll = (id: number) => {
   const client = useClientStore();
   const pollStore = usePollStore();
   const wallet = useWalletStore();
+  
+  useObservePoll(id);
 
   const vote = useCallback(
     async (bool: boolean) => {

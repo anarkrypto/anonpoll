@@ -3,7 +3,7 @@
 import "reflect-metadata";
 
 import { Poll } from "@/components/poll";
-import { useObservePoll, usePoll } from "@/lib/stores/poll";
+import { usePoll } from "@/lib/stores/poll";
 import { useWalletStore } from "@/lib/stores/wallet";
 
 export default function Home({ params }: { params: { pollId: string } }) {
@@ -12,7 +12,6 @@ export default function Home({ params }: { params: { pollId: string } }) {
   // TODO: add extra validation for pollId
   const pollId = Number(params.pollId);
 
-  useObservePoll(pollId);
   const { vote, votes, loading } = usePoll(pollId);
 
   return (
