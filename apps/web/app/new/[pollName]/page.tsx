@@ -16,7 +16,6 @@ export default function AddVoters() {
 
   const handleConfirm = (users: User[]) => {
     const walletsAddresses = users.map((user) => user.wallet);
-    console.log("walletsAddresses", walletsAddresses)
     createPoll(walletsAddresses);
   };
 
