@@ -8,22 +8,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "./ui/button";
+import { usePoll } from "@/lib/stores/poll";
+import { useWalletStore } from "@/lib/stores/wallet";
 
-export interface PollProps {
-  wallet?: string;
-  loading: boolean;
-  votes: { yayes: number; nays: number };
-  onConnectWallet: () => void;
-  onVote: (bool: boolean) => void;
-}
+export function PollCard({ pollId }: { pollId: number }) {
+  const wallet = useWalletStore();
+  const { vote, votes, loading } = usePoll(pollId);
 
-export function PollCard({
-  wallet,
-  onConnectWallet,
-  onVote,
-  votes,
-  loading,
-}: PollProps) {
   return (
     <Card className="w-full max-w-xl p-4">
       <CardHeader>
@@ -33,7 +24,7 @@ export function PollCard({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {wallet ? (
+        {wallet.wallet ? (
           <>
             <div className="flex items-center gap-2">
               <div className="w-12 rounded-md border px-2 py-1 text-center text-xl font-semibold">
@@ -43,7 +34,7 @@ export function PollCard({
                 size="lg"
                 className="w-full"
                 loading={loading}
-                onClick={() => onVote(true)}
+                onClick={() => vote(true)}
                 variant="outline"
               >
                 Vote True ✅
@@ -57,7 +48,7 @@ export function PollCard({
                 size="lg"
                 className="w-full"
                 loading={loading}
-                onClick={() => onVote(false)}
+                onClick={() => vote(false)}
                 variant="outline"
               >
                 Vote False ❌
@@ -69,7 +60,7 @@ export function PollCard({
             size="lg"
             className="w-full"
             loading={loading}
-            onClick={onConnectWallet}
+            onClick={wallet.connectWallet}
           >
             Connect your Auro Wallet
           </Button>
