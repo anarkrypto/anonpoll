@@ -80,6 +80,13 @@ export class Poll extends RuntimeModule {
 		vote: Bool,
 		poolProof: PollProof
 	) {
+
+		/*
+			NOTE: This proof verification was based on private-airdrop-workshop repo, but it has
+			known vulnerabilities: https://github.com/proto-kit/private-airdrop-workshop
+		 	TODO: Implement a new proof validation method
+		*/
+
 		poolProof.verify();
 
 		const commitment = await this.commitments.get(pollId);
