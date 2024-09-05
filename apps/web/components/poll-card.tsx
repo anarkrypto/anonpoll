@@ -17,7 +17,7 @@ export interface PollProps {
   onVote: (bool: boolean) => void;
 }
 
-export function Poll({
+export function PollCard({
   wallet,
   onConnectWallet,
   onVote,
