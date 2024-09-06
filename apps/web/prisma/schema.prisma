@@ -16,7 +16,7 @@ datasource db {
 model Poll {
   id            Int   @id
   title         String
-  description   String
+  description   String?
   options       String[]
   creatorWallet String
   votersWallets String[]
