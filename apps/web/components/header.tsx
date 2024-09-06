@@ -1,11 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Chain } from "./chain";
+import { ChainBlocks } from "./chain-blocks";
 import { Separator } from "./ui/separator";
 import { Montserrat } from "next/font/google";
 import { cn } from "@/lib/cn";
 import { truncateWalletAddress } from "@/lib/utils";
-import { useChainStore } from "@/lib/stores/chain";
 import { useAuthStore } from "@/lib/stores/auth";
 import { useWalletStore } from "@/lib/stores/wallet";
 import Link from "next/link";
@@ -25,7 +24,6 @@ export interface HeaderProps {
 }
 
 export default function Header() {
-  const blockHeight = useChainStore((state) => state.block?.height);
   const { wallet, loading: loadingWallet } = useWalletStore();
   const {
     isAuthenticated,
@@ -48,7 +46,7 @@ export default function Header() {
           </Link>
           <Separator className="mx-4 h-8" orientation={"vertical"} />
           <div className="flex-grow">
-            <Chain height={blockHeight ?? "-"} />
+            <ChainBlocks />
           </div>
         </div>
         <div>
