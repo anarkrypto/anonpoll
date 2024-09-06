@@ -10,13 +10,17 @@ type User = {
   wallet: string;
 };
 
-export default function AddVoters() {
+export default function AddVoters({
+  params: { pollName },
+}: {
+  params: { pollName: string };
+}) {
   const router = useRouter();
   const { createPoll, pollId } = useCreatePoll({ onError: console.error });
 
   const handleConfirm = (users: User[]) => {
     const walletsAddresses = users.map((user) => user.wallet);
-    createPoll(walletsAddresses);
+    createPoll(pollName, walletsAddresses);
   };
 
   useEffect(() => {

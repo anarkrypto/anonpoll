@@ -10,6 +10,8 @@ import { useWalletStore } from "./wallet";
 import { canVote, message } from "chain/dist/runtime/modules/poll";
 import { mockProof } from "../utils";
 import { UInt32 } from "@proto-kit/library";
+import { pollInsertSchema } from "@/schemas/poll";
+import { z } from "zod";
 
 export interface PollState {
   loading: boolean;
@@ -95,6 +97,8 @@ export const usePollStore = create<PollState, [["zustand/immer", never]]>(
       await tx.sign();
       await tx.send();
 
+      console.log("transaction", tx.transaction?.sender.toBase58());
+
       isPendingTransaction(tx.transaction);
       return tx.transaction;
     },
@@ -117,7 +121,7 @@ export const usePoll = (id: number) => {
   const client = useClientStore();
   const pollStore = usePollStore();
   const wallet = useWalletStore();
-  
+
   useObservePoll(id);
 
   const vote = useCallback(
@@ -144,16 +148,18 @@ export const useCreatePoll = ({
 }: {
   onError?: (message: string) => void;
 } = {}) => {
-  const { client } = useClientStore();
+  const client = useClientStore((state) => state.client);
   const { wallet, addPendingTransaction } = useWalletStore();
   const confirmedTransactions = useConfirmedTransactions();
   const [transaction, setTransaction] = useState<PendingTransaction | null>(
     null,
   );
+  const [votersAddresses, setVotersAddresses] = useState<string[]>([]);
   const [pollId, setPollId] = useState<number | null>(null);
+  const [pollName, setPollName] = useState<string>("");
 
   const createPoll = useCallback(
-    async (votersAddresses: string[]) => {
+    async (pollName: string, votersAddresses: string[]) => {
       if (!client || !wallet) return;
 
       const poll = client.runtime.resolve("Poll");
@@ -176,6 +182,9 @@ export const useCreatePoll = ({
 
       isPendingTransaction(tx.transaction);
 
+      setVotersAddresses(votersAddresses);
+      setPollName(pollName);
+
       addPendingTransaction(tx.transaction);
 
       setTransaction(tx.transaction);
@@ -184,23 +193,65 @@ export const useCreatePoll = ({
   );
 
   useEffect(() => {
-    if (!transaction || !client) return;
-    const confirmed = confirmedTransactions.find(
-      (tx) => tx.tx.hash().toString() === transaction.hash().toString(),
-    );
+    const persistPollData = async () => {
+      if (
+        !transaction ||
+        !client ||
+        pollId ||
+        !votersAddresses.length ||
+        !wallet ||
+        !pollName
+      )
+        return;
 
-    if (confirmed) {
-      // TODO: find a better way to get the poll id, this way is not reliable
-      // since the last poll created might not be the one we just created
-      client.query.runtime.Poll.lastPollId.get().then((id) => {
-        if (!id) {
-          onError?.("Could not get poll id");
-          return;
+      const confirmed = confirmedTransactions.find(
+        (tx) => tx.tx.hash().toString() === transaction.hash().toString(),
+      );
+
+      if (confirmed) {
+        try {
+          const id = await client.query.runtime.Poll.lastPollId.get();
+
+          if (!id) {
+            onError?.("Could not get poll id");
+            return;
+          }
+
+          const newPollId = Number(id.toBigInt());
+
+          await persistPoll({
+            id: newPollId,
+            title: pollName,
+            description: null,
+            options: [],
+            votersWallets: votersAddresses,
+          });
+
+          setPollId(newPollId);
+        } catch (error) {
+          onError?.("Failed to persist poll data");
         }
-        setPollId(Number(id.toBigInt()));
-      });
-    }
-  }, [confirmedTransactions, transaction]);
+      }
+    };
+
+    persistPollData();
+  }, [confirmedTransactions, transaction, pollId, votersAddresses, pollName]);
 
   return { createPoll, pollId, transaction };
+};
+
+const persistPoll = async (data: z.infer<typeof pollInsertSchema>) => {
+  return fetch("/api/polls", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      id: data.id,
+      title: data.title,
+      description: data.description,
+      options: data.options,
+      votersWallets: data.votersWallets,
+    }),
+  });
 };
