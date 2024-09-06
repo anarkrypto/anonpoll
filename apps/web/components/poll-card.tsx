@@ -10,18 +10,21 @@ import {
 import { Button } from "./ui/button";
 import { usePoll } from "@/lib/stores/poll";
 import { useWalletStore } from "@/lib/stores/wallet";
+import { PollData } from "@/types/poll";
 
-export function PollCard({ pollId }: { pollId: number }) {
+export function PollCard({
+  id,
+  title,
+  description,
+}: Pick<PollData, "id" | "title" | "description">) {
   const wallet = useWalletStore();
-  const { vote, votes, loading } = usePoll(pollId);
+  const { vote, votes, loading } = usePoll(id);
 
   return (
     <Card className="w-full max-w-xl p-4">
       <CardHeader>
-        <CardTitle>ZeroPoll</CardTitle>
-        <CardDescription>
-          A private voting system powered by zero-knowledge proofs
-        </CardDescription>
+        <CardTitle>{title}</CardTitle>
+        {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
       <CardContent>
         {wallet.wallet ? (
