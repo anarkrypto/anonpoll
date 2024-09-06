@@ -12,10 +12,20 @@ const montserrat = Montserrat({
 
 export default function LandingPage() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-purple-50 to-background p-4">
+    <div className="flex flex-col flex-1 items-center justify-center p-4">
       <main className="w-full max-w-4xl space-y-8">
-        <h1 className={cn(montserrat.className, "text-6xl font-semibold text-center")}>
-          Zero<span className="font-bold text-primary">Poll</span>
+        <h1
+          className={cn(
+            montserrat.className,
+            "text-center text-6xl",
+          )}
+        >
+          <span className="font-semibold bg-gradient-to-b from-zinc-600 to-zinc-800 bg-clip-text text-transparent">
+            Zero
+          </span>
+          <span className="bg-gradient-to-b from-violet-500 to-violet-700 bg-clip-text font-bold text-transparent">
+            Poll
+          </span>
         </h1>
         <p className="text-center text-xl text-gray-600">
           A private voting system powered by zero-knowledge proofs
@@ -39,7 +49,7 @@ export default function LandingPage() {
               description="Your identity remains anonymous throughout the voting process"
             />
             <FeatureCard
-              icon={<Vote className="h-8 w-8 text-purple-500" />}
+              icon={<Vote className="h-8 w-8 text-violet-500" />}
               title="Verifiable"
               description="Ensure the integrity of the voting results without compromising privacy"
             />

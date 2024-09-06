@@ -45,7 +45,7 @@ export default function RootLayout({
     <html lang="en" className="h-full">
       <body
         className={cn(
-          "flex min-h-full flex-col bg-gradient-to-b from-purple-50 to-background font-sans antialiased",
+          "flex min-h-screen flex-col bg-gradient-to-b from-background to-primary/5 font-sans antialiased",
           fontSans.variable,
         )}
       >
