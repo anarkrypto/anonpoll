@@ -12,6 +12,7 @@ import { truncateMiddle } from "../utils";
 
 export interface WalletState {
   wallet?: string;
+  loading: boolean;
   initializeWallet: () => Promise<void>;
   connectWallet: () => Promise<void>;
   observeWalletChange: () => void;
@@ -31,15 +32,21 @@ export interface WalletState {
 
 export const useWalletStore = create<WalletState, [["zustand/immer", never]]>(
   immer((set) => ({
+    loading: true,
     async initializeWallet() {
       if (typeof mina === "undefined") {
         throw new Error("Auro wallet not installed");
       }
 
+      set((state) => {
+        state.loading = true;
+      });
+
       const [wallet] = await mina.getAccounts();
 
       set((state) => {
         state.wallet = wallet;
+        state.loading = false;
       });
     },
     async connectWallet() {
@@ -47,10 +54,15 @@ export const useWalletStore = create<WalletState, [["zustand/immer", never]]>(
         throw new Error("Auro wallet not installed");
       }
 
+      set((state) => {
+        state.loading = true;
+      });
+
       const [wallet] = await mina.requestAccounts();
 
       set((state) => {
         state.wallet = wallet;
+        state.loading = false;
       });
     },
     observeWalletChange() {
