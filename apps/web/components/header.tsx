@@ -8,6 +8,7 @@ import { truncateWalletAddress } from "@/lib/utils";
 import { useChainStore } from "@/lib/stores/chain";
 import { useAuthStore } from "@/lib/stores/auth";
 import { useWalletStore } from "@/lib/stores/wallet";
+import Link from "next/link";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -25,19 +26,25 @@ export interface HeaderProps {
 
 export default function Header() {
   const blockHeight = useChainStore((state) => state.block?.height);
-  const {wallet, loading: loadingWallet} = useWalletStore();
-  const { isAuthenticated, loading: loadingAuth, authenticate } = useAuthStore();
+  const { wallet, loading: loadingWallet } = useWalletStore();
+  const {
+    isAuthenticated,
+    loading: loadingAuth,
+    authenticate,
+  } = useAuthStore();
 
   const loading = loadingWallet || loadingAuth;
-  const showWallet = isAuthenticated && wallet
+  const showWallet = isAuthenticated && wallet;
 
   return (
     <header className="flex justify-center border-b bg-white p-2 shadow-sm">
       <div className="flex w-full max-w-7xl items-center justify-between">
         <div className="flex items-center">
-          <h1 className={cn(montserrat.className, "text-xl font-semibold")}>
-            Zero<span className="font-bold text-primary">Poll</span>
-          </h1>
+          <Link href="/">
+            <h1 className={cn(montserrat.className, "text-xl font-semibold")}>
+              Zero<span className="font-bold text-primary">Poll</span>
+            </h1>
+          </Link>
           <Separator className="mx-4 h-8" orientation={"vertical"} />
           <div className="flex-grow">
             <Chain height={blockHeight ?? "-"} />
