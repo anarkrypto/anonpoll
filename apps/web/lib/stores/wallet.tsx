@@ -16,6 +16,13 @@ export interface WalletState {
   connectWallet: () => Promise<void>;
   observeWalletChange: () => void;
   createNullifier: (message: number[]) => Promise<Nullifier>;
+  signJsonMessage: (
+    message: { label: string; value: string }[],
+  ) => Promise<{
+    data: string;
+    publicKey: string;
+    signature: { field: string; scalar: string };
+  }>;
 
   pendingTransactions: PendingTransaction[];
   addPendingTransaction: (pendingTransaction: PendingTransaction) => void;
@@ -62,6 +69,12 @@ export const useWalletStore = create<WalletState, [["zustand/immer", never]]>(
         throw new Error("Auro wallet not installed");
       }
       return mina.createNullifier({ message });
+    },
+    signJsonMessage: async (message) => {
+      if (typeof mina === "undefined") {
+        throw new Error("Auro wallet not installed");
+      }
+      return mina.signJsonMessage({ message });
     },
 
     pendingTransactions: [] as PendingTransaction[],
