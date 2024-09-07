@@ -24,6 +24,7 @@ export function PollCard({
   description,
   options,
   votersWallets,
+  salt,
   createdAt,
 }: Omit<PollData, "creatorWallet">) {
   const wallet = useWalletStore();

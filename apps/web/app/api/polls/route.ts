@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
     options: data.options,
     votersWallets: data.votersWallets,
     creatorWallet: payload.publicKey,
+    salt: data.salt,
     createdAt: new Date(),
   });
   return Response.json({ message: "Poll created" });

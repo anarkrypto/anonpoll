@@ -16,6 +16,7 @@ export class PollsRepositoryPostgres extends PollRepository {
           options: poll.options,
           votersWallets: poll.votersWallets,
           createdAt: poll.createdAt,
+          salt: poll.salt,
           creatorWallet: poll.creatorWallet,
         },
       });
@@ -38,6 +39,7 @@ export class PollsRepositoryPostgres extends PollRepository {
         description: poll.description,
         options: poll.options,
         votersWallets: poll.votersWallets,
+        salt: poll.salt,
         createdAt: poll.createdAt,
         creatorWallet: poll.creatorWallet,
       };
@@ -55,6 +57,7 @@ export class PollsRepositoryPostgres extends PollRepository {
         description: poll.description,
         options: poll.options,
         votersWallets: poll.votersWallets,
+        salt: poll.salt,
         createdAt: poll.createdAt,
         creatorWallet: poll.creatorWallet,
       }));

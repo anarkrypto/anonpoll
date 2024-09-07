@@ -31,6 +31,7 @@ export default async function PollPage({
         options={data.options}
         votersWallets={data.votersWallets}
         createdAt={data.createdAt}
+        salt={data.salt}
       />
     </div>
   );

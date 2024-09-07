@@ -1,9 +1,7 @@
-export interface PollData {
-  id: number;
-  title: string;
-  description: string | null;
-  options: string[];
+import { pollInsertSchema } from "@/schemas/poll";
+import { z } from "zod";
+
+export type PollData = z.infer<typeof pollInsertSchema> & {
   creatorWallet: string;
-  votersWallets: string[];
   createdAt: Date;
 }
