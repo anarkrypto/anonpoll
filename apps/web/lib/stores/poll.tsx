@@ -106,15 +106,15 @@ export const usePollStore = create<PollState, [["zustand/immer", never]]>(
 );
 
 export const useObservePoll = (id: number) => {
-  const client = useClientStore();
-  const chain = useChainStore();
-  const wallet = useWalletStore();
-  const pollStore = usePollStore();
+  const client = useClientStore((state) => state.client);
+  const blockHeight = useChainStore((state) => state.block?.height);
+  const wallet = useWalletStore((state) => state.wallet);
+  const loadPoll = usePollStore((state) => state.loadPoll);
 
   useEffect(() => {
-    if (!client.client || !wallet.wallet) return;
-    pollStore.loadPoll(client.client, id);
-  }, [client.client, chain.block?.height, wallet.wallet]);
+    if (!client || !wallet) return;
+    loadPoll(client, id);
+  }, [client, blockHeight, wallet]);
 };
 
 export const usePoll = (id: number) => {
