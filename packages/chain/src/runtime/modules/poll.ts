@@ -22,27 +22,29 @@ export class VoteOption extends Struct({
 	votesCount: UInt32
 }) {}
 
+export class OptionHash extends Field {
+	static fromText(text: string, salt: string): Field {
+		const stringToFieldArray = (str: string) =>
+			Array.from(str).map((char) => Field(BigInt(char.charCodeAt(0))));
+
+		return Poseidon.hash(
+			stringToFieldArray(text).concat(stringToFieldArray(salt))
+		);
+	}
+}
+
 export class OptionsHashes extends Struct({
 	hashes: [Field, Field, Field, Field, Field, Field, Field, Field, Field, Field] // 10 options
 }) {
-	
 	// Should be excuted on the client
 	static fromTexts(options: string[], salt: string) {
-		const stringToFieldArray = (str: string) =>
-			Array.from(str).map((char) => Field(BigInt(char.charCodeAt(0))));
 
 		return new OptionsHashes({
 			// Hash options inputs using Poseidon and fill the rest with
 			// indexes to make sure the hashes are unique
 			hashes: Array(10)
 				.fill(Field(0))
-				.map((_, i) =>
-					Poseidon.hash(
-						stringToFieldArray(options[i] || i.toString()).concat(
-							stringToFieldArray(salt)
-						)
-					)
-				)
+				.map((_, i) => OptionHash.fromText(options[i] || i.toString(), salt))
 		});
 	}
 
