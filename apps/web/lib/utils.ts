@@ -41,7 +41,7 @@ export const isValidPublicKey = (publicKey: string) => {
 /**
  * Ensures that the URL starts with http:// or https://.
  * @param url
- * @returns
+ * @returns {string} The URL with http:// or https://.
  */
 export const ensureHttpOrHttps = (url: string) => {
   if (!url.startsWith("http://") && !url.startsWith("https://")) {
