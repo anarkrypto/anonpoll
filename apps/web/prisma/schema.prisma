@@ -20,5 +20,6 @@ model Poll {
   options       String[]
   creatorWallet String
   votersWallets String[]
+  salt          String @default("")
   createdAt     DateTime @default(now())
 }
