@@ -98,11 +98,14 @@ export default function PollForm() {
             <FormField
               control={form.control}
               name="options"
-              render={({ field }) => (
+              render={({ field, fieldState }) => (
                 <FormItem>
                   <FormLabel>Options</FormLabel>
                   <FormControl>
-                    <OptionsInputsGroup {...field} />
+                    <OptionsInputsGroup
+                      {...field}
+                      showError={fieldState.invalid}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -124,6 +127,7 @@ function OptionsInputsGroup({
   value = [],
   onChange,
   maxOptions = Infinity,
+  showError = false,
 }: {
   value: string[];
   onChange: (value: string[]) => void;
@@ -131,13 +135,13 @@ function OptionsInputsGroup({
 }) {
   // Fill the array with 2 default options
   const options = [
-    value[0] ?? "Option 1",
-    value[1] ?? "Option 2",
+    value[0] ?? "",
+    value[1] ?? "",
     ...value.slice(2),
   ];
 
   const addOption = () => {
-    onChange([...options, `Option ${options.length}`]);
+    onChange([...options, ""]);
   };
 
   const removeOption = (index: number) => {
@@ -163,7 +167,7 @@ function OptionsInputsGroup({
               placeholder={`Option ${index + 1}`}
               required
               className="mr-2"
-              invalid={option.length === 0}
+              invalid={showError && option.length === 0}
             />
             {options.length > 2 && (
               <Button
@@ -177,8 +181,13 @@ function OptionsInputsGroup({
               </Button>
             )}
           </div>
-          {option.length === 0 && (
+          {showError && option.length === 0 && (
             <p className="text-red-500">Option cannot be empty.</p>
+          )}
+          {showError && option.length > 128 && (
+            <p className="text-red-500">
+              Option cannot be longer than 128 characters.
+            </p>
           )}
         </div>
       ))}
