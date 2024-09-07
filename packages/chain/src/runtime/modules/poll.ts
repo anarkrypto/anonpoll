@@ -26,6 +26,7 @@ export class PollPublicOutput extends Struct({
 	nullifier: Field
 }) {}
 
+// TODO: Perhaps we should use the poll id instead
 export const message: Field[] = [Field(0)];
 
 export async function canVote(
