@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { TestingAppChain } from "@proto-kit/sdk";
 import {
+	OptionsHashes,
 	Poll,
 	PollProof,
 	PollPublicOutput,
@@ -52,6 +53,12 @@ describe("Poll", () => {
 	const aliceWitness = map.getWitness(aliceHashKey);
 	const bobWitness = map.getWitness(bobHashKey);
 
+	const salt = PrivateKey.random().toBase58();
+
+	const optionsHashes = OptionsHashes.fromTexts(["Yes", "No"], salt);
+	const yesHash = optionsHashes.hashes[0];
+	const noHash = optionsHashes.hashes[1];
+
 	async function mockProof(publicOutput: PollPublicOutput): Promise<PollProof> {
 		const [, proof] = Pickles.proofOfBase64(await dummyBase64Proof(), 2);
 		return new PollProof({
@@ -73,7 +80,7 @@ describe("Poll", () => {
 		commitmentRoot = map.getRoot();
 
 		const tx = await appChain.transaction(alicePublicKey, async () => {
-			await poll.createPoll(commitmentRoot);
+			await poll.createPoll(commitmentRoot, optionsHashes);
 		});
 
 		await tx.sign();
@@ -97,7 +104,7 @@ describe("Poll", () => {
 		const pollProof = await mockProof(publicOutput);
 
 		const tx = await appChain.transaction(alicePublicKey, async () => {
-			await poll.vote(pollId, Bool(true), pollProof);
+			await poll.vote(pollId, yesHash, pollProof);
 		});
 
 		await tx.sign();
@@ -122,7 +129,7 @@ describe("Poll", () => {
 		const pollProof = await mockProof(publicOutput);
 
 		const tx = await appChain.transaction(alicePublicKey, async () => {
-			await poll.vote(pollId, Bool(true), pollProof);
+			await poll.vote(pollId, yesHash, pollProof);
 		});
 
 		await tx.sign();
@@ -153,7 +160,7 @@ describe("Poll", () => {
 		const pollProof = await mockProof(publicOutput);
 
 		const tx = await appChain.transaction(bobPublicKey, async () => {
-			await poll.vote(pollId, Bool(false), pollProof);
+			await poll.vote(pollId, noHash, pollProof);
 		});
 
 		await tx.sign();
@@ -191,7 +198,7 @@ describe("Poll", () => {
 		const pollProof = await mockProof(publicOutput);
 
 		const tx = await appChain.transaction(charliePublicKey, async () => {
-			await poll.vote(pollId, Bool(true), pollProof);
+			await poll.vote(pollId, yesHash, pollProof);
 		});
 
 		await tx.sign();
@@ -207,7 +214,9 @@ describe("Poll", () => {
 
 	it("should correctly count votes", async () => {
 		const votes = await appChain.query.runtime.Poll.votes.get(pollId);
-		expect(votes?.yayes.toBigInt()).toBe(1n);
-		expect(votes?.nays.toBigInt()).toBe(1n);
+		const yesVotes = votes?.options.find((v) => v.hash === yesHash)?.votesCount.toBigInt();
+		const noVotes = votes?.options.find((v) => v.hash === noHash)?.votesCount.toBigInt();
+		expect(yesVotes).toBe(1n);
+		expect(noVotes).toBe(1n);
 	});
 });
