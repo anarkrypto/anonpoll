@@ -28,6 +28,9 @@ export default async function PollPage({
         id={pollId}
         title={data.title}
         description={data.description}
+        options={data.options}
+        votersWallets={data.votersWallets}
+        createdAt={data.createdAt}
       />
     </div>
   );
