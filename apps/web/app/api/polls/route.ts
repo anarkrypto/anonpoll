@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
   const { data, error } = pollInsertSchema.safeParse(body);
 
   if (error) {
-    return Response.json({ error: error.message }, { status: 400 });
+    return Response.json({ message: error.message }, { status: 400 });
   }
 
   const jwtToken = cookies().get("auth.token")?.value;
