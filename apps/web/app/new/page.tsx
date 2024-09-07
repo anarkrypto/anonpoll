@@ -16,30 +16,70 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useCallback, useEffect, useState } from "react";
+import { isValidPublicKey } from "@/lib/utils";
+import { pollInsertSchema } from "@/schemas/poll";
+import { useToast } from "@/components/ui/use-toast";
+import { useCreatePoll } from "@/lib/stores/poll";
+import { useRouter } from "next/navigation";
 
-const pollFormSchema = z.object({
-  title: z.string().trim().min(3).max(128),
-  description: z.string().trim().max(1024).nullable(),
-  options: z.array(z.string().trim().min(1).max(128)),
-});
+const pollFormSchema = pollInsertSchema.omit({ id: true });
 
 type PollFormData = z.infer<typeof pollFormSchema>;
 
 export default function PollForm() {
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const [step, setStep] = useState(1);
+
   const form = useForm<PollFormData>({
     defaultValues: {
-      title: "",
-      description: "",
-      options: [],
+      title: "aaaaa",
+      description: "aaaaa",
+      options: ["aaaaa", "aaaaa"],
+      votersWallets: [],
     },
-    resolver: zodResolver(pollFormSchema),
+    resolver:
+      step === 1
+        ? zodResolver(pollFormSchema.omit({ votersWallets: true }))
+        : zodResolver(pollFormSchema),
   });
 
-  const handleSubmit = (data: PollFormData) => {
-    console.log({
-      title: data.title.trim(),
-      description: data.description?.trim() || null,
-      options: data.options.map((opt) => opt.trim()),
+  const {
+    createPoll,
+    loading: creatingPoll,
+  } = useCreatePoll({
+    onSuccess: (pollId) => {
+      router.push(`/polls/${pollId}`);
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleSubmit = useCallback(
+    async (data: PollFormData) => {
+      if (step === 1) {
+        setStep(2);
+        return;
+      }
+      await createPoll(data);
+    },
+    [step],
+  );
+
+  const handleError = (error: any) => {
+    // It should never happen, it means that something is wrong with the form.
+    console.error({ error });
+    toast({
+      title: "Error",
+      description: "Please check the console for log details.",
+      variant: "destructive",
     });
   };
 
@@ -47,74 +87,102 @@ export default function PollForm() {
     <Card className="mx-auto max-w-2xl rounded-lg bg-white shadow-md lg:p-6">
       <CardHeader>
         <CardTitle className="text-center text-3xl text-secondary">
-          Create a New Poll
+          {step === 1 ? "Create a New Poll" : "Add Voters Wallets"}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(handleSubmit)}
+            onSubmit={form.handleSubmit(handleSubmit, handleError)}
             className="space-y-4"
           >
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field, fieldState }) => (
-                <FormItem>
-                  <FormLabel>Poll Title</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter poll title"
-                      required
-                      {...field}
-                      invalid={fieldState.invalid}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {step === 1 ? (
+              <>
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field, fieldState }) => (
+                    <FormItem>
+                      <FormLabel>Poll Title</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter poll title"
+                          required
+                          {...field}
+                          invalid={fieldState.invalid}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field, fieldState }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Enter poll description"
-                      required
-                      invalid={fieldState.invalid}
-                      {...field}
-                      value={field.value || ""}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field, fieldState }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Enter poll description"
+                          invalid={fieldState.invalid}
+                          {...field}
+                          value={field.value || ""}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="options"
-              render={({ field, fieldState }) => (
-                <FormItem>
-                  <FormLabel>Options</FormLabel>
-                  <FormControl>
-                    <OptionsInputsGroup
-                      {...field}
-                      showError={fieldState.invalid}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="options"
+                  render={({ field, fieldState }) => (
+                    <FormItem>
+                      <FormLabel>Options</FormLabel>
+                      <FormControl>
+                        <OptionsInputsGroup
+                          value={field.value}
+                          onChange={field.onChange}
+                          showError={fieldState.invalid}
+                          max={100}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            ) : (
+              <FormField
+                control={form.control}
+                name="votersWallets"
+                render={({ field, fieldState }) => (
+                  <FormItem>
+                    <FormLabel>Elegible voters wallets (public keys)</FormLabel>
+                    <FormControl>
+                      <VotersWalletsInputsGroup
+                        value={field.value}
+                        onChange={field.onChange}
+                        showError={fieldState.invalid}
+                        max={100}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            )}
 
-            <Button type="submit" className="w-full" color="secondary">
-              Next
-              <ArrowRight className="ml-2 h-4 w-4" />
+            <Button
+              type="submit"
+              className="w-full"
+              color="secondary"
+              loading={creatingPoll || form.formState.isSubmitting}
+            >
+              {step === 1 ? "Next" : "Create Poll"}
+              {step === 1 && <ArrowRight className="ml-2 h-4 w-4" />}
             </Button>
           </form>
         </Form>
@@ -126,19 +194,16 @@ export default function PollForm() {
 function OptionsInputsGroup({
   value = [],
   onChange,
-  maxOptions = Infinity,
+  max = Infinity,
   showError = false,
 }: {
   value: string[];
   onChange: (value: string[]) => void;
-  maxOptions?: number;
+  max?: number;
+  showError?: boolean;
 }) {
-  // Fill the array with 2 default options
-  const options = [
-    value[0] ?? "",
-    value[1] ?? "",
-    ...value.slice(2),
-  ];
+  // Fill the array with 2 empty values
+  const options = [value[0] ?? "", value[1] ?? "", ...value.slice(2)];
 
   const addOption = () => {
     onChange([...options, ""]);
@@ -157,10 +222,10 @@ function OptionsInputsGroup({
   };
 
   return (
-    <>
+    <div>
       {options.map((option, index) => (
-        <div className="mb-2">
-          <div key={index} className="flex items-center">
+        <div className="mb-2" key={index}>
+          <div className="flex items-center">
             <Input
               value={option}
               onChange={(e) => handleOptionChange(index, e.target.value)}
@@ -192,7 +257,7 @@ function OptionsInputsGroup({
         </div>
       ))}
 
-      {maxOptions > options.length ? (
+      {options.length < max ? (
         <Button
           type="button"
           variant="outline"
@@ -203,9 +268,94 @@ function OptionsInputsGroup({
         </Button>
       ) : (
         <p className="mr-2 mt-2 text-sm text-red-500">
-          Maximum {maxOptions} options reached.
+          Maximum {max} options reached.
         </p>
       )}
-    </>
+    </div>
+  );
+}
+
+function VotersWalletsInputsGroup({
+  value = [],
+  onChange,
+  max = Infinity,
+  showError = false,
+}: {
+  value: string[];
+  onChange: (value: string[]) => void;
+  max?: number;
+  showError?: boolean;
+}) {
+  // Fill the array with 1 empty value
+  const wallets = [value[0] ?? "", ...value.slice(1)];
+
+  const addWallet = () => {
+    onChange([...wallets, ""]);
+  };
+
+  const removeWallet = (index: number) => {
+    const newOptions = [...wallets];
+    newOptions.splice(index, 1);
+    onChange(newOptions);
+  };
+
+  const handleWalletChange = (index: number, wallet: string) => {
+    const newOptions = [...wallets];
+    newOptions[index] = wallet;
+    onChange(newOptions);
+  };
+
+  return (
+    <div>
+      {wallets.map((wallet, index) => (
+        <div className="mb-2" key={index}>
+          <div key={index} className="flex items-center">
+            <Input
+              value={wallet}
+              onChange={(e) => handleWalletChange(index, e.target.value)}
+              placeholder={`Option ${index + 1}`}
+              required
+              className="mr-2"
+              invalid={
+                (showError && wallet.length === 0) ||
+                (wallet.length > 0 && !isValidPublicKey(wallet))
+              }
+            />
+            {wallets.length > 1 && (
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={() => removeWallet(index)}
+                className="flex-shrink-0"
+              >
+                <TrashIcon className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+          {showError && wallet.length === 0 && (
+            <p className="text-red-500">Wallet cannot be empty.</p>
+          )}
+          {wallet.length > 0 && !isValidPublicKey(wallet) && (
+            <p className="text-red-500">Invalid wallet</p>
+          )}
+        </div>
+      ))}
+
+      {wallets.length < max ? (
+        <Button
+          type="button"
+          variant="outline"
+          onClick={addWallet}
+          className="mt-2"
+        >
+          <PlusIcon className="mr-2 h-4 w-4" /> Add Wallet
+        </Button>
+      ) : (
+        <p className="mr-2 mt-2 text-sm text-red-500">
+          Maximum {max} wallets reached.
+        </p>
+      )}
+    </div>
   );
 }
