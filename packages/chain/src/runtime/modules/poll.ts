@@ -83,8 +83,11 @@ export class Poll extends RuntimeModule {
 
 		/*
 			NOTE: This proof verification was based on private-airdrop-workshop repo, but it has
-			known vulnerabilities: https://github.com/proto-kit/private-airdrop-workshop
-		 	TODO: Implement a new proof validation method
+			known vulnerabilities while Protokit is in development:
+			Read more: https://github.com/proto-kit/private-airdrop-workshop
+		 	
+			TODO: In the future, check for Protokit updates and, if necessarly,
+			implement a new proof validation method
 		*/
 
 		poolProof.verify();
