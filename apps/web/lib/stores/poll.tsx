@@ -3,7 +3,7 @@ import { Client, useClientStore } from "./client";
 import { useConfirmedTransactions, WalletState } from "./wallet";
 import { immer } from "zustand/middleware/immer";
 import { PendingTransaction, UnsignedTransaction } from "@proto-kit/sequencer";
-import { PublicKey, Bool, MerkleMap, Poseidon, Nullifier } from "o1js";
+import { PublicKey, Bool, MerkleMap, Poseidon, Nullifier, Field } from "o1js";
 import { useCallback, useEffect, useState } from "react";
 import { useChainStore } from "./chain";
 import { useWalletStore } from "./wallet";
@@ -118,29 +118,44 @@ export const useObservePoll = (id: number) => {
 };
 
 export const usePoll = (id: number) => {
-  const client = useClientStore();
+  const client = useClientStore((state) => state.client);
   const pollStore = usePollStore();
   const wallet = useWalletStore();
+  const [loading, setLoading] = useState(false);
+  const [commitment, setCommitment] = useState<string | null>(null);
+
+  const loadCommitment = async () => {
+    if (!client) return null;
+    const commitment = await client.query.runtime.Poll.commitments.get(UInt32.from(id));
+    setCommitment(commitment ? Field(commitment).toString() : null);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    setCommitment(null);
+    setLoading(true);
+    loadCommitment();
+  }, [id, client]);
 
   useObservePoll(id);
 
   const vote = useCallback(
     async (bool: boolean) => {
-      if (!client.client || !wallet.wallet) return;
+      if (!client || !wallet.wallet) return;
 
-      const pendingTransaction = await pollStore.vote(
-        client.client,
-        wallet,
-        id,
-        bool,
-      );
+      const pendingTransaction = await pollStore.vote(client, wallet, id, bool);
 
       wallet.addPendingTransaction(pendingTransaction);
     },
-    [client.client, wallet.wallet],
+    [client, wallet.wallet],
   );
 
-  return { vote, votes: pollStore.votes, loading: pollStore.loading };
+  return {
+    vote,
+    votes: pollStore.votes,
+    loading: pollStore.loading || loading,
+    commitment,
+  };
 };
 
 type CreatePollData = Omit<z.infer<typeof pollInsertSchema>, "id">;
