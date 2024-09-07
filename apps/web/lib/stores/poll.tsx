@@ -143,66 +143,82 @@ export const usePoll = (id: number) => {
   return { vote, votes: pollStore.votes, loading: pollStore.loading };
 };
 
+type CreatePollData = Omit<z.infer<typeof pollInsertSchema>, "id">;
+
+type UseCreatePollProps = {
+  onError?: (message: string) => void;
+  onSuccess?: (pollId: number) => void;
+};
+
+type CreatePollResult = {
+  createPoll: (data: CreatePollData) => Promise<void>;
+  loading: boolean;
+};
+
 export const useCreatePoll = ({
   onError,
-}: {
-  onError?: (message: string) => void;
-} = {}) => {
+  onSuccess,
+}: UseCreatePollProps = {}): CreatePollResult => {
   const client = useClientStore((state) => state.client);
   const { wallet, addPendingTransaction } = useWalletStore();
   const confirmedTransactions = useConfirmedTransactions();
+
   const [transaction, setTransaction] = useState<PendingTransaction | null>(
     null,
   );
-  const [votersAddresses, setVotersAddresses] = useState<string[]>([]);
-  const [pollId, setPollId] = useState<number | null>(null);
-  const [pollName, setPollName] = useState<string>("");
+  const [pollData, setPollData] = useState<CreatePollData | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const reset = () => {
+    setTransaction(null);
+    setPollData(null);
+    setLoading(false);
+  };
 
   const createPoll = useCallback(
-    async (pollName: string, votersAddresses: string[]) => {
-      if (!client || !wallet) return;
+    async (data: CreatePollData) => {
+      if (!client || !wallet) {
+        onError?.("Client or wallet not initialized");
+        return;
+      }
 
-      const poll = client.runtime.resolve("Poll");
+      try {
+        setLoading(true);
 
-      const sender = PublicKey.fromBase58(wallet);
+        const poll = client.runtime.resolve("Poll");
+        const sender = PublicKey.fromBase58(wallet);
+        const map = new MerkleMap();
 
-      const map = new MerkleMap();
+        data.votersWallets.forEach((address) => {
+          const publicKey = PublicKey.fromBase58(address);
+          const hashKey = Poseidon.hash(publicKey.toFields());
+          map.set(hashKey, Bool(true).toField());
+        });
 
-      votersAddresses.forEach((address) => {
-        const publicKey = PublicKey.fromBase58(address);
-        const hashKey = Poseidon.hash(publicKey.toFields());
-        map.set(hashKey, Bool(true).toField());
-      });
+        const tx = await client.transaction(sender, async () => {
+          await poll.createPoll(map.getRoot());
+        });
+        await tx.sign();
+        await tx.send();
 
-      const tx = await client.transaction(sender, async () => {
-        await poll.createPoll(map.getRoot());
-      });
-      await tx.sign();
-      await tx.send();
+        isPendingTransaction(tx.transaction);
+        addPendingTransaction(tx.transaction);
 
-      isPendingTransaction(tx.transaction);
-
-      setVotersAddresses(votersAddresses);
-      setPollName(pollName);
-
-      addPendingTransaction(tx.transaction);
-
-      setTransaction(tx.transaction);
+        setPollData(data);
+        setTransaction(tx.transaction);
+      } catch (error) {
+        reset();
+        onError?.(
+          error instanceof Error ? error.message : "Failed to create poll",
+        );
+      }
     },
-    [client, wallet],
+    [client, wallet, addPendingTransaction, onError],
   );
 
   useEffect(() => {
     const persistPollData = async () => {
-      if (
-        !transaction ||
-        !client ||
-        pollId ||
-        !votersAddresses.length ||
-        !wallet ||
-        !pollName
-      )
-        return;
+      if (!transaction || !client || !wallet || !pollData) return;
 
       const confirmed = confirmedTransactions.find(
         (tx) => tx.tx.hash().toString() === transaction.hash().toString(),
@@ -213,45 +229,52 @@ export const useCreatePoll = ({
           const id = await client.query.runtime.Poll.lastPollId.get();
 
           if (!id) {
-            onError?.("Could not get poll id");
-            return;
+            throw new Error("Could not get poll id");
           }
 
           const newPollId = Number(id.toBigInt());
 
           await persistPoll({
             id: newPollId,
-            title: pollName,
-            description: null,
-            options: [],
-            votersWallets: votersAddresses,
+            ...(pollData as unknown as CreatePollData),
           });
 
-          setPollId(newPollId);
+          onSuccess?.(newPollId);
         } catch (error) {
-          onError?.("Failed to persist poll data");
+          onError?.(
+            error instanceof Error
+              ? error.message
+              : "Failed to persist poll data",
+          );
+        } finally {
+          reset();
         }
       }
     };
 
     persistPollData();
-  }, [confirmedTransactions, transaction, pollId, votersAddresses, pollName]);
+  }, [confirmedTransactions, client, wallet, onError, onSuccess]);
 
-  return { createPoll, pollId, transaction };
+  return { createPoll, loading };
 };
 
-const persistPoll = async (data: z.infer<typeof pollInsertSchema>) => {
-  return fetch("/api/polls", {
+const persistPoll = async (
+  data: z.infer<typeof pollInsertSchema>,
+): Promise<void> => {
+  const response = await fetch("/api/polls", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      id: data.id,
-      title: data.title,
-      description: data.description,
-      options: data.options,
-      votersWallets: data.votersWallets,
-    }),
+    body: JSON.stringify(data),
   });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+    const errorMessage =
+      errorData && typeof errorData.message === "string"
+        ? errorData.message
+        : "Failed to persist poll data";
+    throw new Error(errorMessage);
+  }
 };
