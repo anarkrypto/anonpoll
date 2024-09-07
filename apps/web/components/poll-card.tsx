@@ -14,8 +14,9 @@ import { useWalletStore } from "@/lib/stores/wallet";
 import { PollData } from "@/types/poll";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { DialogDescription, DialogProps } from "@radix-ui/react-dialog";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ShieldCheckIcon } from "lucide-react";
+import { generateCommitmentRoot } from "@/lib/utils";
 
 export function PollCard({
   id,
@@ -26,8 +27,15 @@ export function PollCard({
   createdAt,
 }: Omit<PollData, "creatorWallet">) {
   const wallet = useWalletStore();
-  const { vote, votes, loading } = usePoll(id);
+  const { vote, votes, loading, commitment } = usePoll(id);
   const [openVotersModal, setOpenVotersModal] = useState(false);
+
+  console.log("commitment", commitment);
+
+  const validProof = useMemo(() => {
+    if (!commitment) return false;
+    return commitment === generateCommitmentRoot(votersWallets).toString();
+  }, [votersWallets, commitment]);
 
   return (
     <>
@@ -92,7 +100,7 @@ export function PollCard({
                 onClick={() => setOpenVotersModal(true)}
                 variant="outline"
               >
-                View Elegible Voters
+                View Elegible Voters ({validProof ? "Valid" : "Invalid"})
               </Button>
             </div>
           )}
@@ -102,7 +110,7 @@ export function PollCard({
         votersWallets={votersWallets}
         open={openVotersModal}
         onOpenChange={setOpenVotersModal}
-        validProof={true}
+        validProof={validProof}
       />
     </>
   );
