@@ -1,5 +1,5 @@
 import { PollProof, PollPublicOutput } from "chain/dist/runtime/modules/poll";
-import { PublicKey } from "o1js";
+import { Bool, MerkleMap, Poseidon, PublicKey } from "o1js";
 
 export const mockProof = async (
   publicOutput: PollPublicOutput,
@@ -37,6 +37,15 @@ export const isValidPublicKey = (publicKey: string) => {
     return false;
   }
 };
+
+export const generateCommitmentRoot = (publicKeys: string[]) => {
+  const map = new MerkleMap();
+  publicKeys.forEach((publicKey) => {
+    const hashKey = Poseidon.hash(PublicKey.fromBase58(publicKey).toFields());
+    map.set(hashKey, Bool(true).toField());
+  });
+  return map.getRoot();
+}
 
 /**
  * Ensures that the URL starts with http:// or https://.
