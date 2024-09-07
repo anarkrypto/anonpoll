@@ -22,6 +22,7 @@ import { pollInsertSchema } from "@/schemas/poll";
 import { useToast } from "@/components/ui/use-toast";
 import { useCreatePoll } from "@/lib/stores/poll";
 import { useRouter } from "next/navigation";
+import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from "@/constants";
 
 const pollFormSchema = pollInsertSchema.omit({ id: true });
 
@@ -147,7 +148,7 @@ export default function PollForm() {
                           value={field.value}
                           onChange={field.onChange}
                           showError={fieldState.invalid}
-                          max={100}
+                          max={MAX_POLL_OPTIONS}
                         />
                       </FormControl>
                       <FormMessage />
@@ -167,7 +168,7 @@ export default function PollForm() {
                         value={field.value}
                         onChange={field.onChange}
                         showError={fieldState.invalid}
-                        max={100}
+                        max={MAX_POLL_VOTERS}
                       />
                     </FormControl>
                   </FormItem>
