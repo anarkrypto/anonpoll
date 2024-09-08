@@ -1,7 +1,9 @@
 import { PollCard } from "@/components/poll-card";
+import { verifyAuthJwtToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { PollsRepositoryPostgres } from "@/repositories/prisma/polls-repository-postgres";
 import { unstable_cache } from "next/cache";
+import { cookies } from "next/headers";
 
 const getCachedPoll = async (pollId: number) => {
   // Since poll metadata does not chang never (title, description, votersWallets...),
@@ -35,10 +37,27 @@ export default async function PollPage({
     return <div>Poll not found</div>;
   }
 
+  const jwtToken = cookies().get("auth.token")?.value;
+
+  if (!jwtToken) {
+    return <div>You need to be logged in to access this poll</div>;
+  }
+
   const data = await getCachedPoll(pollId);
 
   if (!data) {
     return <div>Poll not found</div>;
+  }
+
+  const { payload, success } = await verifyAuthJwtToken(jwtToken);
+
+  const hasAccess =
+    success &&
+    (data.creatorWallet === payload.publicKey ||
+      data.votersWallets.includes(payload.publicKey));
+
+  if (!hasAccess) {
+    return <div>You don't have access to this poll</div>;
   }
 
   return (
