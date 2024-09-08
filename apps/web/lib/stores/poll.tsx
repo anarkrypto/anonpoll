@@ -9,7 +9,6 @@ import { useChainStore } from "./chain";
 import { useWalletStore } from "./wallet";
 import {
   canVote,
-  OptionHash,
   OptionsHashes,
 } from "chain/dist/runtime/modules/poll";
 import { mockProof } from "../utils";
@@ -29,8 +28,7 @@ export interface PollState {
     wallet: WalletState,
     id: number,
     voters: string[],
-    optionText: string,
-    salt: string,
+    optionHash: string,
   ) => Promise<PendingTransaction>;
 }
 
@@ -82,8 +80,7 @@ export const usePollStore = create<PollState, [["zustand/immer", never]]>(
       wallet: WalletState,
       id: number,
       voters: string[],
-      optionText: string,
-      salt: string,
+      optionHash: string,
     ) {
       const pollId = UInt32.from(id);
 
@@ -116,10 +113,8 @@ export const usePollStore = create<PollState, [["zustand/immer", never]]>(
 
       const pollProof = await mockProof(publicOutput);
 
-      const optionHash = OptionHash.fromText(optionText, salt);
-
       const tx = await client.transaction(sender, async () => {
-        await poll.vote(pollId, optionHash, pollProof);
+        await poll.vote(pollId, Field(optionHash), pollProof);
       });
 
       await tx.sign();
