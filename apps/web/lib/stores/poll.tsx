@@ -7,7 +7,12 @@ import { PublicKey, Bool, MerkleMap, Poseidon, Nullifier, Field } from "o1js";
 import { useCallback, useEffect, useState } from "react";
 import { useChainStore } from "./chain";
 import { useWalletStore } from "./wallet";
-import { canVote, message } from "chain/dist/runtime/modules/poll";
+import {
+  canVote,
+  message,
+  OptionHash,
+  OptionsHashes,
+} from "chain/dist/runtime/modules/poll";
 import { mockProof } from "../utils";
 import { UInt32 } from "@proto-kit/library";
 import { pollInsertSchema } from "@/schemas/poll";
@@ -15,13 +20,17 @@ import { z } from "zod";
 
 export interface PollState {
   loading: boolean;
-  votes: { yayes: number; nays: number };
+  votes: {
+    hash: string;
+    votesCount: number;
+  }[];
   loadPoll: (client: Client, id: number) => Promise<void>;
   vote: (
     client: Client,
     wallet: WalletState,
     id: number,
-    vote: boolean,
+    optionText: string,
+    salt: string,
   ) => Promise<PendingTransaction>;
 }
 
@@ -35,10 +44,7 @@ function isPendingTransaction(
 export const usePollStore = create<PollState, [["zustand/immer", never]]>(
   immer((set) => ({
     loading: true,
-    votes: {
-      yayes: 0,
-      nays: 0,
-    },
+    votes: [],
     async loadPoll(client: Client, id: number) {
       const pollId = UInt32.from(id);
 
@@ -50,18 +56,28 @@ export const usePollStore = create<PollState, [["zustand/immer", never]]>(
         throw new Error("Poll not found");
       }
 
-      const pollData = await client.query.runtime.Poll.votes.get(pollId);
+      const options = (await client.query.runtime.Poll.votes.get(pollId))
+        ?.options;
+
+      if (options) {
+        set((state) => {
+          state.loading = false;
+          state.votes = options.map((vote) => {
+            return {
+              hash: vote.hash.toString(),
+              votesCount: Number(vote.votesCount.toBigInt()),
+            };
+          });
+        });
+        return;
+      }
 
       set((state) => {
         state.loading = false;
-        state.votes = {
-          yayes: Number(pollData?.yayes.toBigInt() ?? BigInt(0)),
-          nays: Number(pollData?.nays.toBigInt() ?? BigInt(0)),
-        };
       });
     },
 
-    async vote(client: Client, wallet: WalletState, id: number, vote: boolean) {
+    async vote(client: Client, wallet: WalletState, id: number, optionText: string, salt: string) {
       const pollId = UInt32.from(id);
 
       if (!wallet.wallet) {
@@ -90,8 +106,10 @@ export const usePollStore = create<PollState, [["zustand/immer", never]]>(
 
       const pollProof = await mockProof(publicOutput);
 
+      const optionHash = OptionHash.fromText(optionText, salt);
+
       const tx = await client.transaction(sender, async () => {
-        await poll.vote(pollId, Bool(vote), pollProof);
+        await poll.vote(pollId, optionHash, pollProof);
       });
 
       await tx.sign();
@@ -126,7 +144,9 @@ export const usePoll = (id: number) => {
 
   const loadCommitment = async () => {
     if (!client) return null;
-    const commitment = await client.query.runtime.Poll.commitments.get(UInt32.from(id));
+    const commitment = await client.query.runtime.Poll.commitments.get(
+      UInt32.from(id),
+    );
     setCommitment(commitment ? Field(commitment).toString() : null);
     setLoading(false);
   };
@@ -140,10 +160,10 @@ export const usePoll = (id: number) => {
   useObservePoll(id);
 
   const vote = useCallback(
-    async (bool: boolean) => {
+    async (optionText: string, salt: string) => {
       if (!client || !wallet.wallet) return;
 
-      const pendingTransaction = await pollStore.vote(client, wallet, id, bool);
+      const pendingTransaction = await pollStore.vote(client, wallet, id, optionText, salt);
 
       wallet.addPendingTransaction(pendingTransaction);
     },
@@ -210,8 +230,10 @@ export const useCreatePoll = ({
           map.set(hashKey, Bool(true).toField());
         });
 
+        const optionsHashes = OptionsHashes.fromTexts(data.options, data.salt);
+
         const tx = await client.transaction(sender, async () => {
-          await poll.createPoll(map.getRoot());
+          await poll.createPoll(map.getRoot(), optionsHashes);
         });
         await tx.sign();
         await tx.send();

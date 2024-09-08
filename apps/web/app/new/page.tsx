@@ -16,15 +16,15 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback, useEffect, useState } from "react";
-import { isValidPublicKey } from "@/lib/utils";
+import { useCallback, useState } from "react";
+import { generateSalt, isValidPublicKey } from "@/lib/utils";
 import { pollInsertSchema } from "@/schemas/poll";
 import { useToast } from "@/components/ui/use-toast";
 import { useCreatePoll } from "@/lib/stores/poll";
 import { useRouter } from "next/navigation";
 import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from "@/constants";
 
-const pollFormSchema = pollInsertSchema.omit({ id: true });
+const pollFormSchema = pollInsertSchema.omit({ id: true, salt: true });
 
 type PollFormData = z.infer<typeof pollFormSchema>;
 
@@ -37,8 +37,8 @@ export default function PollForm() {
   const form = useForm<PollFormData>({
     defaultValues: {
       title: "aaaaa",
-      description: "aaaaa",
-      options: ["aaaaa", "aaaaa"],
+      description: "bbbb",
+      options: ["xxxxx", "yyyyy"],
       votersWallets: [],
     },
     resolver:
@@ -47,10 +47,7 @@ export default function PollForm() {
         : zodResolver(pollFormSchema),
   });
 
-  const {
-    createPoll,
-    loading: creatingPoll,
-  } = useCreatePoll({
+  const { createPoll, loading: creatingPoll } = useCreatePoll({
     onSuccess: (pollId) => {
       router.push(`/polls/${pollId}`);
     },
@@ -69,7 +66,7 @@ export default function PollForm() {
         setStep(2);
         return;
       }
-      await createPoll(data);
+      await createPoll({ ...data, salt: generateSalt() });
     },
     [step],
   );

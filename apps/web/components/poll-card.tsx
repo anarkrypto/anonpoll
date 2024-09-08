@@ -17,6 +17,7 @@ import { DialogDescription, DialogProps } from "@radix-ui/react-dialog";
 import { useMemo, useState } from "react";
 import { ShieldCheckIcon } from "lucide-react";
 import { generateCommitmentRoot } from "@/lib/utils";
+import { OptionHash } from "chain/dist/runtime/modules/poll";
 
 export function PollCard({
   id,
@@ -28,7 +29,7 @@ export function PollCard({
   createdAt,
 }: Omit<PollData, "creatorWallet">) {
   const wallet = useWalletStore();
-  const { vote, votes, loading, commitment } = usePoll(id);
+  const { vote, votes: votesMap, loading, commitment } = usePoll(id);
   const [openVotersModal, setOpenVotersModal] = useState(false);
 
   console.log("commitment", commitment);
@@ -37,6 +38,21 @@ export function PollCard({
     if (!commitment) return false;
     return commitment === generateCommitmentRoot(votersWallets).toString();
   }, [votersWallets, commitment]);
+
+  const optionsVotes = useMemo(() => {
+    console.log(salt, options, votesMap);
+    if (!votesMap || !options || votesMap.length === 0 || options.length === 0 || !salt) return [];
+    return options.map((option) => {
+      const hash = OptionHash.fromText(option, salt).toString();
+      const votes =
+        votesMap.find((vote) => vote.hash === hash)?.votesCount || 0;
+      return {
+        text: option,
+        hash,
+        votes,
+      };
+    });
+  }, [votesMap, options, salt]);
 
   return (
     <>
@@ -47,36 +63,24 @@ export function PollCard({
         </CardHeader>
         <CardContent>
           {wallet.wallet ? (
-            <>
-              <div className="flex items-center gap-2">
-                <div className="w-12 rounded-md border px-2 py-1 text-center text-xl font-semibold">
-                  {votes.yayes.toString()}
-                </div>
-                <Button
-                  size="lg"
-                  className="w-full"
-                  loading={loading}
-                  onClick={() => vote(true)}
-                  variant="outline"
-                >
-                  Vote True ✅
-                </Button>
-              </div>
-              <div className="mt-2 flex items-center gap-2">
-                <div className="w-12 rounded-md border px-2 py-1 text-center text-xl font-semibold">
-                  {votes.nays.toString()}
-                </div>
-                <Button
-                  size="lg"
-                  className="w-full"
-                  loading={loading}
-                  onClick={() => vote(false)}
-                  variant="outline"
-                >
-                  Vote False ❌
-                </Button>
-              </div>
-            </>
+            <ul className="flex flex-col gap-2">
+              {optionsVotes.map((option, index) => (
+                <li className="flex items-center gap-2" key={index}>
+                  <div className="w-12 rounded-md border px-2 py-1 text-center text-xl font-semibold">
+                    {option.votes}
+                  </div>
+                  <Button
+                    size="lg"
+                    className="w-full"
+                    loading={loading}
+                    onClick={() => vote(option.text, salt)}
+                    variant="outline"
+                  >
+                    {option.text}
+                  </Button>
+                </li>
+              ))}
+            </ul>
           ) : (
             <Button
               size="lg"
