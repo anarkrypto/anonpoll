@@ -24,6 +24,7 @@ export interface ComputedBlockJSON {
 
 export interface ChainState {
   loading: boolean;
+  online: boolean;
   block?: {
     height: string;
   } & ComputedBlockJSON;
@@ -45,26 +46,24 @@ export interface BlockQueryResponse {
 
 export const useChainStore = create<ChainState, [["zustand/immer", never]]>(
   immer((set) => ({
-    loading: Boolean(false),
+    loading: Boolean(true),
+    online: false,
     async loadBlock() {
-      set((state) => {
-        state.loading = true;
-      });
+      try {
+        const graphql = process.env.NEXT_PUBLIC_PROTOKIT_GRAPHQL_URL;
+        if (graphql === undefined) {
+          throw new Error(
+            "Environment variable NEXT_PUBLIC_PROTOKIT_GRAPHQL_URL not set, can't execute graphql requests",
+          );
+        }
 
-      const graphql = process.env.NEXT_PUBLIC_PROTOKIT_GRAPHQL_URL;
-      if (graphql === undefined) {
-        throw new Error(
-          "Environment variable NEXT_PUBLIC_PROTOKIT_GRAPHQL_URL not set, can't execute graphql requests",
-        );
-      }
-
-      const response = await fetch(graphql, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: `
+        const response = await fetch(graphql, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            query: `
             query GetBlock {
               block {
                 txs {
@@ -92,20 +91,30 @@ export const useChainStore = create<ChainState, [["zustand/immer", never]]>(
               }
             }
           `,
-        }),
-      });
+          }),
+        });
 
-      const { data } = (await response.json()) as BlockQueryResponse;
+        const { data } = (await response.json()) as BlockQueryResponse;
+        const block = data.network.unproven
+        ? {
+            height: data.network.unproven.block.height,
+            ...data.block,
+          }
+        : undefined;
 
-      set((state) => {
-        state.loading = false;
-        state.block = data.network.unproven
-          ? {
-              height: data.network.unproven.block.height,
-              ...data.block,
-            }
-          : undefined;
-      });
+        set((state) => {
+          state.block = block,
+          state.online = !!block;
+        });
+      } catch {
+        set((state) => {
+          state.online = false;
+        });
+      } finally {
+        set((state) => {
+          state.loading = false;
+        });
+      }
     },
   })),
 );
