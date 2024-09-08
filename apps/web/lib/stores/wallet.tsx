@@ -52,6 +52,7 @@ export const useWalletStore = create<WalletState, [["zustand/immer", never]]>(
       }
 
       set((state) => {
+        state.walletInstalled = true;
         state.loading = true;
       });
 
