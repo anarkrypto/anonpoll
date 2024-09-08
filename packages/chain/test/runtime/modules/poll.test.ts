@@ -34,7 +34,7 @@ describe("Poll", () => {
 
 	let poll: Poll;
 	let commitmentRoot: Field;
-	const pollId = UInt32.from(1);
+	let pollId: UInt32;
 
 	const alicePrivateKey = PrivateKey.fromBigInt(BigInt(1));
 	const alicePublicKey = alicePrivateKey.toPublicKey();
@@ -88,7 +88,9 @@ describe("Poll", () => {
 		await appChain.produceBlock();
 
 		const lastPollId = await appChain.query.runtime.Poll.lastPollId.get();
-		expect(lastPollId?.toBigInt()).toBe(pollId.toBigInt());
+		expect(lastPollId?.toBigInt()).toBe(1n);
+
+		pollId = UInt32.from(1n);
 
 		const commitment =
 			await appChain.query.runtime.Poll.commitments.get(pollId);
