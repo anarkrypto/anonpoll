@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import { pollInsertSchema } from "@/schemas/poll";
 import { client } from "chain";
 import { UInt32 } from "@proto-kit/library";
+import { revalidateTag } from "next/cache";
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
@@ -44,5 +45,8 @@ export async function POST(request: NextRequest) {
     salt: data.salt,
     createdAt: new Date(),
   });
+
+  revalidateTag(`poll-${data.id}`);
+
   return Response.json({ message: "Poll created" });
 }
