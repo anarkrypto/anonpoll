@@ -36,9 +36,9 @@ export default function PollForm() {
 
   const form = useForm<PollFormData>({
     defaultValues: {
-      title: "aaaaa",
-      description: "bbbb",
-      options: ["xxxxx", "yyyyy"],
+      title: "",
+      description: "",
+      options: [],
       votersWallets: [],
     },
     resolver:
