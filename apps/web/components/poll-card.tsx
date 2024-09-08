@@ -70,7 +70,7 @@ export function PollCard({
                     size="lg"
                     className="w-full"
                     loading={loading}
-                    onClick={() => vote(option.text, salt)}
+                    onClick={() => vote(votersWallets, option.text, salt)}
                     variant="outline"
                   >
                     {option.text}

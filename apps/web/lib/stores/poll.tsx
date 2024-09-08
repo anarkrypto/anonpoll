@@ -29,6 +29,7 @@ export interface PollState {
     client: Client,
     wallet: WalletState,
     id: number,
+    voters: string[],
     optionText: string,
     salt: string,
   ) => Promise<PendingTransaction>;
@@ -77,7 +78,14 @@ export const usePollStore = create<PollState, [["zustand/immer", never]]>(
       });
     },
 
-    async vote(client: Client, wallet: WalletState, id: number, optionText: string, salt: string) {
+    async vote(
+      client: Client,
+      wallet: WalletState,
+      id: number,
+      voters: string[],
+      optionText: string,
+      salt: string,
+    ) {
       const pollId = UInt32.from(id);
 
       if (!wallet.wallet) {
@@ -87,12 +95,15 @@ export const usePollStore = create<PollState, [["zustand/immer", never]]>(
       const poll = client.runtime.resolve("Poll");
       const sender = PublicKey.fromBase58(wallet.wallet);
 
-      // reconstruct the merkle map with the sender's public key
+      // reconstruct the merkle map with the voters's public key
       const map = new MerkleMap();
-      const hashKey = Poseidon.hash(sender.toFields());
-      map.set(hashKey, Bool(true).toField());
+      voters.forEach((wallet) => {
+        const hashKey = Poseidon.hash(PublicKey.fromBase58(wallet).toFields());
+        map.set(hashKey, Bool(true).toField());
+      });
 
       // get the witness for the sender's public key
+      const hashKey = Poseidon.hash(sender.toFields());
       const witness = map.getWitness(hashKey);
 
       // Ask for Auro Wallet to create a nullifier
@@ -158,10 +169,17 @@ export const usePoll = (id: number) => {
   useObservePoll(id);
 
   const vote = useCallback(
-    async (optionText: string, salt: string) => {
+    async (voters: string[], optionText: string, salt: string) => {
       if (!client || !wallet.wallet) return;
 
-      const pendingTransaction = await pollStore.vote(client, wallet, id, optionText, salt);
+      const pendingTransaction = await pollStore.vote(
+        client,
+        wallet,
+        id,
+        voters,
+        optionText,
+        salt,
+      );
 
       wallet.addPendingTransaction(pendingTransaction);
     },
