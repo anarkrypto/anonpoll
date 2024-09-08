@@ -15,10 +15,18 @@ import { PollData } from "@/types/poll";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { DialogDescription, DialogProps } from "@radix-ui/react-dialog";
 import { useEffect, useMemo, useState } from "react";
-import { CircleCheckBigIcon, CircleIcon, ShieldCheckIcon } from "lucide-react";
+import {
+  CircleCheckBigIcon,
+  CircleIcon,
+  Share2Icon,
+  ShareIcon,
+  ShieldCheckIcon,
+} from "lucide-react";
 import { generateCommitmentRoot } from "@/lib/utils";
 import { OptionHash } from "chain/dist/runtime/modules/poll";
 import { cn } from "@/lib/cn";
+import { Badge } from "./ui/badge";
+import { useToast } from "./ui/use-toast";
 
 export function PollCard({
   id,
@@ -44,6 +52,7 @@ export function PollCard({
   const [openVotersModal, setOpenVotersModal] = useState(false);
   const [activeOptionHash, setActiveOptionHash] = useState<string | null>(null);
   const [loadProgressBar, setLoadProgressBar] = useState(false);
+  const { toast } = useToast();
 
   const validProof = useMemo(() => {
     if (!commitment) return false;
@@ -108,7 +117,7 @@ export function PollCard({
 
   return (
     <>
-      <Card className="w-full max-w-xl p-4">
+      <Card className="w-full max-w-xl sm:p-4">
         <CardHeader>
           <CardTitle>{title}</CardTitle>
           {description && <CardDescription>{description}</CardDescription>}
@@ -187,23 +196,38 @@ export function PollCard({
             )}
           </div>
         </CardContent>
-        <CardFooter>
-          {votersWallets.length > 0 && (
-            <div className="mt-2 flex items-center gap-2">
-              <div className="w-12 rounded-md border px-2 py-1 text-center text-xl font-semibold">
-                {votersWallets.length.toString()}
-              </div>
-              <Button
-                size="lg"
-                className="w-full"
-                loading={loading}
-                onClick={() => setOpenVotersModal(true)}
-                variant="outline"
-              >
-                View Elegible Voters ({validProof ? "Valid" : "Invalid"})
-              </Button>
-            </div>
-          )}
+        <CardFooter className="flex gap-2">
+          <Button
+            className="w-full"
+            loading={loading}
+            onClick={() => setOpenVotersModal(true)}
+            variant="outline"
+          >
+            Eligible Voters
+            <Badge
+              className={cn(
+                "ml-2",
+                validProof
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-700",
+              )}
+            >
+              {votersWallets.length}
+            </Badge>
+          </Button>
+          <Button
+            className="w-full"
+            onClick={() => {
+              navigator.clipboard.writeText(window.location.href);
+              toast({
+                title: "Link copied to clipboard",
+              });
+            }}
+            variant="outline"
+          >
+            Share
+            <Share2Icon className="ml-2 h-4 w-4 text-violet-500" />
+          </Button>
         </CardFooter>
       </Card>
       <VotersModal
@@ -225,9 +249,9 @@ function VotersModal({
     <Dialog modal {...props}>
       <DialogContent className="max-w-xl">
         <DialogHeader>
-          <DialogTitle>Elegible Voters Wallets</DialogTitle>
+          <DialogTitle>Eligible Voters Wallets</DialogTitle>
           <DialogDescription>
-            View the wallets that are elegible to vote in this poll. Remember
+            View the wallets that are eligible to vote in this poll. Remember
             the votes itself are private.
           </DialogDescription>
         </DialogHeader>
