@@ -2,7 +2,7 @@
 
 import { useChainStore } from "@/lib/stores/chain";
 
-export function ChainBlocks() {
+export function ChainStatus() {
 
   const blockHeight = useChainStore((state) => state.block?.height);
 

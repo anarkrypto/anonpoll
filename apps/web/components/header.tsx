@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ChainBlocks } from "./chain-blocks";
+import { ChainStatus } from "./chain-status";
 import { Separator } from "./ui/separator";
 import { Montserrat } from "next/font/google";
 import { cn } from "@/lib/cn";
@@ -46,7 +46,7 @@ export default function Header() {
           </Link>
           <Separator className="mx-4 h-8" orientation={"vertical"} />
           <div className="flex-grow">
-            <ChainBlocks />
+            <ChainStatus />
           </div>
         </div>
         <div>
