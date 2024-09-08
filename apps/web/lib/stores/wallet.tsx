@@ -114,6 +114,7 @@ export const useConfirmedTransactions = () => {
     () =>
       (chain.block?.txs || []).map(({ tx, status, statusMessage }) => {
         return {
+          // TODO: It should probably receive a new class like ConfirmedTransaction
           tx: new PendingTransaction({
             methodId: Field(tx.methodId),
             nonce: UInt64.from(tx.nonce),
