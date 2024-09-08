@@ -115,8 +115,6 @@ export const usePollStore = create<PollState, [["zustand/immer", never]]>(
       await tx.sign();
       await tx.send();
 
-      console.log("transaction", tx.transaction?.sender.toBase58());
-
       isPendingTransaction(tx.transaction);
       return tx.transaction;
     },

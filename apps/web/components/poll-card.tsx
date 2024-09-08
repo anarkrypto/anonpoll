@@ -32,15 +32,12 @@ export function PollCard({
   const { vote, votes: votesMap, loading, commitment } = usePoll(id);
   const [openVotersModal, setOpenVotersModal] = useState(false);
 
-  console.log("commitment", commitment);
-
   const validProof = useMemo(() => {
     if (!commitment) return false;
     return commitment === generateCommitmentRoot(votersWallets).toString();
   }, [votersWallets, commitment]);
 
   const optionsVotes = useMemo(() => {
-    console.log(salt, options, votesMap);
     if (!votesMap || !options || votesMap.length === 0 || options.length === 0 || !salt) return [];
     return options.map((option) => {
       const hash = OptionHash.fromText(option, salt).toString();
