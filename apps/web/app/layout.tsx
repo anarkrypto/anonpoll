@@ -13,6 +13,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/cn";
 import { useClientStore } from "@/lib/stores/client";
 import { useAuthStore } from "@/lib/stores/auth";
+import InstallAuroWalletModal from "@/components/install-auro-wallet-modal";
 
 export const fontSans = FontSans({
   subsets: ["latin"],
@@ -24,7 +25,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-
   const wallet = useWalletStore();
   const startClient = useClientStore((state) => state.start);
   const verifyAuth = useAuthStore((state) => state.verifyAuth);
@@ -36,8 +36,10 @@ export default function RootLayout({
   useEffect(() => {
     // init on mount
     startClient();
-    wallet.initializeWallet();
-    wallet.observeWalletChange();
+    if (wallet.walletInstalled) {
+      wallet.initializeWallet();
+      wallet.observeWalletChange();
+    }
     verifyAuth();
   }, []);
 
@@ -52,6 +54,10 @@ export default function RootLayout({
         <Header />
         {children}
         <Toaster />
+        <InstallAuroWalletModal
+          open={wallet.showInstallWalletModal}
+          onOpenChange={wallet.openChangeInstallWalletModal}
+        />
       </body>
     </html>
   );

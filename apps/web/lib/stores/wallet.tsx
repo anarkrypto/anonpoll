@@ -13,13 +13,14 @@ import { truncateMiddle } from "../utils";
 export interface WalletState {
   wallet?: string;
   loading: boolean;
+  walletInstalled: boolean;
+  showInstallWalletModal: boolean;
+  openChangeInstallWalletModal: (bool: boolean) => void;
   initializeWallet: () => Promise<void>;
   connectWallet: () => Promise<void>;
   observeWalletChange: () => void;
   createNullifier: (message: number[]) => Promise<Nullifier>;
-  signJsonMessage: (
-    message: { label: string; value: string }[],
-  ) => Promise<{
+  signJsonMessage: (message: { label: string; value: string }[]) => Promise<{
     data: string;
     publicKey: string;
     signature: { field: string; scalar: string };
@@ -32,10 +33,21 @@ export interface WalletState {
 
 export const useWalletStore = create<WalletState, [["zustand/immer", never]]>(
   immer((set) => ({
-    loading: true,
+    loading: typeof mina !== "undefined",
+    walletInstalled: typeof mina !== "undefined",
+    showInstallWalletModal: false,
+    openChangeInstallWalletModal(bool: boolean) {
+      set((state) => {
+        state.showInstallWalletModal = bool;
+      });
+    },
     async initializeWallet() {
       if (typeof mina === "undefined") {
-        throw new Error("Auro wallet not installed");
+        console.log("Auro wallet not installed");
+        set((state) => {
+          state.showInstallWalletModal = true;
+        });
+        return;
       }
 
       set((state) => {
@@ -51,7 +63,11 @@ export const useWalletStore = create<WalletState, [["zustand/immer", never]]>(
     },
     async connectWallet() {
       if (typeof mina === "undefined") {
-        throw new Error("Auro wallet not installed");
+        console.log("Auro wallet not installed");
+        set((state) => {
+          state.showInstallWalletModal = true;
+        });
+        return;
       }
 
       set((state) => {
@@ -67,7 +83,11 @@ export const useWalletStore = create<WalletState, [["zustand/immer", never]]>(
     },
     observeWalletChange() {
       if (typeof mina === "undefined") {
-        throw new Error("Auro wallet not installed");
+        console.log("Auro wallet not installed");
+        set((state) => {
+          state.showInstallWalletModal = true;
+        });
+        return;
       }
 
       mina.on("accountsChanged", ([wallet]) => {
@@ -78,13 +98,17 @@ export const useWalletStore = create<WalletState, [["zustand/immer", never]]>(
     },
     createNullifier: async (message) => {
       if (typeof mina === "undefined") {
-        throw new Error("Auro wallet not installed");
+        console.log("Auro wallet not installed");
+        set((state) => {
+          state.showInstallWalletModal = true;
+        });
+        return;
       }
       return mina.createNullifier({ message });
     },
     signJsonMessage: async (message) => {
       if (typeof mina === "undefined") {
-        throw new Error("Auro wallet not installed");
+        throw "Auro wallet not installed";
       }
       return mina.signJsonMessage({ message });
     },

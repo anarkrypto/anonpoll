@@ -1,9 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Shield, Lock, Vote } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Montserrat } from "next/font/google";
+import { useWalletStore } from "@/lib/stores/wallet";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -11,16 +14,15 @@ const montserrat = Montserrat({
 });
 
 export default function LandingPage() {
+  const [walletInstalled, openChangeInstallWalletModal] = useWalletStore(
+    (state) => [state.walletInstalled, state.openChangeInstallWalletModal],
+  );
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center p-4">
+    <div className="flex flex-1 flex-col items-center justify-center p-4">
       <main className="w-full max-w-4xl space-y-8">
-        <h1
-          className={cn(
-            montserrat.className,
-            "text-center text-6xl",
-          )}
-        >
-          <span className="font-semibold bg-gradient-to-b from-zinc-600 to-zinc-800 bg-clip-text text-transparent">
+        <h1 className={cn(montserrat.className, "text-center text-6xl")}>
+          <span className="bg-gradient-to-b from-zinc-600 to-zinc-800 bg-clip-text font-semibold text-transparent">
             Zero
           </span>
           <span className="bg-gradient-to-b from-violet-500 to-violet-700 bg-clip-text font-bold text-transparent">
@@ -57,12 +59,25 @@ export default function LandingPage() {
         </Card>
 
         <div className="flex justify-center">
-          <Link href="/new" passHref>
-            <Button size="lg" className="px-8 py-6 text-lg">
+          {!walletInstalled ? (
+            <Button
+              size="lg"
+              className="px-8 py-6 text-lg"
+              onClick={() => {
+                openChangeInstallWalletModal(true);
+              }}
+            >
               Create a New Poll
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-          </Link>
+          ) : (
+            <Link href="/new" passHref>
+              <Button size="lg" className="px-8 py-6 text-lg">
+                Create a New Poll
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+          )}
         </div>
 
         <p className="mt-8 text-center text-gray-600">
