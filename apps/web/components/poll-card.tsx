@@ -14,10 +14,11 @@ import { useWalletStore } from "@/lib/stores/wallet";
 import { PollData } from "@/types/poll";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { DialogDescription, DialogProps } from "@radix-ui/react-dialog";
-import { useMemo, useState } from "react";
-import { ShieldCheckIcon } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { CircleCheckBigIcon, CircleIcon, ShieldCheckIcon } from "lucide-react";
 import { generateCommitmentRoot } from "@/lib/utils";
 import { OptionHash } from "chain/dist/runtime/modules/poll";
+import { cn } from "@/lib/cn";
 
 export function PollCard({
   id,
@@ -28,9 +29,21 @@ export function PollCard({
   salt,
   createdAt,
 }: Omit<PollData, "creatorWallet">) {
-  const wallet = useWalletStore();
-  const { vote, votes: votesMap, loading, commitment } = usePoll(id);
+  const [wallet, connectWallet] = useWalletStore((store) => [
+    store.wallet,
+    store.connectWallet,
+  ]);
+  const {
+    vote,
+    votes: votesMap,
+    loading,
+    commitment,
+    voted,
+    voting,
+  } = usePoll(id);
   const [openVotersModal, setOpenVotersModal] = useState(false);
+  const [activeOptionHash, setActiveOptionHash] = useState<string | null>(null);
+  const [loadProgressBar, setLoadProgressBar] = useState(false);
 
   const validProof = useMemo(() => {
     if (!commitment) return false;
@@ -38,18 +51,60 @@ export function PollCard({
   }, [votersWallets, commitment]);
 
   const optionsVotes = useMemo(() => {
-    if (!votesMap || !options || votesMap.length === 0 || options.length === 0 || !salt) return [];
     return options.map((option) => {
       const hash = OptionHash.fromText(option, salt).toString();
-      const votes =
+      const votesCount =
         votesMap.find((vote) => vote.hash === hash)?.votesCount || 0;
+      const votesPercentage = (votesCount / votersWallets.length) * 100;
       return {
         text: option,
         hash,
-        votes,
+        votesCount,
+        votesPercentage,
       };
     });
   }, [votesMap, options, salt]);
+
+  const winnerOptionHash = useMemo(() => {
+    // Return winner option hash.
+    // If there is no vote, return null.
+    // If there is a tie, return null.
+    if (optionsVotes.every((option) => option.votesCount === 0)) {
+      return null;
+    }
+    const maxVotesCount = Math.max(
+      ...optionsVotes.map((option) => option.votesCount),
+    );
+    const topOptions = optionsVotes.filter(
+      (option) => option.votesCount === maxVotesCount,
+    );
+    if (topOptions.length > 1) {
+      return null;
+    }
+    return topOptions[0]?.hash || null;
+  }, [optionsVotes]);
+
+  const handleVote = () => {
+    if (!activeOptionHash) return;
+    vote(votersWallets, activeOptionHash, salt);
+  };
+
+  const handleSelectOption = (hash: string) => {
+    if (voted) return;
+    setActiveOptionHash((prev) => (prev === hash ? null : hash));
+  };
+
+  const canVote = !!activeOptionHash && validProof;
+
+  useEffect(() => {
+    if (loading || loadProgressBar) return;
+    const timeout = setTimeout(() => {
+      setLoadProgressBar(true);
+    }, 1000);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [loading, loadProgressBar]);
 
   return (
     <>
@@ -59,35 +114,78 @@ export function PollCard({
           {description && <CardDescription>{description}</CardDescription>}
         </CardHeader>
         <CardContent>
-          {wallet.wallet ? (
+          <div className="flex flex-col gap-4">
             <ul className="flex flex-col gap-2">
               {optionsVotes.map((option, index) => (
-                <li className="flex items-center gap-2" key={index}>
-                  <div className="w-12 rounded-md border px-2 py-1 text-center text-xl font-semibold">
-                    {option.votes}
-                  </div>
+                <li key={index}>
                   <Button
                     size="lg"
-                    className="w-full"
+                    className={cn(
+                      "relative w-full px-12",
+                      activeOptionHash === option.hash &&
+                        "border-2 border-primary/40 bg-primary/20 hover:bg-primary/20 ",
+                    )}
                     loading={loading}
-                    onClick={() => vote(votersWallets, option.text, salt)}
+                    onClick={() => handleSelectOption(option.hash)}
                     variant="outline"
                   >
-                    {option.text}
+                    <div
+                      className={cn(
+                        "absolute bottom-0 left-0 h-full rounded-md bg-green-400/30 transition-all duration-500 ease-in-out",
+                        activeOptionHash === option.hash && "bg-primary/30",
+                      )}
+                      style={{
+                        width: loadProgressBar
+                          ? `${option.votesPercentage * 0.6}%`
+                          : option.votesPercentage * 0.2,
+                      }}
+                    />
+                    <div className="absolute left-2 top-1/2 mr-2 -translate-y-1/2">
+                      {activeOptionHash === option.hash ? (
+                        <CircleCheckBigIcon className="h-5 w-5 text-primary" />
+                      ) : (
+                        <CircleIcon className="h-5 w-5 text-zinc-400" />
+                      )}
+                    </div>
+                    <div className="flex flex-1 justify-start">
+                      {option.text}
+                    </div>
+                    <div
+                      className={cn(
+                        "absolute right-2 top-1/2 -translate-y-1/2",
+                        winnerOptionHash === option.hash &&
+                          "font-bold text-green-600",
+                      )}
+                    >
+                      {option.votesPercentage}%
+                    </div>
                   </Button>
                 </li>
               ))}
             </ul>
-          ) : (
-            <Button
-              size="lg"
-              className="w-full"
-              loading={loading}
-              onClick={wallet.connectWallet}
-            >
-              Connect your Auro Wallet
-            </Button>
-          )}
+            {!!wallet && !voted && (
+              <Button
+                size="lg"
+                className="w-full"
+                type="submit"
+                onClick={handleVote}
+                disabled={!canVote}
+                loading={voting}
+              >
+                Vote
+              </Button>
+            )}
+            {!wallet && (
+              <Button
+                size="lg"
+                className="w-full"
+                loading={loading}
+                onClick={connectWallet}
+              >
+                Connect your Auro Wallet
+              </Button>
+            )}
+          </div>
         </CardContent>
         <CardFooter>
           {votersWallets.length > 0 && (
