@@ -142,8 +142,14 @@ export const usePoll = (id: number) => {
   const client = useClientStore((state) => state.client);
   const pollStore = usePollStore();
   const wallet = useWalletStore();
+  const confirmedTransactions = useConfirmedTransactions();
+
+  const [voted, setVoted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [commitment, setCommitment] = useState<string | null>(null);
+  const [transaction, setTransaction] = useState<PendingTransaction | null>(
+    null,
+  );
 
   const loadCommitment = async () => {
     if (!client) return null;
@@ -163,7 +169,7 @@ export const usePoll = (id: number) => {
   useObservePoll(id);
 
   const vote = useCallback(
-    async (voters: string[], optionText: string, salt: string) => {
+    async (voters: string[], optionHash: string, salt: string) => {
       if (!client || !wallet.wallet) return;
 
       const pendingTransaction = await pollStore.vote(
@@ -171,20 +177,38 @@ export const usePoll = (id: number) => {
         wallet,
         id,
         voters,
-        optionText,
-        salt,
+        optionHash,
       );
 
+      isPendingTransaction(pendingTransaction);
       wallet.addPendingTransaction(pendingTransaction);
+
+      setTransaction(pendingTransaction);
     },
     [client, wallet.wallet],
   );
 
+  useEffect(() => {
+    if (!transaction || voted) return;
+    const confirmed = confirmedTransactions.find(
+      (tx) => tx.tx.hash().toString() === transaction.hash().toString(),
+    );
+    console.log({ confirmed });
+    if (confirmed) {
+      setVoted(true);
+    }
+  }, [transaction, confirmedTransactions, voted]);
+
+  const voting = !!transaction && !voted;
+
   return {
     vote,
     votes: pollStore.votes,
+    voted,
     loading: pollStore.loading || loading,
     commitment,
+    transaction,
+    voting
   };
 };
 
