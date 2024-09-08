@@ -36,12 +36,15 @@ export default function RootLayout({
   useEffect(() => {
     // init on mount
     startClient();
-    if (wallet.walletInstalled) {
-      wallet.initializeWallet();
-      wallet.observeWalletChange();
-    }
+    wallet.initializeWallet();
     verifyAuth();
   }, []);
+
+  useEffect(() => {
+    if (wallet.walletInstalled) {
+      wallet.observeWalletChange();
+    }
+  }, [wallet.walletInstalled])
 
   return (
     <html lang="en" className="h-full">

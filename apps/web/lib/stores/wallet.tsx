@@ -33,8 +33,8 @@ export interface WalletState {
 
 export const useWalletStore = create<WalletState, [["zustand/immer", never]]>(
   immer((set) => ({
-    loading: typeof mina !== "undefined",
-    walletInstalled: typeof mina !== "undefined",
+    loading: true,
+    walletInstalled: false,
     showInstallWalletModal: false,
     openChangeInstallWalletModal(bool: boolean) {
       set((state) => {
@@ -45,7 +45,8 @@ export const useWalletStore = create<WalletState, [["zustand/immer", never]]>(
       if (typeof mina === "undefined") {
         console.log("Auro wallet not installed");
         set((state) => {
-          state.showInstallWalletModal = true;
+          state.loading = false;
+          state.walletInstalled = false;
         });
         return;
       }
