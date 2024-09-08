@@ -150,6 +150,7 @@ export const usePoll = (id: number) => {
   const [transaction, setTransaction] = useState<PendingTransaction | null>(
     null,
   );
+  const [voting, setVoting] = useState(false);
 
   const loadCommitment = async () => {
     if (!client) return null;
@@ -172,6 +173,8 @@ export const usePoll = (id: number) => {
     async (voters: string[], optionHash: string, salt: string) => {
       if (!client || !wallet.wallet) return;
 
+      setVoting(true);
+
       const pendingTransaction = await pollStore.vote(
         client,
         wallet,
@@ -193,13 +196,11 @@ export const usePoll = (id: number) => {
     const confirmed = confirmedTransactions.find(
       (tx) => tx.tx.hash().toString() === transaction.hash().toString(),
     );
-    console.log({ confirmed });
     if (confirmed) {
       setVoted(true);
+      setVoting(false);
     }
   }, [transaction, confirmedTransactions, voted]);
-
-  const voting = !!transaction && !voted;
 
   return {
     vote,
