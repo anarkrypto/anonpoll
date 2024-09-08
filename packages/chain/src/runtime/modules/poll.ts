@@ -38,7 +38,6 @@ export class OptionsHashes extends Struct({
 }) {
 	// Should be excuted on the client
 	static fromTexts(options: string[], salt: string) {
-
 		return new OptionsHashes({
 			// Hash options inputs using Poseidon and fill the rest with
 			// indexes to make sure the hashes are unique
@@ -110,12 +109,10 @@ export class PollPublicOutput extends Struct({
 	nullifier: Field
 }) {}
 
-// TODO: Perhaps we should use the poll id instead
-export const message: Field[] = [Field(0)];
-
 export async function canVote(
 	witness: MerkleMapWitness,
-	nullifier: Nullifier
+	nullifier: Nullifier,
+	pollId: UInt32
 ): Promise<PollPublicOutput> {
 	const key = Poseidon.hash(nullifier.getPublicKey().toFields());
 	const [computedRoot, computedKey] = witness.computeRootAndKeyV2(
@@ -123,6 +120,7 @@ export async function canVote(
 	);
 	computedKey.assertEquals(key);
 
+	const message = [Field.from(pollId.value)];
 	nullifier.verify(message);
 
 	return new PollPublicOutput({
@@ -136,7 +134,7 @@ export const pollProgram = ZkProgram({
 	publicOutput: PollPublicOutput,
 	methods: {
 		canVote: {
-			privateInputs: [MerkleMapWitness, Nullifier],
+			privateInputs: [MerkleMapWitness, Nullifier, UInt32],
 			method: canVote
 		}
 	}

@@ -6,7 +6,6 @@ import {
 	PollProof,
 	PollPublicOutput,
 	canVote,
-	message
 } from "../../../src/runtime/modules/poll";
 import { Field, PrivateKey, Nullifier, MerkleMap, Poseidon, Bool } from "o1js";
 import { Pickles } from "o1js/dist/node/snarky";
@@ -99,10 +98,10 @@ describe("Poll", () => {
 
 	it("should allow a valid vote with correct proof", async () => {
 		const nullifier = Nullifier.fromJSON(
-			Nullifier.createTestNullifier(message, alicePrivateKey)
+			Nullifier.createTestNullifier([Field.from(pollId.value)], alicePrivateKey)
 		);
 
-		const publicOutput = await canVote(aliceWitness, nullifier);
+		const publicOutput = await canVote(aliceWitness, nullifier, pollId);
 		const pollProof = await mockProof(publicOutput);
 
 		const tx = await appChain.transaction(alicePublicKey, async () => {
@@ -124,10 +123,10 @@ describe("Poll", () => {
 
 	it("should prevent voting with a reused nullifier", async () => {
 		const nullifier = Nullifier.fromJSON(
-			Nullifier.createTestNullifier([Field(0)], alicePrivateKey)
+			Nullifier.createTestNullifier([Field.from(pollId.value)], alicePrivateKey)
 		);
 
-		const publicOutput = await canVote(aliceWitness, nullifier);
+		const publicOutput = await canVote(aliceWitness, nullifier, pollId);
 		const pollProof = await mockProof(publicOutput);
 
 		const tx = await appChain.transaction(alicePublicKey, async () => {
@@ -155,10 +154,10 @@ describe("Poll", () => {
 		poll = appChain.runtime.resolve("Poll");
 
 		const nullifier = Nullifier.fromJSON(
-			Nullifier.createTestNullifier(message, bobPrivateKey)
+			Nullifier.createTestNullifier([Field.from(pollId.value)], bobPrivateKey)
 		);
 
-		const publicOutput = await canVote(bobWitness, nullifier);
+		const publicOutput = await canVote(bobWitness, nullifier, pollId);
 		const pollProof = await mockProof(publicOutput);
 
 		const tx = await appChain.transaction(bobPublicKey, async () => {
@@ -192,10 +191,10 @@ describe("Poll", () => {
 		const charlieWitness = map.getWitness(charlieHashKey);
 
 		const nullifier = Nullifier.fromJSON(
-			Nullifier.createTestNullifier(message, charliePrivateKey)
+			Nullifier.createTestNullifier([Field.from(pollId.value)], charliePrivateKey)
 		);
 
-		const publicOutput = await canVote(charlieWitness, nullifier);
+		const publicOutput = await canVote(charlieWitness, nullifier, pollId);
 
 		const pollProof = await mockProof(publicOutput);
 

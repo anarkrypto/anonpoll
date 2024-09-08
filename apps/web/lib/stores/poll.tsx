@@ -9,7 +9,6 @@ import { useChainStore } from "./chain";
 import { useWalletStore } from "./wallet";
 import {
   canVote,
-  message,
   OptionHash,
   OptionsHashes,
 } from "chain/dist/runtime/modules/poll";
@@ -108,12 +107,12 @@ export const usePollStore = create<PollState, [["zustand/immer", never]]>(
 
       // Ask for Auro Wallet to create a nullifier
       const jsonNullifier = (await wallet.createNullifier(
-        message.map((f) => Number(f.toBigInt())),
+        [pollId].map((f) => Number(f.toBigInt())),
       )) as any;
 
       const nullifier = Nullifier.fromJSON(jsonNullifier);
 
-      const publicOutput = await canVote(witness, nullifier);
+      const publicOutput = await canVote(witness, nullifier, pollId);
 
       const pollProof = await mockProof(publicOutput);
 
