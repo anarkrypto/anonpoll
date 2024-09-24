@@ -99,11 +99,6 @@ export class VoteOptions extends Struct({
 	}
 }
 
-export class Votes extends Struct({
-	yayes: UInt32,
-	nays: UInt32
-}) {}
-
 export class PollPublicOutput extends Struct({
 	root: Field,
 	nullifier: Field
