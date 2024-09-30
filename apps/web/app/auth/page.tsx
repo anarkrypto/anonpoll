@@ -24,6 +24,7 @@ export default function AuthPage() {
 
   useEffect(() => {
     if (isAuthenticated) {
+      router.refresh();
       router.push(next);
     }
   }, [isAuthenticated]);
