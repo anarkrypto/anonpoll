@@ -1,16 +1,19 @@
 # ZeroPoll
 
 A private voting system powered by zero-knowledge proofs
+
+https://zeropoll.xyz
 ___
 
-This project is based on [Protokit framework](https://protokit.dev) and was set up with [`proto-kit/starter-kit`](https://github.com/proto-kit/starter-kit).
+- This project is funded by Mina Protocol: [Check the proposal](https://forums.minaprotocol.com/t/zeropoll-voting-polls/6482) 🎉
+- This project is based on [Protokit framework](https://protokit.dev) and was set up with [`proto-kit/starter-kit`](https://github.com/proto-kit/starter-kit).
 
 ## Quick start
 
 The monorepo contains 1 package and 1 app:
 
 - `packages/chain` contains everything related to your app-chain
-- `apps/web` contains a demo UI that connects to your locally hosted app-chain sequencer
+- `apps/web` contains a web UI that connects to your app-chain sequencer
 
 **Prerequisites:**
 
