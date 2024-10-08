@@ -21,42 +21,42 @@ export default function LandingPage() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center p-4">
       <main className="w-full max-w-4xl space-y-8">
-        <h1 className={cn(montserrat.className, "text-center text-6xl")}>
-          <span className="bg-gradient-to-b from-zinc-600 to-zinc-800 bg-clip-text font-semibold text-transparent">
-            Zero
-          </span>
-          <span className="bg-gradient-to-b from-violet-500 to-violet-700 bg-clip-text font-bold text-transparent">
-            Poll
-          </span>
-        </h1>
-        <p className="text-center text-xl text-gray-600">
-          A private voting system powered by zero-knowledge proofs
-        </p>
+        <div className="space-y-4">
+          <h1
+            className={cn(
+              montserrat.className,
+              "text-center text-4xl sm:text-5xl md:text-6xl",
+            )}
+          >
+            <span className="bg-gradient-to-b from-zinc-600 to-zinc-800 bg-clip-text font-semibold text-transparent">
+              Zero
+            </span>
+            <span className="bg-gradient-to-b from-violet-500 to-violet-700 bg-clip-text font-bold text-transparent">
+              Poll
+            </span>
+          </h1>
+          <p className="text-md text-center text-gray-600 sm:text-lg md:text-xl">
+            A private voting system powered by zero-knowledge proofs
+          </p>
+        </div>
 
-        <Card className="bg-white shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-center text-2xl font-semibold">
-              Secure, Anonymous, and Verifiable
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-6 md:grid-cols-3">
-            <FeatureCard
-              icon={<Shield className="h-8 w-8 text-blue-500" />}
-              title="Secure"
-              description="Your vote is protected by state-of-the-art cryptography"
-            />
-            <FeatureCard
-              icon={<Lock className="h-8 w-8 text-green-500" />}
-              title="Private"
-              description="Your identity remains anonymous throughout the voting process"
-            />
-            <FeatureCard
-              icon={<Vote className="h-8 w-8 text-violet-500" />}
-              title="Verifiable"
-              description="Ensure the integrity of the voting results without compromising privacy"
-            />
-          </CardContent>
-        </Card>
+        <div className="grid justify-center gap-3 md:grid-cols-3 lg:gap-6">
+          <FeatureCard
+            icon={<Shield className="h-8 w-8 text-blue-500" />}
+            title="Secure"
+            description="Your vote is protected by state-of-the-art cryptography"
+          />
+          <FeatureCard
+            icon={<Lock className="h-8 w-8 text-green-500" />}
+            title="Private"
+            description="Your identity remains anonymous throughout the voting process"
+          />
+          <FeatureCard
+            icon={<Vote className="h-8 w-8 text-violet-500" />}
+            title="Verifiable"
+            description="Ensure the integrity of the voting results without compromising privacy"
+          />
+        </div>
 
         <div className="flex justify-center">
           {!walletInstalled ? (
@@ -80,11 +80,16 @@ export default function LandingPage() {
           )}
         </div>
 
-        <p className="mt-8 text-center text-gray-600">
-          Experience the future of voting with our cutting-edge zero-knowledge
-          proof technology. Create polls, cast votes, and verify results - all
-          while maintaining anonymity.
-        </p>
+        <div>
+          <p className="text-center text-gray-600">
+            Experience the future of voting with our cutting-edge zero-knowledge
+            proof technology.
+          </p>
+          <p className="text-center text-gray-600">
+            Create polls, cast votes, and verify results - all while maintaining
+            anonymity.
+          </p>
+        </div>
       </main>
 
       <footer className="mt-16 flex w-full justify-center gap-4 text-sm text-gray-600">
@@ -93,7 +98,7 @@ export default function LandingPage() {
         <a
           href="https://github.com/anarkrypto/zeropoll"
           target="_blank"
-          className="hover:text-violet-600 gap-1.5 flex items-center"
+          className="flex items-center gap-1.5 hover:text-violet-600"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -121,10 +126,10 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="flex flex-col items-center space-y-2 text-center">
+    <div className="flex max-w-xl flex-col items-center space-y-2 rounded-lg border border-zinc-200 bg-white p-4 text-center">
       {icon}
       <h3 className="text-lg font-semibold">{title}</h3>
-      <p className="text-gray-600">{description}</p>
+      <p className="text-sm text-gray-600">{description}</p>
     </div>
   );
 }
