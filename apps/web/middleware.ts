@@ -35,9 +35,23 @@ export default async function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
-// Specify the routes where this middleware should apply
 export const config = {
-  matcher: "/((?!_next/static|api|favicon.ico).*)", // Apply to all routes except static files or favicon
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - Any file with an extension (e.g. .ico .js, .css, .png)
+     */
+    {
+      source: "/((?!api|static|.*\\..*|_next).*)",
+      missing: [
+        { type: "header", key: "next-router-prefetch" },
+        { type: "header", key: "purpose", value: "prefetch" },
+      ],
+    },
+  ],
 };
 
 // Light jwt verification that does not require o1js
