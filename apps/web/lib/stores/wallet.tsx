@@ -188,6 +188,7 @@ export const useNotifyTransactions = () => {
     (
       status: "PENDING" | "SUCCESS" | "FAILURE",
       transaction: UnsignedTransaction | PendingTransaction,
+      statusMessage?: string,
     ) => {
       if (!client.client) return;
 
@@ -220,7 +221,18 @@ export const useNotifyTransactions = () => {
 
       toast({
         title: title(),
-        description: `Hash: ${hash}`,
+        description: (
+          <div>
+            {statusMessage && (
+              <p>
+                <b>Message:</b> {statusMessage}
+              </p>
+            )}
+            <p>
+              <b>Hash</b>: {hash}
+            </p>
+          </div>
+        ),
       });
     },
     [client.client],
@@ -236,9 +248,9 @@ export const useNotifyTransactions = () => {
   // notify about transaction success or failure
   const confirmedTransactions = useConfirmedTransactions();
   useEffect(() => {
-    confirmedTransactions?.forEach(({ tx, status }) => {
+    confirmedTransactions?.forEach(({ tx, status, statusMessage }) => {
       wallet.removePendingTransaction(tx);
-      notifyTransaction(status ? "SUCCESS" : "FAILURE", tx);
+      notifyTransaction(status ? "SUCCESS" : "FAILURE", tx, statusMessage);
     });
   }, [wallet.pendingTransactions, confirmedTransactions, notifyTransaction]);
 };
