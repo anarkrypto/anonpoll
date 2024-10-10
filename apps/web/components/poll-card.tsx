@@ -132,7 +132,7 @@ export function PollCard({
                     className={cn(
                       "relative w-full px-12",
                       activeOptionHash === option.hash &&
-                        "border-2 border-primary/40 bg-primary/20 hover:bg-primary/20 ",
+                        "border-2 border-primary/40 bg-primary/20 hover:bg-primary/20 rounded-lg overflow-hidden",
                     )}
                     loading={loading}
                     onClick={() => handleSelectOption(option.hash)}
@@ -140,7 +140,7 @@ export function PollCard({
                   >
                     <div
                       className={cn(
-                        "absolute bottom-0 left-0 h-full rounded-md bg-green-400/30 transition-all duration-500 ease-in-out",
+                        "absolute bottom-0 left-0 h-full bg-green-400/30 transition-all duration-500 ease-in-out",
                         activeOptionHash === option.hash && "bg-primary/30",
                       )}
                       style={{
