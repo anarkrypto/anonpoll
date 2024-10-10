@@ -40,8 +40,12 @@ export default function Header() {
         <div className="flex items-center">
           <Link href="/">
             <h1 className={cn(montserrat.className, "text-xl")}>
-              <span className="bg-gradient-to-b font-semibold from-zinc-600 to-zinc-800 bg-clip-text text-transparent">Zero</span>
-              <span className="font-bold bg-gradient-to-b from-violet-500 to-violet-700 text-transparent bg-clip-text">Poll</span>
+              <span className="bg-gradient-to-b from-zinc-600 to-zinc-800 bg-clip-text font-semibold text-transparent">
+                Zero
+              </span>
+              <span className="bg-gradient-to-b from-violet-500 to-violet-700 bg-clip-text font-bold text-transparent">
+                Poll
+              </span>
             </h1>
           </Link>
           <Separator className="mx-4 h-8" orientation={"vertical"} />
@@ -53,11 +57,16 @@ export default function Header() {
           {/* wallet */}
           <Button loading={loading} onClick={authenticate} variant="secondary">
             {showWallet ? (
-              <div className="text-xs sm:text-sm">
-                {truncateWalletAddress(wallet)}
-              </div>
+              <>
+                <div className="hidden sm:block text-sm">
+                  {truncateWalletAddress(wallet, 7)}
+                </div>
+                <div className="sm:hidden text-xs">
+                  {truncateWalletAddress(wallet, 4)}
+                </div>
+              </>
             ) : (
-              <div className="text-sm">Connect wallet</div>
+              <div className="text-sm">Connect Wallet</div>
             )}
           </Button>
         </div>
