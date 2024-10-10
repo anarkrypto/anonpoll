@@ -25,8 +25,8 @@ export const truncateMiddle = (
   return `${str.slice(0, start)}${separator}${str.slice(-end)}`;
 };
 
-export const truncateWalletAddress = (address: string) => {
-  return truncateMiddle(address, 7, 7);
+export const truncateWalletAddress = (address: string, length = 7) => {
+  return truncateMiddle(address, length, length);
 };
 
 export const isValidPublicKey = (publicKey: string) => {
