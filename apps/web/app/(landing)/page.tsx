@@ -19,7 +19,7 @@ export default function LandingPage() {
   );
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center p-4">
+    <div className="flex flex-1 flex-col items-center justify-center p-4 mt-4 sm:mt-0">
       <main className="w-full max-w-4xl space-y-8">
         <div className="space-y-4">
           <h1
