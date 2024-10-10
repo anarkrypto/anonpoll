@@ -18,7 +18,7 @@ export function ChainStatus() {
           loading ? "bg-yellow-500" : online ? "bg-green-500" : "bg-red-500",
         )}
       ></div>
-      <div className="text-xs text-slate-600">{blockHeight ?? "-"}</div>
+      <div className="hidden sm:block text-xs text-slate-600">{blockHeight ?? "-"}</div>
     </div>
   );
 }
