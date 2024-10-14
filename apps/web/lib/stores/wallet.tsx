@@ -76,12 +76,16 @@ export const useWalletStore = create<WalletState, [["zustand/immer", never]]>(
         state.loading = true;
       });
 
-      const [wallet] = await mina.requestAccounts();
-
-      set((state) => {
-        state.wallet = wallet;
-        state.loading = false;
-      });
+      try {
+        const [wallet] = await mina.requestAccounts();
+        set((state) => {
+          state.wallet = wallet;
+        });
+      } finally {
+        set((state) => {
+          state.loading = false;
+        });
+      }
     },
     observeWalletChange() {
       if (typeof mina === "undefined") {
