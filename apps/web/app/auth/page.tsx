@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useAuthStore } from "@/lib/stores/auth";
+import { useAuth } from "@/lib/stores/auth";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
@@ -16,11 +16,7 @@ export default function AuthPage() {
   const next = useSearchParams().get("next") || "/";
   const router = useRouter();
 
-  const [isAuthenticated, authenticate, loading] = useAuthStore((state) => [
-    state.isAuthenticated,
-    state.authenticate,
-    state.loading,
-  ]);
+  const {isAuthenticated, authenticate, loading} = useAuth()
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -43,9 +39,7 @@ export default function AuthPage() {
         <Button
           size="lg"
           className="w-full px-8 py-6 text-lg"
-          onClick={() => {
-            authenticate();
-          }}
+          onClick={authenticate}
           loading={loading}
         >
           Connect Wallet

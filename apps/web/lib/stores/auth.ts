@@ -37,20 +37,10 @@ export const useAuthStore = create<AuthState, [["zustand/immer", never]]>(
 
         const { signature, publicKey } = await signJsonMessage(message);
 
-        try {
-          await fetchAuthApi({ publicKey, signature, issuedAt });
-          set({ isAuthenticated: true });
-        } catch (error) {
-          const message =
-            error instanceof Error
-              ? error.message
-              : "Try again later or contact support";
-          useToast().toast({
-            title: "Authentication failed",
-            description: message,
-            variant: "destructive",
-          });
-        }
+        await fetchAuthApi({ publicKey, signature, issuedAt });
+        set({ isAuthenticated: true });
+      } catch (error) {
+        throw error;
       } finally {
         set({ loading: false });
       }
@@ -61,6 +51,34 @@ export const useAuthStore = create<AuthState, [["zustand/immer", never]]>(
     },
   })),
 );
+
+export const useAuth = () => {
+  const { isAuthenticated, loading, authenticate, verifyAuth } = useAuthStore();
+
+  const { toast } = useToast();
+
+  const handleAuthenticate = async () => {
+    try {
+      await authenticate();
+    } catch (error) {
+      console.error(error instanceof Error, "Authentication failed", error);
+      const message =
+        error instanceof Error ? error.message : "Check the console";
+      toast({
+        title: "Authentication failed",
+        description: message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  return {
+    isAuthenticated,
+    loading,
+    authenticate: handleAuthenticate,
+    verifyAuth,
+  };
+};
 
 const fetchAuthApi = async ({
   publicKey,

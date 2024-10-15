@@ -8,7 +8,7 @@ import { usePrevious } from "@uidotdev/usehooks";
 import { useClientStore } from "./client";
 import { useChainStore } from "./chain";
 import { Field, Nullifier, PublicKey, Signature, UInt64 } from "o1js";
-import { truncateMiddle } from "../utils";
+import { MinaError, truncateMiddle } from "../utils";
 
 export interface WalletState {
   wallet?: string;
@@ -56,12 +56,19 @@ export const useWalletStore = create<WalletState, [["zustand/immer", never]]>(
         state.loading = true;
       });
 
-      const [wallet] = await mina.getAccounts();
+      try {
+        const [wallet] = await mina.getAccounts();
 
-      set((state) => {
-        state.wallet = wallet;
-        state.loading = false;
-      });
+        set((state) => {
+          state.wallet = wallet;
+        });
+      } catch (error) {
+        throw MinaError.fromJson(error);
+      } finally {
+        set((state) => {
+          state.loading = false;
+        });
+      }
     },
     async connectWallet() {
       if (typeof mina === "undefined") {
@@ -81,6 +88,8 @@ export const useWalletStore = create<WalletState, [["zustand/immer", never]]>(
         set((state) => {
           state.wallet = wallet;
         });
+      } catch (error) {
+        throw MinaError.fromJson(error);
       } finally {
         set((state) => {
           state.loading = false;

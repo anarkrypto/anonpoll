@@ -5,7 +5,7 @@ import { Separator } from "./ui/separator";
 import { Montserrat } from "next/font/google";
 import { cn } from "@/lib/cn";
 import { truncateWalletAddress } from "@/lib/utils";
-import { useAuthStore } from "@/lib/stores/auth";
+import { useAuth } from "@/lib/stores/auth";
 import { useWalletStore } from "@/lib/stores/wallet";
 import Link from "next/link";
 
@@ -25,11 +25,9 @@ export interface HeaderProps {
 
 export default function Header() {
   const { wallet, loading: loadingWallet } = useWalletStore();
-  const {
-    isAuthenticated,
-    loading: loadingAuth,
-    authenticate,
-  } = useAuthStore();
+
+  const {isAuthenticated, authenticate, loading: loadingAuth} = useAuth()
+
 
   const loading = loadingWallet || loadingAuth;
   const showWallet = isAuthenticated && wallet;
@@ -58,10 +56,10 @@ export default function Header() {
           <Button loading={loading} onClick={authenticate} variant="secondary">
             {showWallet ? (
               <>
-                <div className="hidden sm:block text-sm">
+                <div className="hidden text-sm sm:block">
                   {truncateWalletAddress(wallet, 7)}
                 </div>
-                <div className="sm:hidden text-xs">
+                <div className="text-xs sm:hidden">
                   {truncateWalletAddress(wallet, 4)}
                 </div>
               </>
