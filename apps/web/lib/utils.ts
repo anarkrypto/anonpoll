@@ -1,5 +1,6 @@
 import { PollProof, PollPublicOutput } from "chain/dist/runtime/modules/poll";
 import { Bool, MerkleMap, Poseidon, PrivateKey, PublicKey } from "o1js";
+import { z } from "zod";
 
 export const mockProof = async (
   publicOutput: PollPublicOutput,
@@ -45,7 +46,7 @@ export const generateCommitmentRoot = (publicKeys: string[]) => {
     map.set(hashKey, Bool(true).toField());
   });
   return map.getRoot();
-}
+};
 
 export const generateSalt = () => {
   return PrivateKey.random().toBase58();
@@ -77,3 +78,26 @@ export const getSiteUrl = () => {
 
   return new URL(url).origin;
 };
+
+export class MinaError extends Error {
+  code: number;
+  constructor(message: string, code: number) {
+    super(message);
+    this.code = code;
+    this.name = "MinaError";
+  }
+
+  static fromJson(json: any) {
+    const { success, data } = z
+      .object({
+        message: z.string(),
+        code: z.number(),
+      })
+      .safeParse(json);
+    if (success) {
+      return new MinaError(data.message, data.code);
+    } else {
+      return new MinaError("Unknown error", 0);
+    }
+  }
+}
