@@ -61,7 +61,7 @@ export const useAuth = () => {
     try {
       await authenticate();
     } catch (error) {
-      console.error(error instanceof Error, "Authentication failed", error);
+      console.error("Authentication failed", error);
       const message =
         error instanceof Error ? error.message : "Check the console";
       toast({
