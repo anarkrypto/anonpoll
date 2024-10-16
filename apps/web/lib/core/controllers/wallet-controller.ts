@@ -41,6 +41,12 @@ export class WalletController extends BaseController<WalletState> {
       this.store.setState({ loading: false });
     }
   }
+
+  signJsonMessage(message: { label: string; value: string }[]) {
+    return this.provider.signJsonMessage({ message });
+  }
+
+  get account(): string | null {
+    return this.state.account;
+  }
 }
-
-
