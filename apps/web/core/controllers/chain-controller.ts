@@ -1,5 +1,7 @@
 import { BaseController, BaseState, Store } from "./base-controller";
 
+export const tickInterval = 1000;
+
 export interface ComputedTransactionJSON {
   argsFields: string[];
   argsJSON: string[];
@@ -42,6 +44,8 @@ export interface BlockQueryResponse {
 }
 
 export class ChainController extends BaseController<ChainState> {
+  private interval: NodeJS.Timeout | undefined;
+
   constructor(store: Store<ChainState>) {
     super(store);
   }
@@ -97,11 +101,11 @@ export class ChainController extends BaseController<ChainState> {
       const { data }: BlockQueryResponse = await response.json();
 
       const block = data.network.unproven
-      ? {
-          height: data.network.unproven.block.height,
-          ...data.block,
-        }
-      : undefined;
+        ? {
+            height: data.network.unproven.block.height,
+            ...data.block,
+          }
+        : undefined;
 
       this.store.setState({
         block,
@@ -110,7 +114,18 @@ export class ChainController extends BaseController<ChainState> {
     } catch (error) {
       throw error;
     } finally {
-        this.store.setState({ loading: false });
+      this.store.setState({ loading: false });
+    }
+  }
+
+  async start() {
+    await this.loadBlock();
+    this.interval = setInterval(() => this.loadBlock(), tickInterval);
+  }
+
+  stop() {
+    if (this.interval) {
+      clearInterval(this.interval);
     }
   }
 }
