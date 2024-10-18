@@ -1,4 +1,4 @@
-import { BaseController, Store } from "./base-controller";
+import { BaseController } from "./base-controller";
 import { generateAuthJsonMessage } from "@/lib/auth";
 import { WalletController } from "./wallet-controller";
 import { authSchema } from "@/schemas/auth";
@@ -11,20 +11,27 @@ type AuthState = {
 };
 
 export class AuthController extends BaseController<AuthState> {
-  wallet: WalletController;
-  constructor(wallet: WalletController, store: Store<AuthState>) {
-    super(store);
+ 
+  readonly defaultState: AuthState = {
+    isAuthenticated: false,
+    loading: false,
+  }
+  
+  private wallet: WalletController;
+
+  constructor(wallet: WalletController, initialState: Partial<AuthState> = {}) {
+    super(initialState);
     this.wallet = wallet;
   }
 
   init (): boolean {
     const token = Cookies.get("auth.token");
-    this.store.setState({ isAuthenticated: !!token, loading: false });  
+    this.update({ isAuthenticated: !!token, loading: false });  
     return !!token
   }
 
   public async authenticate(): Promise<void> {
-    this.store.setState({ loading: true });
+    this.update({ loading: true });
     try {
       if (!this.wallet.account) {
         await this.wallet.connect();
@@ -37,11 +44,11 @@ export class AuthController extends BaseController<AuthState> {
         await this.wallet.signJsonMessage(message);
 
       await fetchAuthApi({ publicKey, signature, issuedAt });
-      this.store.setState({ isAuthenticated: true });
+      this.update({ isAuthenticated: true });
     } catch (error) {
       throw error;
     } finally {
-      this.store.setState({ loading: false });
+      this.update({ loading: false });
     }
   }
 }

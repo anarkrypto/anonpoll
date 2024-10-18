@@ -1,4 +1,4 @@
-import { BaseController, BaseState, Store } from "./base-controller";
+import { BaseController, BaseState } from "./base-controller";
 
 export const tickInterval = 1000;
 
@@ -46,12 +46,17 @@ export interface BlockQueryResponse {
 export class ChainController extends BaseController<ChainState> {
   private interval: NodeJS.Timeout | undefined;
 
-  constructor(store: Store<ChainState>) {
-    super(store);
+  readonly defaultState: ChainState = {
+    loading: true,
+    online: false,
+  };
+
+  constructor(initialState: Partial<ChainState> = {}) {
+    super(initialState);
   }
 
   async loadBlock() {
-    this.store.setState({ loading: true });
+    this.update({ loading: true });
 
     try {
       const graphql = process.env.NEXT_PUBLIC_PROTOKIT_GRAPHQL_URL;
@@ -107,14 +112,14 @@ export class ChainController extends BaseController<ChainState> {
           }
         : undefined;
 
-      this.store.setState({
+      this.update({
         block,
         loading: false,
       });
     } catch (error) {
       throw error;
     } finally {
-      this.store.setState({ loading: false });
+      this.update({ loading: false });
     }
   }
 
