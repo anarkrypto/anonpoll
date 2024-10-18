@@ -12,10 +12,12 @@ export type BaseState = Record<string, any>;
  *
  * State change callbacks
  */
-export type Listener<State extends BaseState> = (state: State) => void;
+export type Listener<State extends BaseState> = (
+  fullState: State,
+  changedState: Partial<State>,
+) => void;
 
 export class BaseController<State extends BaseState> {
-
   readonly defaultState: State = {} as State;
   private internalState: State;
   private internalListeners = new Set<Listener<State>>();
@@ -46,15 +48,15 @@ export class BaseController<State extends BaseState> {
    */
   update(state: Partial<State>) {
     this.internalState = Object.assign({}, this.internalState, state);
-    this.notify(this.internalState);
+    this.notify(this.internalState, state);
   }
 
   /**
    * Notifies all subscribed listeners of current modified state.
    */
-  private notify(state: State) {
+  private notify(fullState: State, changedState: Partial<State>) {
     this.internalListeners.forEach((listener) => {
-      listener(state);
+      listener(fullState, changedState);
     });
   }
 
@@ -63,7 +65,7 @@ export class BaseController<State extends BaseState> {
    *
    * @param listener - The callback triggered when state changes.
    */
-  subscribe(listener: () => void) {
+  subscribe(listener: Listener<State>) {
     this.internalListeners.add(listener);
   }
 
