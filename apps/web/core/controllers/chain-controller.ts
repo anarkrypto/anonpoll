@@ -1,4 +1,5 @@
 import { BaseController, BaseState } from "./base-controller";
+import { client } from "chain";
 
 export const tickInterval = 1000;
 
@@ -44,6 +45,8 @@ export interface BlockQueryResponse {
 }
 
 export class ChainController extends BaseController<ChainState> {
+
+  client = client
   private interval: NodeJS.Timeout | undefined;
 
   readonly defaultState: ChainState = {
@@ -124,6 +127,7 @@ export class ChainController extends BaseController<ChainState> {
   }
 
   async start() {
+    await this.client.start();
     await this.loadBlock();
     this.interval = setInterval(() => this.loadBlock(), tickInterval);
   }
