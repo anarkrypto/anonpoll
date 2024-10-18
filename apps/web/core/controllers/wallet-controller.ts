@@ -7,11 +7,10 @@ type WalletState = {
 };
 
 export class WalletController extends BaseController<WalletState> {
-
   readonly defaultState: WalletState = {
     account: null,
     loading: false,
-  }
+  };
 
   provider: MinaProvider;
 
@@ -48,8 +47,12 @@ export class WalletController extends BaseController<WalletState> {
     }
   }
 
-  signJsonMessage(message: { label: string; value: string }[]) {
+  public signJsonMessage(message: { label: string; value: string }[]) {
     return this.provider.signJsonMessage({ message });
+  }
+
+  public async createNullifier(message: number[]) {
+    return await this.provider.createNullifier({ message });
   }
 
   get account(): string | null {
