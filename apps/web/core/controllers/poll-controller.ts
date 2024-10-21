@@ -61,7 +61,6 @@ export class PollController extends BaseController<PollState> {
   }
 
   private observePoll(id: number) {
-    const pollId = UInt32.from(id);
     this.chain.subscribe((_, changedState) => {
       if ("blocks" in changedState) {
         this.loadPoll(id);
