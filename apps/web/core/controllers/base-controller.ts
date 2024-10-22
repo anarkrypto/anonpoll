@@ -5,7 +5,7 @@ import { Logger } from "../utils/logger";
  *
  * Base state representation
  */
-export type BaseState = Record<string, any>;
+export interface BaseState {};
 
 /**
  * @type Listener
