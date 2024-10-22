@@ -11,7 +11,6 @@ import { PendingTransaction } from "@proto-kit/sequencer";
 type CreatePollData = Omit<z.infer<typeof pollInsertSchema>, "id">;
 
 export interface PollManagerState extends BaseState {
-  loading: boolean;
   polls: {
     id: number;
     title: string;
@@ -39,8 +38,6 @@ export class PollManagerController extends BaseController<PollManagerState> {
     if (!this.wallet.account) {
       throw new Error("Client or wallet not initialized");
     }
-
-    this.update({ loading: true });
 
     const poll = this.chain.client.runtime.resolve("Poll");
     const sender = PublicKey.fromBase58(this.wallet.account);
