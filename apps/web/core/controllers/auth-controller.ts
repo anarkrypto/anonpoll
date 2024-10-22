@@ -1,11 +1,11 @@
-import { BaseController } from "./base-controller";
+import { BaseController, BaseState } from "./base-controller";
 import { generateAuthJsonMessage } from "@/lib/auth";
 import { WalletController } from "./wallet-controller";
 import { authSchema } from "@/schemas/auth";
 import { z } from "zod";
 import Cookies from "js-cookie";
 
-type AuthState = {
+export interface AuthState extends BaseState {
   isAuthenticated: boolean;
   loading: boolean;
 };

@@ -1,5 +1,5 @@
 import { UInt32 } from "@proto-kit/library";
-import { BaseController } from "./base-controller";
+import { BaseController, BaseState } from "./base-controller";
 import { ChainController } from "./chain-controller";
 import {
   ModuleQuery,
@@ -12,7 +12,7 @@ import { mockProof } from "@/lib/utils";
 import { WalletController } from "./wallet-controller";
 import { isPendingTransaction } from "../utils";
 
-export interface PollState {
+export interface PollState extends BaseState {
   loading: boolean;
   votes: {
     hash: string;

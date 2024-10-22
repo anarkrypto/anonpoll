@@ -3,6 +3,7 @@ import { MinaProvider, MinaProviderError } from "../providers/base-provider";
 import { PendingTransaction } from "@proto-kit/sequencer";
 import { ChainController } from "./chain-controller";
 import { Field, PublicKey, Signature, UInt64 } from "o1js";
+
 export interface TransactionJSON {
   hash: string;
   methodId: string;
