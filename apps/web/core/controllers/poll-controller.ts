@@ -28,8 +28,8 @@ export class PollController extends BaseController<PollConfig, PollState> {
   private poll: Poll;
   private voters = new Set<string>();
 
-  constructor(config: PollConfig, initialState: Partial<PollState> = {}) {
-    super(config, initialState);
+  constructor(config: PollConfig, state: Partial<PollState> = {}) {
+    super(config, state);
     this.wallet = config.wallet;
     this.chain = config.chain;
     this.pollQuery = this.chain.client.query.runtime.Poll;

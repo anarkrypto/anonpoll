@@ -60,8 +60,8 @@ export class ChainController extends BaseController<ChainConfig, ChainState> {
     },
   };
 
-  constructor(config: ChainConfig, initialState: Partial<ChainState> = {}) {
-    super(config, initialState);
+  constructor(config: ChainConfig, state: Partial<ChainState> = {}) {
+    super(config, state);
   }
 
   async loadBlock() {

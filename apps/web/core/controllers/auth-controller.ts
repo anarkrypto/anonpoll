@@ -22,8 +22,8 @@ export class AuthController extends BaseController<AuthConfig, AuthState> {
 
   private wallet: WalletController;
 
-  constructor(config: AuthConfig, initialState: Partial<AuthState> = {}) {
-    super(config, initialState);
+  constructor(config: AuthConfig, state: Partial<AuthState> = {}) {
+    super(config, state);
     this.wallet = config.wallet;
   }
 

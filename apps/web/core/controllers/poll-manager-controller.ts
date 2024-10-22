@@ -31,9 +31,9 @@ export class PollManagerController extends BaseController<PollManagerConfig, Pol
 
   constructor(
     config: PollManagerConfig,
-    initialState: Partial<PollManagerState> = {},
+    state: Partial<PollManagerState> = {},
   ) {
-    super(config, initialState);
+    super(config, state);
     this.chain = config.chain;
     this.wallet = config.wallet;
   }

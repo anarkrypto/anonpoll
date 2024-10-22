@@ -52,9 +52,9 @@ export class WalletController extends BaseController<WalletConfig, WalletState> 
 
   constructor(
     config: WalletConfig,
-    initialState: Partial<WalletState> = {},
+    state: Partial<WalletState> = {},
   ) {
-    super(config, initialState);
+    super(config, state);
     this.provider = config.provider;
     this.chain = config.chain;
   }
