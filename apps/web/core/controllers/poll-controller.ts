@@ -21,12 +21,15 @@ export interface PollState {
 }
 
 export class PollController extends BaseController<PollState> {
+  private wallet: WalletController;
   private chain: ChainController;
   private pollQuery: ModuleQuery<Poll>;
   private poll: Poll;
+  private voters = new Set<string>();
 
-  constructor(chain: ChainController, initialState: Partial<PollState> = {}) {
+  constructor(wallet: WalletController, chain: ChainController, initialState: Partial<PollState> = {}) {
     super(initialState);
+    this.wallet = wallet;
     this.chain = chain;
     this.pollQuery = chain.client.query.runtime.Poll;
     this.poll = chain.client.runtime.resolve("Poll");
@@ -70,22 +73,20 @@ export class PollController extends BaseController<PollState> {
   }
 
   public async vote(
-    wallet: WalletController,
     id: number,
-    voters: string[],
     optionHash: string,
   ) {
     const pollId = UInt32.from(id);
 
-    if (!wallet.account) {
+    if (!this.wallet.account) {
       throw new Error("Wallet not initialized");
     }
 
-    const sender = PublicKey.fromBase58(wallet.account);
+    const sender = PublicKey.fromBase58(this.wallet.account);
 
     // reconstruct the merkle map with the voters's public key
     const map = new MerkleMap();
-    voters.forEach((wallet) => {
+    this.voters.forEach((wallet) => {
       const hashKey = Poseidon.hash(PublicKey.fromBase58(wallet).toFields());
       map.set(hashKey, Bool(true).toField());
     });
@@ -95,7 +96,7 @@ export class PollController extends BaseController<PollState> {
     const witness = map.getWitness(hashKey);
 
     // Ask for Auro Wallet to create a nullifier
-    const jsonNullifier = (await wallet.createNullifier(
+    const jsonNullifier = (await this.wallet.createNullifier(
       [pollId].map((f) => Number(f.toBigInt())),
     )) as any;
 
