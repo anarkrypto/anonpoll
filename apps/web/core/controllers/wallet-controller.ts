@@ -95,7 +95,7 @@ export class WalletController extends BaseController<WalletState> {
             });
 
             this.update({
-              confirmedTransactions: this.transactions.values(),
+              transactions: Array.from(this.transactions.values()),
             });
           }
         }
@@ -132,8 +132,8 @@ export class WalletController extends BaseController<WalletState> {
   public addPendingTransaction(transaction: PendingTransaction) {
     if (!this.transactions.has(transaction.hash.toString())) {
       this.update({
-        pendingTransactions: [
-          ...this.state.pendingTransactions,
+        transactions: [
+          ...this.state.transactions,
           {
             ...transaction.toJSON(),
             status: "PENDING",
