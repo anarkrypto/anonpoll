@@ -10,6 +10,7 @@ import { canVote, Poll } from "chain/dist/runtime/modules/poll";
 import { Bool, Field, MerkleMap, Nullifier, Poseidon, PublicKey } from "o1js";
 import { mockProof } from "@/lib/utils";
 import { WalletController } from "./wallet-controller";
+import { isPendingTransaction } from "../utils";
 
 export interface PollState {
   loading: boolean;
@@ -124,9 +125,3 @@ export class PollController extends BaseController<PollState> {
   }
 }
 
-function isPendingTransaction(
-  transaction: PendingTransaction | UnsignedTransaction | undefined,
-): asserts transaction is PendingTransaction {
-  if (!(transaction instanceof PendingTransaction))
-    throw new Error("Transaction is not a PendingTransaction");
-}
