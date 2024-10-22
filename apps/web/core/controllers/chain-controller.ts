@@ -16,19 +16,11 @@ export interface ComputedTransactionJSON {
 }
 
 export interface ComputedBlockJSON {
-  txs?: {
+  txs: {
     status: boolean;
     statusMessage?: string;
     tx: ComputedTransactionJSON;
   }[];
-}
-
-export interface ChainState extends BaseState {
-  loading: boolean;
-  online: boolean;
-  block?: {
-    height: string;
-  } & ComputedBlockJSON;
 }
 
 export interface BlockQueryResponse {
@@ -44,14 +36,26 @@ export interface BlockQueryResponse {
   };
 }
 
-export class ChainController extends BaseController<ChainState> {
+export interface ChainState extends BaseState {
+  loading: boolean;
+  online: boolean;
+  block: {
+    height: string;
+  } & ComputedBlockJSON;
+}
 
-  client = client
+
+export class ChainController extends BaseController<ChainState> {
+  client = client;
   private interval: NodeJS.Timeout | undefined;
 
   readonly defaultState: ChainState = {
     loading: true,
     online: false,
+    block: {
+      height: "0",
+      txs: [],
+    },
   };
 
   constructor(initialState: Partial<ChainState> = {}) {
@@ -108,17 +112,14 @@ export class ChainController extends BaseController<ChainState> {
 
       const { data }: BlockQueryResponse = await response.json();
 
-      const block = data.network.unproven
-        ? {
+      if (data.network.unproven) {
+        this.update({
+          block: {
             height: data.network.unproven.block.height,
-            ...data.block,
-          }
-        : undefined;
-
-      this.update({
-        block,
-        loading: false,
-      });
+            txs: data.block.txs || [],
+          },
+        });
+      }
     } catch (error) {
       throw error;
     } finally {
