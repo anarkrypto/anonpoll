@@ -114,6 +114,7 @@ export class PollController extends BaseController<PollState> {
     await tx.send();
 
     isPendingTransaction(tx.transaction);
+    this.wallet.addPendingTransaction(tx.transaction);
     return tx.transaction;
   }
 
