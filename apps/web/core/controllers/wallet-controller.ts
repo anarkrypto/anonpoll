@@ -1,4 +1,4 @@
-import { BaseController, BaseState } from "./base-controller";
+import { BaseConfig, BaseController, BaseState } from "./base-controller";
 import { MinaProvider, MinaProviderError } from "../providers/base-provider";
 import { PendingTransaction } from "@proto-kit/sequencer";
 import { ChainController } from "./chain-controller";
@@ -26,13 +26,18 @@ export interface ConfirmedTransaction {
   statusMessage: string | null;
 }
 
-interface WalletState extends BaseState {
+export interface WalletConfig extends BaseConfig {
+  provider: MinaProvider,
+  chain: ChainController;
+}
+
+export interface WalletState extends BaseState {
   account: string | null;
   loading: boolean;
   transactions: TransactionJSON[];
 }
 
-export class WalletController extends BaseController<WalletState> {
+export class WalletController extends BaseController<WalletConfig, WalletState> {
   readonly defaultState: WalletState = {
     account: null,
     loading: false,
@@ -46,13 +51,12 @@ export class WalletController extends BaseController<WalletState> {
   private transactions = new Map<string, TransactionJSON>();
 
   constructor(
-    provider: MinaProvider,
-    chain: ChainController,
+    config: WalletConfig,
     initialState: Partial<WalletState> = {},
   ) {
-    super(initialState);
-    this.provider = provider;
-    this.chain = chain;
+    super(config, initialState);
+    this.provider = config.provider;
+    this.chain = config.chain;
   }
 
   public async init() {

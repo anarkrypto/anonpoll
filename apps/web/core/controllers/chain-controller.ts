@@ -1,7 +1,5 @@
-import { BaseController, BaseState } from "./base-controller";
+import { BaseConfig, BaseController, BaseState } from "./base-controller";
 import { client } from "chain";
-
-export const tickInterval = 1000;
 
 export interface ComputedTransactionJSON {
   argsFields: string[];
@@ -36,6 +34,11 @@ export interface BlockQueryResponse {
   };
 }
 
+export interface ChainConfig extends BaseConfig {
+  tickInterval: number;
+  graphqlUrl: string;
+}
+
 export interface ChainState extends BaseState {
   loading: boolean;
   online: boolean;
@@ -44,8 +47,7 @@ export interface ChainState extends BaseState {
   } & ComputedBlockJSON;
 }
 
-
-export class ChainController extends BaseController<ChainState> {
+export class ChainController extends BaseController<ChainConfig, ChainState> {
   client = client;
   private interval: NodeJS.Timeout | undefined;
 
@@ -58,22 +60,15 @@ export class ChainController extends BaseController<ChainState> {
     },
   };
 
-  constructor(initialState: Partial<ChainState> = {}) {
-    super(initialState);
+  constructor(config: ChainConfig, initialState: Partial<ChainState> = {}) {
+    super(config, initialState);
   }
 
   async loadBlock() {
     this.update({ loading: true });
 
     try {
-      const graphql = process.env.NEXT_PUBLIC_PROTOKIT_GRAPHQL_URL;
-      if (graphql === undefined) {
-        throw new Error(
-          "Environment variable NEXT_PUBLIC_PROTOKIT_GRAPHQL_URL not set, can't execute graphql requests",
-        );
-      }
-
-      const response = await fetch(graphql, {
+      const response = await fetch(this.config.graphqlUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -130,7 +125,7 @@ export class ChainController extends BaseController<ChainState> {
   async start() {
     await this.client.start();
     await this.loadBlock();
-    this.interval = setInterval(() => this.loadBlock(), tickInterval);
+    this.interval = setInterval(() => this.loadBlock(), this.config.tickInterval);
   }
 
   stop() {

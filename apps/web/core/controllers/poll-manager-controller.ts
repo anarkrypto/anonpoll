@@ -1,4 +1,4 @@
-import { BaseController, BaseState } from "./base-controller";
+import { BaseConfig, BaseController, BaseState } from "./base-controller";
 import { pollInsertSchema } from "@/schemas/poll";
 import { z } from "zod";
 import { Bool, MerkleMap, Poseidon, PublicKey } from "o1js";
@@ -10,6 +10,11 @@ import { PendingTransaction } from "@proto-kit/sequencer";
 
 type CreatePollData = Omit<z.infer<typeof pollInsertSchema>, "id">;
 
+export interface PollManagerConfig extends BaseConfig {
+  chain: ChainController;
+  wallet: WalletController;
+}
+
 export interface PollManagerState extends BaseState {
   polls: {
     id: number;
@@ -20,18 +25,17 @@ export interface PollManagerState extends BaseState {
   }[];
 }
 
-export class PollManagerController extends BaseController<PollManagerState> {
+export class PollManagerController extends BaseController<PollManagerConfig, PollManagerState> {
   chain: ChainController;
   wallet: WalletController;
 
   constructor(
-    chain: ChainController,
-    wallet: WalletController,
+    config: PollManagerConfig,
     initialState: Partial<PollManagerState> = {},
   ) {
-    super(initialState);
-    this.chain = chain;
-    this.wallet = wallet;
+    super(config, initialState);
+    this.chain = config.chain;
+    this.wallet = config.wallet;
   }
 
   public async create(data: CreatePollData): Promise<PendingTransaction> {

@@ -1,33 +1,36 @@
-import { BaseController, BaseState } from "./base-controller";
+import { BaseConfig, BaseController, BaseState } from "./base-controller";
 import { generateAuthJsonMessage } from "@/lib/auth";
 import { WalletController } from "./wallet-controller";
 import { authSchema } from "@/schemas/auth";
 import { z } from "zod";
 import Cookies from "js-cookie";
 
+export interface AuthConfig extends BaseConfig {
+  wallet: WalletController;
+}
+
 export interface AuthState extends BaseState {
   isAuthenticated: boolean;
   loading: boolean;
-};
+}
 
-export class AuthController extends BaseController<AuthState> {
- 
+export class AuthController extends BaseController<AuthConfig, AuthState> {
   readonly defaultState: AuthState = {
     isAuthenticated: false,
     loading: false,
-  }
-  
+  };
+
   private wallet: WalletController;
 
-  constructor(wallet: WalletController, initialState: Partial<AuthState> = {}) {
-    super(initialState);
-    this.wallet = wallet;
+  constructor(config: AuthConfig, initialState: Partial<AuthState> = {}) {
+    super(config, initialState);
+    this.wallet = config.wallet;
   }
 
-  init (): boolean {
+  init(): boolean {
     const token = Cookies.get("auth.token");
-    this.update({ isAuthenticated: !!token, loading: false });  
-    return !!token
+    this.update({ isAuthenticated: !!token, loading: false });
+    return !!token;
   }
 
   public async authenticate(): Promise<void> {

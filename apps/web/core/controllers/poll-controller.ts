@@ -1,16 +1,17 @@
 import { UInt32 } from "@proto-kit/library";
-import { BaseController, BaseState } from "./base-controller";
+import { BaseConfig, BaseController, BaseState } from "./base-controller";
 import { ChainController } from "./chain-controller";
-import {
-  ModuleQuery,
-  PendingTransaction,
-  UnsignedTransaction,
-} from "@proto-kit/sequencer";
+import { ModuleQuery } from "@proto-kit/sequencer";
 import { canVote, Poll } from "chain/dist/runtime/modules/poll";
 import { Bool, Field, MerkleMap, Nullifier, Poseidon, PublicKey } from "o1js";
 import { mockProof } from "@/lib/utils";
 import { WalletController } from "./wallet-controller";
 import { isPendingTransaction } from "../utils";
+
+export interface PollConfig extends BaseConfig {
+  wallet: WalletController;
+  chain: ChainController;
+}
 
 export interface PollState extends BaseState {
   loading: boolean;
@@ -20,19 +21,19 @@ export interface PollState extends BaseState {
   }[];
 }
 
-export class PollController extends BaseController<PollState> {
+export class PollController extends BaseController<PollConfig, PollState> {
   private wallet: WalletController;
   private chain: ChainController;
   private pollQuery: ModuleQuery<Poll>;
   private poll: Poll;
   private voters = new Set<string>();
 
-  constructor(wallet: WalletController, chain: ChainController, initialState: Partial<PollState> = {}) {
-    super(initialState);
-    this.wallet = wallet;
-    this.chain = chain;
-    this.pollQuery = chain.client.query.runtime.Poll;
-    this.poll = chain.client.runtime.resolve("Poll");
+  constructor(config: PollConfig, initialState: Partial<PollState> = {}) {
+    super(config, initialState);
+    this.wallet = config.wallet;
+    this.chain = config.chain;
+    this.pollQuery = this.chain.client.query.runtime.Poll;
+    this.poll = this.chain.client.runtime.resolve("Poll");
   }
 
   public async loadPoll(id: number) {
@@ -72,10 +73,7 @@ export class PollController extends BaseController<PollState> {
     });
   }
 
-  public async vote(
-    id: number,
-    optionHash: string,
-  ) {
+  public async vote(id: number, optionHash: string) {
     const pollId = UInt32.from(id);
 
     if (!this.wallet.account) {
@@ -126,4 +124,3 @@ export class PollController extends BaseController<PollState> {
     return this.state.loading;
   }
 }
-
