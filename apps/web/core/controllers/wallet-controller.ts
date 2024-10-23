@@ -3,10 +3,15 @@ import { MinaProvider, MinaProviderError } from "../providers/base-provider";
 import { PendingTransaction } from "@proto-kit/sequencer";
 import { ChainController } from "./chain-controller";
 import { Field, PublicKey, Signature, UInt64 } from "o1js";
+import { MethodIdResolver } from "@proto-kit/module";
+
+export type TransactionStatus = "PENDING" | "SUCCESS" | "FAILURE";
 
 export interface TransactionJSON {
   hash: string;
   methodId: string;
+  methodName: string;
+  methodModule: string;
   nonce: string;
   sender: string;
   argsFields: string[];
@@ -16,7 +21,7 @@ export interface TransactionJSON {
     s: string;
   };
   isMessage: boolean;
-  status: "PENDING" | "SUCCESS" | "FAILURE";
+  status: TransactionStatus;
   statusMessage: string | null;
 }
 
@@ -27,7 +32,7 @@ export interface ConfirmedTransaction {
 }
 
 export interface WalletConfig extends BaseConfig {
-  provider: MinaProvider,
+  provider: MinaProvider;
   chain: ChainController;
 }
 
@@ -37,7 +42,10 @@ export interface WalletState extends BaseState {
   transactions: TransactionJSON[];
 }
 
-export class WalletController extends BaseController<WalletConfig, WalletState> {
+export class WalletController extends BaseController<
+  WalletConfig,
+  WalletState
+> {
   readonly defaultState: WalletState = {
     account: null,
     loading: false,
@@ -50,10 +58,7 @@ export class WalletController extends BaseController<WalletConfig, WalletState> 
 
   private transactions = new Map<string, TransactionJSON>();
 
-  constructor(
-    config: WalletConfig,
-    state: Partial<WalletState> = {},
-  ) {
+  constructor(config: WalletConfig, state: Partial<WalletState> = {}) {
     super(config, state);
     this.provider = config.provider;
     this.chain = config.chain;
@@ -83,11 +88,11 @@ export class WalletController extends BaseController<WalletConfig, WalletState> 
                   s: tx.signature.s,
                 }),
               });
-              return {
-                ...pendingTransaction.toJSON(),
-                status: status ? "SUCCESS" : "FAILURE",
-                statusMessage: statusMessage ?? null,
-              } as TransactionJSON;
+              return this.buildTransaction(
+                pendingTransaction,
+                status ? "SUCCESS" : "FAILURE",
+                statusMessage,
+              );
             });
 
           if (myRecentConfirmedTransactions.length > 0) {
@@ -139,14 +144,48 @@ export class WalletController extends BaseController<WalletConfig, WalletState> 
       this.update({
         transactions: [
           ...this.state.transactions,
-          {
-            ...transaction.toJSON(),
-            status: "PENDING",
-            statusMessage: null,
-          },
+          this.buildTransaction(transaction, "PENDING"),
         ],
       });
     }
+  }
+
+  private buildTransaction(
+    tx: PendingTransaction,
+    status: TransactionStatus,
+    statusMessage?: string | null,
+  ): TransactionJSON {
+    const methodIdResolver = this.chain.client.resolveOrFail(
+      "MethodIdResolver",
+      MethodIdResolver,
+    );
+
+    const resolvedMethodDetails = methodIdResolver.getMethodNameFromId(
+      tx.methodId.toBigInt(),
+    );
+
+    if (!resolvedMethodDetails)
+      throw new Error("Unable to resolve method details");
+
+    const [moduleName, methodName] = resolvedMethodDetails;
+
+    return {
+      hash: tx.hash.toString(),
+      methodId: tx.methodId.toString(),
+      methodName: methodName,
+      methodModule: moduleName,
+      nonce: tx.nonce.toString(),
+      sender: tx.sender.toBase58(),
+      argsFields: tx.argsFields.map((arg) => arg.toString()),
+      auxiliaryData: [],
+      signature: {
+        r: tx.signature.r.toString(),
+        s: tx.signature.s.toString(),
+      },
+      isMessage: false,
+      status: status ? "SUCCESS" : "FAILURE",
+      statusMessage: statusMessage ?? null,
+    };
   }
 
   get account(): string | null {
