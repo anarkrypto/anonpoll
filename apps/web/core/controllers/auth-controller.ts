@@ -46,7 +46,7 @@ export class AuthController extends BaseController<AuthConfig, AuthState> {
       const { signature, publicKey } =
         await this.wallet.signJsonMessage(message);
 
-      await fetchAuthApi({ publicKey, signature, issuedAt });
+      await this.fetchAuthApi({ publicKey, signature, issuedAt });
       this.update({ isAuthenticated: true });
     } catch (error) {
       throw error;
@@ -54,31 +54,36 @@ export class AuthController extends BaseController<AuthConfig, AuthState> {
       this.update({ loading: false });
     }
   }
-}
 
-const fetchAuthApi = async ({
-  publicKey,
-  signature,
-  issuedAt,
-}: z.infer<typeof authSchema>) => {
-  const response = await fetch("/api/auth", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      publicKey,
-      signature,
-      issuedAt,
-    }),
-  });
-  if (!response.ok) {
-    const message = await response
-      .json()
-      .then((data) => (typeof data.message === "string" ? data.message : null))
-      .catch(() => null);
-    throw new Error(
-      message || `Response Status: ${response.status} (${response.statusText})`,
-    );
+  private async fetchAuthApi({
+    publicKey,
+    signature,
+    issuedAt,
+  }: z.infer<typeof authSchema>) {
+    // The server api will be responsible for verifying the signature
+    // and issuing a jwt token to the client cookie
+    const response = await fetch("/api/auth", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        publicKey,
+        signature,
+        issuedAt,
+      }),
+    });
+    if (!response.ok) {
+      const message = await response
+        .json()
+        .then((data) =>
+          typeof data.message === "string" ? data.message : null,
+        )
+        .catch(() => null);
+      throw new Error(
+        message ||
+          `Response Status: ${response.status} (${response.statusText})`,
+      );
+    }
   }
-};
+}
