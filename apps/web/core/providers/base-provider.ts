@@ -1,24 +1,6 @@
+import { Nullifier } from "o1js";
 import { z } from "zod";
-
-export type Group = {
-  x: bigint;
-  y: bigint;
-};
-
-export type Nullifier = {
-  publicKey: Group;
-  public: {
-    nullifier: Group;
-    s: bigint;
-  };
-  private: {
-    c: bigint;
-    g_r: Group;
-    h_m_pk_r: Group;
-  };
-};
-
-export declare class MinaProvider {
+export interface MinaProviderInterface {
   requestAccounts: () => Promise<string[]>;
   getAccounts: () => Promise<string[]>;
   on: (event: "accountsChanged", handler: (event: any) => void) => void;

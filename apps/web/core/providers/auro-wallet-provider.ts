@@ -1,10 +1,37 @@
-import { MinaProvider } from "./base-provider";
+import { Nullifier } from "o1js";
+import { MinaProviderInterface } from "./base-provider";
 
-export class AuroWalletProvider implements MinaProvider {
-  provider: MinaProvider;
+type Group = {
+  x: bigint;
+  y: bigint;
+};
+
+type JsonNullifier = {
+  publicKey: Group;
+  public: {
+    nullifier: Group;
+    s: bigint;
+  };
+  private: {
+    c: bigint;
+    g_r: Group;
+    h_m_pk_r: Group;
+  };
+};
+
+interface AuroWalletProviderInterface extends Omit<MinaProviderInterface, "createNullifier"> {
+  createNullifier: ({
+    message,
+  }: {
+    message: number[];
+  }) => Promise<JsonNullifier>;
+}
+
+export class AuroWalletProvider implements MinaProviderInterface {
+  provider: AuroWalletProviderInterface;
 
   constructor() {
-    this.provider = (window as any).mina as MinaProvider;
+    this.provider = (window as any).mina as AuroWalletProviderInterface;
   }
 
   static isInstalled() {
@@ -28,7 +55,8 @@ export class AuroWalletProvider implements MinaProvider {
 
   async createNullifier({ message }: { message: number[] }) {
     // https://docs.aurowallet.com/general/reference/api-reference/methods/mina_createnullifier
-    return this.provider.createNullifier({ message });
+    const jsonNullifier = await this.provider.createNullifier({ message });
+    return Nullifier.fromJSON(jsonNullifier);
   }
 
   async signJsonMessage({
