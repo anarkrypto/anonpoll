@@ -6,7 +6,7 @@ import { isPendingTransaction } from "../utils";
 import { WalletController } from "./wallet-controller";
 import { OptionsHashes } from "chain/dist/runtime/modules/poll";
 import { ChainController } from "./chain-controller";
-import { PollStoreController } from "./poll-metadata-store";
+import { PollStoreController } from "./poll-store";
 
 type CreatePollData = Omit<z.infer<typeof pollInsertSchema>, "id">;
 
