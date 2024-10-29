@@ -1,5 +1,5 @@
 import { BaseConfig, BaseController, BaseState } from "./base-controller";
-import { MinaProvider, MinaProviderError } from "../providers/base-provider";
+import { MinaProviderInterface, MinaProviderError } from "../providers/base-provider";
 import { PendingTransaction } from "@proto-kit/sequencer";
 import { ChainController } from "./chain-controller";
 import { Field, PublicKey, Signature, UInt64 } from "o1js";
@@ -32,7 +32,7 @@ export interface ConfirmedTransaction {
 }
 
 export interface WalletConfig extends BaseConfig {
-  provider: MinaProvider;
+  provider: MinaProviderInterface;
   chain: ChainController;
 }
 
@@ -52,7 +52,7 @@ export class WalletController extends BaseController<
     transactions: [],
   };
 
-  provider: MinaProvider;
+  provider: MinaProviderInterface;
 
   private chain: ChainController;
 
