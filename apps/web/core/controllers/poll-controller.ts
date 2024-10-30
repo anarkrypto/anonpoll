@@ -94,10 +94,10 @@ export class PollController extends BaseController<PollConfig, PollState> {
     const witness = map.getWitness(hashKey);
 
     // Ask for Auro Wallet to create a nullifier
-    const nullifier = (await this.wallet.createNullifier(
-      [pollId].map((f) => Number(f.toBigInt())),
-    )) as any;
-
+    const nullifier = await this.wallet.createNullifier([
+      Number(pollId.toString()),
+    ]);
+    
     const publicOutput = await canVote(witness, nullifier, pollId);
 
     const pollProof = await mockProof(publicOutput);
