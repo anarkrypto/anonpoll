@@ -19,12 +19,33 @@ type JsonNullifier = {
   };
 };
 
-interface AuroWalletProviderInterface extends Omit<MinaProviderInterface, "createNullifier"> {
+interface AuroWalletProviderInterface {
+  // https://docs.aurowallet.com/general/reference/api-reference/methods/mina_requestaccounts
+  requestAccounts: () => Promise<string[]>;
+
+  // https://docs.aurowallet.com/general/reference/api-reference/methods/mina_accounts
+  getAccounts: () => Promise<string[]>;
+
+  // https://docs.aurowallet.com/general/reference/api-reference/events#accountschanged
+  on: (event: "accountsChanged", handler: (event: any) => void) => void;
+
+  // https://docs.aurowallet.com/general/reference/api-reference/methods/mina_createnullifier
   createNullifier: ({
     message,
   }: {
     message: number[];
   }) => Promise<JsonNullifier>;
+
+  // https://docs.aurowallet.com/general/reference/api-reference/methods/mina_sign_jsonmessage
+  signJsonMessage: ({
+    message,
+  }: {
+    message: { label: string; value: string }[];
+  }) => Promise<{
+    data: string;
+    publicKey: string;
+    signature: { field: string; scalar: string };
+  }>;
 }
 
 export class AuroWalletProvider implements MinaProviderInterface {
@@ -38,23 +59,24 @@ export class AuroWalletProvider implements MinaProviderInterface {
     return typeof (window as any).mina !== "undefined";
   }
 
-  async requestAccounts() {
-    // https://docs.aurowallet.com/general/reference/api-reference/methods/mina_requestaccounts
-    return this.provider.requestAccounts();
+  async requestAccount() {
+    const accounts = await this.provider.requestAccounts();
+    if (!accounts.length) {
+      throw new Error("No accounts found");
+    }
+    return accounts[0];
   }
 
-  async getAccounts() {
-    // https://docs.aurowallet.com/general/reference/api-reference/methods/mina_accounts
-    return this.provider.getAccounts();
+  async getAccount() {
+    const accounts = await this.provider.getAccounts();
+    return accounts[0];
   }
 
   async on(event: "accountsChanged", handler: (event: any) => void) {
-    // https://docs.aurowallet.com/general/reference/api-reference/events#accountschanged
     return this.provider.on(event, handler);
   }
 
   async createNullifier({ message }: { message: number[] }) {
-    // https://docs.aurowallet.com/general/reference/api-reference/methods/mina_createnullifier
     const jsonNullifier = await this.provider.createNullifier({ message });
     return Nullifier.fromJSON(jsonNullifier);
   }
@@ -64,7 +86,6 @@ export class AuroWalletProvider implements MinaProviderInterface {
   }: {
     message: { label: string; value: string }[];
   }) {
-    // https://docs.aurowallet.com/general/reference/api-reference/methods/mina_sign_jsonmessage
     return this.provider.signJsonMessage({ message });
   }
 }

@@ -68,7 +68,7 @@ export class WalletController extends BaseController<
     this.update({ loading: true });
 
     try {
-      const [account] = await this.provider.getAccounts();
+      const account = await this.provider.getAccount();
       this.update({ account });
 
       this.chain.subscribe((_, changedState) => {
@@ -121,7 +121,7 @@ export class WalletController extends BaseController<
     this.update({ loading: true });
 
     try {
-      const [account] = await this.provider.requestAccounts();
+      const account = await this.provider.requestAccount();
 
       this.update({ account });
     } catch (error) {
