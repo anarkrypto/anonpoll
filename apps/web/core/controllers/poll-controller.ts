@@ -3,7 +3,7 @@ import { BaseConfig, BaseController, BaseState } from "./base-controller";
 import { ChainController } from "./chain-controller";
 import { ModuleQuery } from "@proto-kit/sequencer";
 import { canVote, Poll } from "chain/dist/runtime/modules/poll";
-import { Bool, Field, MerkleMap, Nullifier, Poseidon, PublicKey } from "o1js";
+import { Bool, Field, MerkleMap, Poseidon, PublicKey } from "o1js";
 import { mockProof } from "@/lib/utils";
 import { WalletController } from "./wallet-controller";
 import { isPendingTransaction } from "../utils";
