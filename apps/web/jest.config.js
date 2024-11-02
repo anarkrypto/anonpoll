@@ -3,27 +3,13 @@
 /* eslint-disable import/no-commonjs */
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 
+const baseConfig = require("chain/jest.config.cjs");
+
 module.exports = {
-  // because we run tests from within ./packages/<package_name>/
-  rootDir: "./",
-  roots: ["<rootDir>"],
-  moduleDirectories: ["node_modules", "test"],
-  testPathIgnorePatterns: ["dist"],
-  extensionsToTreatAsEsm: [".ts"],
-  testTimeout: 30_000,
+  ...baseConfig,
+  setupFilesAfterEnv: [],
   moduleNameMapper: {
-    "o1js/dist/(.*)": "<rootDir>/node_modules/o1js/dist/$1",
-    "^(\\.{1,2}/.*)\\.js$": "$1",
+    ...baseConfig.moduleNameMapper,
     "^@/(.*)$": "<rootDir>/$1",
-  },
-  transform: {
-    // '^.+\\.[tj]sx?$' to process js/ts with `ts-jest`
-    // '^.+\\.m?[tj]sx?$' to process js/ts/mjs/mts with `ts-jest`
-    "^.+\\.ts?$": [
-      "ts-jest",
-      {
-        useESM: true,
-      },
-    ],
   },
 };
