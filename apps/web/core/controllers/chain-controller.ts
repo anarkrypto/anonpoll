@@ -1,5 +1,4 @@
 import { BaseConfig, BaseController, BaseState } from "./base-controller";
-import { client } from "chain";
 
 export interface ComputedTransactionJSON {
   argsFields: string[];
@@ -45,10 +44,9 @@ export interface ChainState extends BaseState {
   block: {
     height: string;
   } & ComputedBlockJSON;
-}
+}{}
 
 export class ChainController extends BaseController<ChainConfig, ChainState> {
-  client = client;
   private interval: NodeJS.Timeout | undefined;
 
   readonly defaultState: ChainState = {
@@ -105,7 +103,7 @@ export class ChainController extends BaseController<ChainConfig, ChainState> {
         }),
       });
 
-      const { data }: BlockQueryResponse = await response.json();
+      const { data } = (await response.json()) as BlockQueryResponse;
 
       if (data.network.unproven) {
         this.update({
@@ -123,9 +121,11 @@ export class ChainController extends BaseController<ChainConfig, ChainState> {
   }
 
   async start() {
-    await this.client.start();
     await this.loadBlock();
-    this.interval = setInterval(() => this.loadBlock(), this.config.tickInterval);
+    this.interval = setInterval(
+      () => this.loadBlock(),
+      this.config.tickInterval,
+    );
   }
 
   stop() {
