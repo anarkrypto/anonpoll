@@ -1,9 +1,13 @@
 import { BaseConfig, BaseController, BaseState } from "./base-controller";
-import { MinaProviderInterface, MinaProviderError } from "../providers/base-provider";
+import {
+  MinaProviderInterface,
+  MinaProviderError,
+} from "../providers/base-provider";
 import { PendingTransaction } from "@proto-kit/sequencer";
 import { ChainController } from "./chain-controller";
 import { Field, PublicKey, Signature, UInt64 } from "o1js";
 import { MethodIdResolver } from "@proto-kit/module";
+import { client } from "chain";
 
 export type TransactionStatus = "PENDING" | "SUCCESS" | "FAILURE";
 
@@ -34,6 +38,7 @@ export interface ConfirmedTransaction {
 export interface WalletConfig extends BaseConfig {
   provider: MinaProviderInterface;
   chain: ChainController;
+  client: Pick<typeof client, "resolveOrFail">;
 }
 
 export interface WalletState extends BaseState {
@@ -97,13 +102,8 @@ export class WalletController extends BaseController<
 
           if (myRecentConfirmedTransactions.length > 0) {
             myRecentConfirmedTransactions.forEach((tx) => {
-              if (this.transactions.has(tx.hash)) {
-                this.transactions.set(tx.hash, tx);
-              } else {
-                this.transactions.set(tx.hash, tx);
-              }
+              this.transactions.set(tx.hash, tx);
             });
-
             this.update({
               transactions: Array.from(this.transactions.values()),
             });
@@ -141,11 +141,13 @@ export class WalletController extends BaseController<
 
   public addPendingTransaction(transaction: PendingTransaction) {
     if (!this.transactions.has(transaction.hash.toString())) {
+      this.transactions.set(
+        transaction.hash.toString(),
+        this.buildTransaction(transaction, "PENDING"),
+      );
+
       this.update({
-        transactions: [
-          ...this.state.transactions,
-          this.buildTransaction(transaction, "PENDING"),
-        ],
+        transactions: Array.from(this.transactions.values()),
       });
     }
   }
@@ -155,7 +157,7 @@ export class WalletController extends BaseController<
     status: TransactionStatus,
     statusMessage?: string | null,
   ): TransactionJSON {
-    const methodIdResolver = this.chain.client.resolveOrFail(
+    const methodIdResolver = this.config.client.resolveOrFail(
       "MethodIdResolver",
       MethodIdResolver,
     );
@@ -170,7 +172,7 @@ export class WalletController extends BaseController<
     const [moduleName, methodName] = resolvedMethodDetails;
 
     return {
-      hash: tx.hash.toString(),
+      hash: tx.hash().toString(),
       methodId: tx.methodId.toString(),
       methodName: methodName,
       methodModule: moduleName,
