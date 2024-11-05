@@ -1,23 +1,28 @@
+import { Bool, Field, MerkleMap, Poseidon, PublicKey } from "o1js";
 import { UInt32 } from "@proto-kit/library";
+import { ModuleQuery } from "@proto-kit/sequencer";
+import { client } from "chain";
+import { canVote, OptionsHashes, Poll } from "chain/dist/runtime/modules/poll";
 import { BaseConfig, BaseController, BaseState } from "./base-controller";
 import { ChainController } from "./chain-controller";
-import { ModuleQuery } from "@proto-kit/sequencer";
-import { canVote, Poll } from "chain/dist/runtime/modules/poll";
-import { Bool, Field, MerkleMap, Poseidon, PublicKey } from "o1js";
 import { mockProof } from "@/lib/utils";
 import { WalletController } from "./wallet-controller";
 import { isPendingTransaction } from "../utils";
-import { client } from "chain";
+import { PollStoreInterface } from "../providers/stores/poll-store-interface";
+import { PollData } from "@/types/poll";
 
 export interface PollConfig extends BaseConfig {
   wallet: WalletController;
   chain: ChainController;
   client: Pick<typeof client, "query" | "runtime" | "transaction">;
+  store: PollStoreInterface;
 }
 
 export interface PollState extends BaseState {
   loading: boolean;
-  votes: {
+  metadata: PollData | null;
+  options: {
+    text: string;
     hash: string;
     votesCount: number;
   }[];
@@ -30,6 +35,13 @@ export class PollController extends BaseController<PollConfig, PollState> {
   private pollQuery: ModuleQuery<Poll>;
   private poll: Poll;
   private voters = new Set<string>();
+  private store: PollStoreInterface;
+
+  readonly defaultState: PollState = {
+    loading: false,
+    metadata: null,
+    options: [],
+  };
 
   constructor(config: PollConfig, state: Partial<PollState> = {}) {
     super(config, state);
@@ -38,41 +50,91 @@ export class PollController extends BaseController<PollConfig, PollState> {
     this.client = config.client;
     this.pollQuery = this.client.query.runtime.Poll;
     this.poll = this.client.runtime.resolve("Poll");
+    this.store = config.store;
   }
 
   public async loadPoll(id: number) {
-    const pollId = UInt32.from(id);
+    try {
+      const pollId = UInt32.from(id);
 
-    const currentCommitment = await this.pollQuery.commitments.get(
-      UInt32.from(pollId),
+      this.update({ loading: true });
+
+      const metadata = await this.getMetadata(id);
+
+      const voteOptions = await this.getVotesOptions(pollId);
+
+      this.compareHashes(
+        voteOptions.map(({ hash }) => hash),
+        metadata.options,
+        metadata.salt,
+      );
+
+      this.update({
+        metadata,
+        options: metadata.options.map((text, index) => {
+          return {
+            text,
+            hash: voteOptions[index].hash,
+            votesCount: voteOptions[index].votesCount,
+          };
+        }),
+      });
+
+      this.observePoll(id);
+    } catch (error) {
+      throw error;
+    } finally {
+      this.update({ loading: false });
+    }
+  }
+
+  private async getMetadata(id: number) {
+    if (this.state.metadata?.id === id) {
+      return this.state.metadata;
+    }
+
+    const metadata = await this.store.getById(id);
+
+    if (metadata.options.length < 2) {
+      throw new Error("Poll must have at least 2 options");
+    }
+
+    return metadata;
+  }
+
+  private async getVotesOptions(pollId: UInt32) {
+    const votesOptions = (await this.pollQuery.votes.get(pollId))?.options.map(
+      (option) => {
+        return {
+          hash: option.hash.toString(),
+          votesCount: Number(option.votesCount.toBigInt()),
+        };
+      },
     );
 
-    if (!currentCommitment) {
-      throw new Error("Poll not found");
+    if (!votesOptions) {
+      throw new Error("Votes not found");
     }
 
-    const options = (await this.pollQuery.votes.get(pollId))?.options;
+    return votesOptions;
+  }
 
-    if (options) {
-      this.state.loading = false;
-      this.state.votes = options.map((vote) => {
-        return {
-          hash: vote.hash.toString(),
-          votesCount: Number(vote.votesCount.toBigInt()),
-        };
-      });
-      return;
+  private compareHashes(hashes: string[], optionsText: string[], salt: string) {
+    const computedHashes = OptionsHashes.fromTexts(optionsText, salt)
+      .hashes as Field[];
+    if (
+      !computedHashes.every(
+        (value, index) => value.toString() === hashes[index],
+      )
+    ) {
+      throw new Error("Options hashes do not match");
     }
-
-    this.state.loading = false;
-
-    this.observePoll(id);
   }
 
   private observePoll(id: number) {
-    this.chain.subscribe((_, changedState) => {
-      if ("blocks" in changedState) {
-        this.loadPoll(id);
+    this.chain.subscribe(async (_, changedState) => {
+      if ("block" in changedState) {
+        await this.loadPoll(id);
       }
     });
   }
@@ -118,11 +180,15 @@ export class PollController extends BaseController<PollConfig, PollState> {
     return tx.transaction;
   }
 
-  get votes() {
-    return this.state.votes;
+  public get metadata() {
+    return this.state.metadata;
   }
 
-  get loading() {
+  public get options() {
+    return this.state.options;
+  }
+
+  public get loading() {
     return this.state.loading;
   }
 }
