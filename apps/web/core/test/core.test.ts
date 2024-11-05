@@ -37,6 +37,8 @@ describe("Poll Manager", () => {
     client: appChain,
   });
 
+  let store: InMemoryPollStore;
+
   beforeAll(async () => {
     await appChain.start();
     appChain.setSigner(PrivateKey.fromBase58(PRIVATE_KEY));
@@ -47,10 +49,10 @@ describe("Poll Manager", () => {
     expect(wallet.account).toBeDefined();
   });
 
-  it("should create a poll manager", async () => {
+  it("should create a poll", async () => {
     await chain.start();
 
-    const store = new InMemoryPollStore(wallet.account as string);
+    store = new InMemoryPollStore(wallet.account as string);
 
     const pollManager = new PollManagerController({
       client: appChain,
@@ -69,19 +71,29 @@ describe("Poll Manager", () => {
     expect(pollResult).toBeDefined();
 
     expect(pollResult.id).toBe(1);
+  });
+
+  it("should load and vote in the poll", async () => {
+
+    const pollId = 1
 
     const poll = await new PollController({
       client: appChain,
       wallet,
       chain,
+      store,
     });
 
-    await poll.loadPoll(pollResult.id);
+    await poll.loadPoll(pollId);
 
-    expect(poll.votes.length).toBe(10);
+    expect(poll.options.length).toBe(2);
 
-    expect(poll.votes[0].votesCount).toBe(0);
+    expect(poll.options[0].votesCount).toBe(0);
 
-    await poll.vote(pollResult.id, poll.votes[0].hash);
+    await poll.vote(pollId, poll.options[0].hash);
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    expect(poll.options[0].votesCount).toBe(1);
   });
 });
