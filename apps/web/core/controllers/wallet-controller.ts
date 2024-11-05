@@ -2,7 +2,7 @@ import { BaseConfig, BaseController, BaseState } from "./base-controller";
 import {
   MinaProviderInterface,
   MinaProviderError,
-} from "../providers/base-provider";
+} from "../providers/wallets/base-wallet-provider";
 import { PendingTransaction } from "@proto-kit/sequencer";
 import { ChainController } from "./chain-controller";
 import { Field, PublicKey, Signature, UInt64 } from "o1js";
