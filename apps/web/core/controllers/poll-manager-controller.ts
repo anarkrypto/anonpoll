@@ -5,15 +5,15 @@ import { Bool, MerkleMap, Poseidon, PublicKey } from "o1js";
 import { isPendingTransaction } from "../utils";
 import { WalletController } from "./wallet-controller";
 import { OptionsHashes } from "chain/dist/runtime/modules/poll";
-import { ChainController } from "./chain-controller";
-import { PollStoreController } from "./poll-store";
+import { PollStoreInterface } from "./poll-store";
+import { client } from "chain";
 
 type CreatePollData = Omit<z.infer<typeof pollInsertSchema>, "id">;
 
 export interface PollManagerConfig extends BaseConfig {
-  chain: ChainController;
+  client: Pick<typeof client, "query" | "runtime" | "transaction">;
   wallet: WalletController;
-  baseApiUrl: string;
+  store: PollStoreInterface;
 }
 
 export interface PollManagerState extends BaseState {
@@ -30,20 +30,18 @@ export class PollManagerController extends BaseController<
   PollManagerConfig,
   PollManagerState
 > {
-  chain: ChainController;
+  client: Pick<typeof client, "query" | "runtime" | "transaction">;
   wallet: WalletController;
-  store: PollStoreController;
+  store: PollStoreInterface;
 
   constructor(
     config: PollManagerConfig,
     state: Partial<PollManagerState> = {},
   ) {
     super(config, state);
-    this.chain = config.chain;
+    this.client = config.client;
     this.wallet = config.wallet;
-    this.store = new PollStoreController({
-      baseApiUrl: config.baseApiUrl,
-    });
+    this.store = config.store;
   }
 
   public async create(data: CreatePollData): Promise<{ id: number }> {
@@ -51,7 +49,7 @@ export class PollManagerController extends BaseController<
       throw new Error("Client or wallet not initialized");
     }
 
-    const poll = this.chain.client.runtime.resolve("Poll");
+    const poll = this.client.runtime.resolve("Poll");
     const sender = PublicKey.fromBase58(this.wallet.account);
     const map = new MerkleMap();
 
@@ -63,9 +61,10 @@ export class PollManagerController extends BaseController<
 
     const optionsHashes = OptionsHashes.fromTexts(data.options, data.salt);
 
-    const tx = await this.chain.client.transaction(sender, async () => {
+    const tx = await this.client.transaction(sender, async () => {
       await poll.createPoll(map.getRoot(), optionsHashes);
     });
+
     await tx.sign();
     await tx.send();
 
@@ -74,14 +73,14 @@ export class PollManagerController extends BaseController<
 
     return new Promise(async (resolve, reject) => {
       this.wallet.subscribe(async (_, changedState) => {
+
         if (changedState.transactions) {
           const transaction = changedState.transactions.find(
             ({ hash }) => hash === tx.transaction?.hash().toString(),
           );
 
           if (transaction?.status === "SUCCESS") {
-            const id =
-              await this.chain.client.query.runtime.Poll.lastPollId.get();
+            const id = await this.client.query.runtime.Poll.lastPollId.get();
 
             if (!id) {
               return reject("Could not get poll id");
