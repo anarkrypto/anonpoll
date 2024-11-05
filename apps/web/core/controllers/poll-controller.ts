@@ -7,10 +7,12 @@ import { Bool, Field, MerkleMap, Poseidon, PublicKey } from "o1js";
 import { mockProof } from "@/lib/utils";
 import { WalletController } from "./wallet-controller";
 import { isPendingTransaction } from "../utils";
+import { client } from "chain";
 
 export interface PollConfig extends BaseConfig {
   wallet: WalletController;
   chain: ChainController;
+  client: Pick<typeof client, "query" | "runtime" | "transaction">;
 }
 
 export interface PollState extends BaseState {
@@ -24,6 +26,7 @@ export interface PollState extends BaseState {
 export class PollController extends BaseController<PollConfig, PollState> {
   private wallet: WalletController;
   private chain: ChainController;
+  private client: Pick<typeof client, "query" | "runtime" | "transaction">;
   private pollQuery: ModuleQuery<Poll>;
   private poll: Poll;
   private voters = new Set<string>();
@@ -32,8 +35,9 @@ export class PollController extends BaseController<PollConfig, PollState> {
     super(config, state);
     this.wallet = config.wallet;
     this.chain = config.chain;
-    this.pollQuery = this.chain.client.query.runtime.Poll;
-    this.poll = this.chain.client.runtime.resolve("Poll");
+    this.client = config.client;
+    this.pollQuery = this.client.query.runtime.Poll;
+    this.poll = this.client.runtime.resolve("Poll");
   }
 
   public async loadPoll(id: number) {
@@ -97,12 +101,12 @@ export class PollController extends BaseController<PollConfig, PollState> {
     const nullifier = await this.wallet.createNullifier([
       Number(pollId.toString()),
     ]);
-    
+
     const publicOutput = await canVote(witness, nullifier, pollId);
 
     const pollProof = await mockProof(publicOutput);
 
-    const tx = await this.chain.client.transaction(sender, async () => {
+    const tx = await this.client.transaction(sender, async () => {
       await this.poll.vote(pollId, Field(optionHash), pollProof);
     });
 
