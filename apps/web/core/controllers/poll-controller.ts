@@ -1,6 +1,5 @@
 import { Bool, Field, MerkleMap, Poseidon, PublicKey } from "o1js";
 import { UInt32 } from "@proto-kit/library";
-import { ModuleQuery } from "@proto-kit/sequencer";
 import { client } from "chain";
 import { canVote, OptionsHashes, Poll } from "chain/dist/runtime/modules/poll";
 import { BaseConfig, BaseController, BaseState } from "./base-controller";
