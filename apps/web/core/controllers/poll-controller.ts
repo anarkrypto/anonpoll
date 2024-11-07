@@ -32,8 +32,6 @@ export class PollController extends BaseController<PollConfig, PollState> {
   private wallet: WalletController;
   private chain: ChainController;
   private client: Pick<typeof client, "query" | "runtime" | "transaction">;
-  private pollQuery: ModuleQuery<Poll>;
-  private poll: Poll;
   private voters = new Set<string>();
   private store: PollStoreInterface;
 
@@ -48,8 +46,6 @@ export class PollController extends BaseController<PollConfig, PollState> {
     this.wallet = config.wallet;
     this.chain = config.chain;
     this.client = config.client;
-    this.pollQuery = this.client.query.runtime.Poll;
-    this.poll = this.client.runtime.resolve("Poll");
     this.store = config.store;
     this.initialize();
   }
@@ -104,14 +100,14 @@ export class PollController extends BaseController<PollConfig, PollState> {
   }
 
   private async getVotesOptions(pollId: UInt32) {
-    const votesOptions = (await this.pollQuery.votes.get(pollId))?.options.map(
-      (option) => {
-        return {
-          hash: option.hash.toString(),
-          votesCount: Number(option.votesCount.toBigInt()),
-        };
-      },
-    );
+    const votesOptions = (
+      await this.client.query.runtime.Poll.votes.get(pollId)
+    )?.options.map((option) => {
+      return {
+        hash: option.hash.toString(),
+        votesCount: Number(option.votesCount.toBigInt()),
+      };
+    });
 
     if (!votesOptions) {
       throw new Error("Votes not found");
@@ -169,8 +165,10 @@ export class PollController extends BaseController<PollConfig, PollState> {
 
     const pollProof = await mockProof(publicOutput);
 
+    const poll = this.client.runtime.resolve("Poll");
+
     const tx = await this.client.transaction(sender, async () => {
-      await this.poll.vote(pollId, Field(optionHash), pollProof);
+      await poll.vote(pollId, Field(optionHash), pollProof);
     });
 
     await tx.sign();
