@@ -46,18 +46,17 @@ export const usePollStore = create<
   }),
 );
 
-export const usPollManager = () =>
-  create<
-    {
-      state: PollManagerState;
-      create: (data: CreatePollData) => Promise<{ id: number; hash: string }>;
-    },
-    [["zustand/immer", never]]
-  >(
-    immer((set) => {
-      const engine = useEngineStore();
-      const manager = engine.context.pollManager;
-      manager.subscribe((state) => set({ state }));
-      return { state: manager.state, create: manager.create };
-    }),
-  );
+export const usePollManagerStore = create<
+  {
+    state: PollManagerState;
+    create: (data: CreatePollData) => Promise<{ id: number; hash: string }>;
+  },
+  [["zustand/immer", never]]
+>(
+  immer((set) => {
+    const engine = useEngineStore();
+    const manager = engine.context.pollManager;
+    manager.subscribe((state) => set({ state }));
+    return { state: manager.state, create: manager.create };
+  }),
+);
