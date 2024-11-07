@@ -15,6 +15,12 @@ interface Controllers {
   pollManager: PollManagerController;
 }
 
+export interface EngineConfig {
+  tickInterval?: number;
+  protokitGraphqlUrl: string;
+  storeApiUrl: string;
+}
+
 export interface EngineState {
   wallet: WalletState;
   chain: ChainState;
@@ -34,11 +40,11 @@ export class Engine {
    */
   context: EngineContext;
 
-  constructor(initialState: Partial<EngineState> = {}) {
+  constructor(config: EngineConfig, initialState: Partial<EngineState> = {}) {
     const chain = new ChainController(
       {
-        tickInterval: 1000,
-        graphqlUrl: "",
+        tickInterval: config.tickInterval || 1000,
+        graphqlUrl: config.protokitGraphqlUrl,
       },
       initialState.chain,
     );
@@ -51,7 +57,7 @@ export class Engine {
       initialState.wallet,
     );
 
-    const store = new PollStoreProvider("");
+    const store = new PollStoreProvider(config.storeApiUrl);
 
     const pollManager = new PollManagerController(
       { store, client, wallet },

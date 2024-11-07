@@ -55,7 +55,10 @@ export default function RootLayout({
           fontSans.variable,
         )}
       >
-        <ZeroPollProvider>
+        <ZeroPollProvider
+          protokitGraphqlUrl={process.env.NEXT_PUBLIC_PROTOKIT_GRAPHQL_URL!}
+          storeApiUrl="/api"
+        >
           <Header />
           {children}
           <Toaster />

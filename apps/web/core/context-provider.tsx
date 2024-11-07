@@ -1,5 +1,11 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { Engine } from "@/core/engine";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { Engine, EngineConfig } from "@/core/engine";
 import { WalletState } from "@/core/controllers/wallet-controller";
 import { PollState } from "@/core/controllers/poll-controller";
 import { ChainState } from "@/core/controllers/chain-controller";
@@ -20,9 +26,17 @@ export const useZeroPollContext = () => {
   return useContext(ZeroPollContext);
 };
 
-const engine = new Engine();
+export function ZeroPollProvider({
+  children,
+  tickInterval,
+  protokitGraphqlUrl,
+  storeApiUrl,
+}: { children: React.ReactNode } & EngineConfig) {
+  const engine = useMemo(
+    () => new Engine({ tickInterval, protokitGraphqlUrl, storeApiUrl }),
+    [tickInterval, protokitGraphqlUrl, storeApiUrl],
+  );
 
-export function ZeroPollProvider({ children }: { children: React.ReactNode }) {
   const [chainState, setChainState] = useState<ChainState>(
     engine.context.chain.state,
   );
@@ -39,7 +53,7 @@ export function ZeroPollProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     engine.context.chain.start();
     const walletProvider = new AuroWalletProvider();
-    engine.context.wallet.init(walletProvider)
+    engine.context.wallet.init(walletProvider);
 
     // Subscribe to sync states
     engine.context.chain.subscribe(setChainState);
