@@ -1,11 +1,11 @@
 import { Nullifier } from "o1js";
 import { z } from "zod";
-export interface MinaProviderInterface {
-  requestAccount: () => Promise<string>;
-  getAccount: () => Promise<string>;
-  on: (event: "accountsChanged", handler: (event: any) => void) => void;
-  createNullifier: ({ message }: { message: number[] }) => Promise<Nullifier>;
-  signJsonMessage: ({
+export abstract class MinaProviderAbstract {
+  abstract requestAccount: () => Promise<string>;
+  abstract getAccount: () => Promise<string>;
+  abstract on: (event: "accountsChanged", handler: (event: any) => void) => void;
+  abstract createNullifier: ({ message }: { message: number[] }) => Promise<Nullifier>;
+  abstract signJsonMessage: ({
     message,
   }: {
     message: { label: string; value: string }[];

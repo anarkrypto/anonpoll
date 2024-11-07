@@ -1,5 +1,5 @@
 import { Nullifier } from "o1js";
-import { MinaProviderInterface } from "./base-provider";
+import { MinaProviderAbstract } from "./base-wallet-provider";
 
 type Group = {
   x: bigint;
@@ -48,7 +48,7 @@ interface AuroWalletProviderInterface {
   }>;
 }
 
-export class AuroWalletProvider implements MinaProviderInterface {
+export class AuroWalletProvider implements MinaProviderAbstract {
   provider: AuroWalletProviderInterface;
 
   constructor() {

@@ -1,6 +1,6 @@
 import { BaseConfig, BaseController, BaseState } from "./base-controller";
 import {
-  MinaProviderInterface,
+  MinaProviderAbstract,
   MinaProviderError,
 } from "../providers/wallets/base-wallet-provider";
 import { PendingTransaction } from "@proto-kit/sequencer";
@@ -57,7 +57,7 @@ export class WalletController extends BaseController<
     transactions: [],
   };
 
-  provider: MinaProviderInterface;
+  provider: MinaProviderAbstract | null = null;
 
   private chain: ChainController;
 
