@@ -35,8 +35,6 @@ export function ZeroPollProvider({ children }: { children: React.ReactNode }) {
     engine.context.pollManager.state,
   );
 
-  console.log("here");
-
   useEffect(() => {
     engine.context.chain.start();
 
