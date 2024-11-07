@@ -1,22 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
 import { ChainState } from "./controllers/chain-controller";
 import { WalletState } from "./controllers/wallet-controller";
-import {
-  useChainStore,
-  usePollManagerStore,
-  usePollStore,
-  useWalletStore,
-} from "./engine-stores";
 import { PollState } from "./controllers/poll-controller";
 import { PendingTransaction } from "@proto-kit/sequencer";
 import { CreatePollData } from "./controllers/poll-manager-controller";
+import { useZeroPollContext } from "./context-provider";
 
 export const useChain = (): ChainState => {
-  return useChainStore();
+  return useZeroPollContext().chainState;
 };
 
 export const useWallet = (): WalletState => {
-  return useWalletStore();
+  return useZeroPollContext().walletState;
 };
 
 export const usePoll = (
@@ -24,25 +19,37 @@ export const usePoll = (
 ): PollState & {
   vote: (id: number, optionHash: string) => Promise<PendingTransaction>;
 } => {
+  const {
+    engine: {
+      context: { poll },
+    },
+    pollState,
+  } = useZeroPollContext();
+
   useEffect(() => {
-    load(id);
+    poll.loadPoll(id);
   }, [id]);
 
-  const { state, load, vote } = usePollStore();
-  return { ...state, vote };
+  const vote = poll.vote;
+
+  return { ...pollState, vote };
 };
 
 export const useCreatePoll = () => {
   const [data, setData] = useState<{ id: number; hash: string } | null>(null);
 
-  const create = usePollManagerStore((state) => state.create);
+  const {
+    engine: {
+      context: { pollManager },
+    },
+  } = useZeroPollContext();
 
   const createPoll = useCallback(
     async (data: CreatePollData) => {
-      const result = await create(data);
+      const result = await pollManager.create(data);
       setData(result);
     },
-    [create],
+    [pollManager.create],
   );
 
   return { createPoll, data };
