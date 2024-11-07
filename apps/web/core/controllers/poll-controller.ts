@@ -51,6 +51,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
     this.pollQuery = this.client.query.runtime.Poll;
     this.poll = this.client.runtime.resolve("Poll");
     this.store = config.store;
+    this.initialize();
   }
 
   public async loadPoll(id: number) {

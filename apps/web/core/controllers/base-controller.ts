@@ -45,7 +45,6 @@ export class BaseController<
     });
     this.initialState = state as State;
     this.initialConfig = config as Config;
-    this.initialize();
   }
 
   /**

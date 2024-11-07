@@ -42,6 +42,7 @@ export class PollManagerController extends BaseController<
     this.client = config.client;
     this.wallet = config.wallet;
     this.store = config.store;
+    this.initialize();
   }
 
   public async create(

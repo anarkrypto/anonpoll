@@ -25,6 +25,7 @@ export class AuthController extends BaseController<AuthConfig, AuthState> {
   constructor(config: AuthConfig, state: Partial<AuthState> = {}) {
     super(config, state);
     this.wallet = config.wallet;
+    this.initialize();
   }
 
   init(): boolean {

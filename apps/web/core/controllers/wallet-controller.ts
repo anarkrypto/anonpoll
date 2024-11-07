@@ -67,6 +67,7 @@ export class WalletController extends BaseController<
     super(config, state);
     this.provider = config.provider;
     this.chain = config.chain;
+    this.initialize();
   }
 
   public async init() {
