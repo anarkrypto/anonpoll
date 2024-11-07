@@ -10,8 +10,9 @@ export const useChain = (): ChainState => {
   return useZeroPollContext().chainState;
 };
 
-export const useWallet = (): WalletState => {
-  return useZeroPollContext().walletState;
+export const useWallet = (): WalletState & { connect: () => Promise<void> } => {
+  const { walletState, engine } = useZeroPollContext();
+  return { ...walletState, connect: () => engine.context.wallet.connect() };
 };
 
 export const usePoll = (
