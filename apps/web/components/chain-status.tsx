@@ -1,14 +1,10 @@
 "use client";
 
+import { useChain } from "@/core/hooks";
 import { cn } from "@/lib/cn";
-import { useChainStore } from "@/lib/stores/chain";
 
 export function ChainStatus() {
-  const [blockHeight, loading, online] = useChainStore((state) => [
-    state.block?.height,
-    state.loading,
-    state.online,
-  ]);
+  const { block, loading, online } = useChain();
 
   return (
     <div className="flex items-center">
@@ -18,7 +14,9 @@ export function ChainStatus() {
           loading ? "bg-yellow-500" : online ? "bg-green-500" : "bg-red-500",
         )}
       ></div>
-      <div className="hidden sm:block text-xs text-slate-600">{blockHeight ?? "-"}</div>
+      <div className="hidden text-xs text-slate-600 sm:block">
+        {block.height ?? "-"}
+      </div>
     </div>
   );
 }
