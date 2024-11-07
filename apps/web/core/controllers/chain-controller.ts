@@ -44,7 +44,7 @@ export interface ChainState extends BaseState {
   block: {
     height: string;
   } & ComputedBlockJSON;
-}{}
+}
 
 export class ChainController extends BaseController<ChainConfig, ChainState> {
   private interval: NodeJS.Timeout | undefined;
@@ -64,8 +64,6 @@ export class ChainController extends BaseController<ChainConfig, ChainState> {
   }
 
   async loadBlock() {
-    this.update({ loading: true });
-
     try {
       const response = await fetch(this.config.graphqlUrl, {
         method: "POST",
@@ -74,33 +72,33 @@ export class ChainController extends BaseController<ChainConfig, ChainState> {
         },
         body: JSON.stringify({
           query: `
-                query {
-                network {
-                    unproven {
-                    block {
-                        height
-                    }
-                    }
+          query GetBlock {
+            block {
+              txs {
+                tx {
+                  argsFields
+                  auxiliaryData
+                  methodId
+                  nonce
+                  sender
+                  signature {
+                    r
+                    s
+                  }
                 }
+                status
+                statusMessage
+              }
+            }
+            network {
+              unproven {
                 block {
-                    txs {
-                    status
-                    statusMessage
-                    tx {
-                        argsFields
-                        argsJSON
-                        methodId
-                        nonce
-                        sender
-                        signature {
-                        r
-                        s
-                        }
-                    }
-                    }
+                  height
                 }
-                }
-            `,
+              }
+            }
+          }
+        `,
         }),
       });
 
@@ -115,18 +113,27 @@ export class ChainController extends BaseController<ChainConfig, ChainState> {
         });
       }
     } catch (error) {
+      this.update({ online: false });
       throw error;
-    } finally {
-      this.update({ loading: false });
     }
   }
 
   async start() {
-    await this.loadBlock();
-    this.interval = setInterval(
-      () => this.loadBlock(),
-      this.config.tickInterval,
-    );
+    this.update({ loading: true });
+    try {
+      await this.loadBlock();
+      this.interval = setInterval(
+        () => this.loadBlock(),
+        this.config.tickInterval,
+      );
+      await this.update({
+        online: true,
+      });
+    } catch (error) {
+      throw error;
+    } finally {
+      this.update({ loading: false });
+    }
   }
 
   stop() {
