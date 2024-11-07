@@ -36,7 +36,6 @@ export interface ConfirmedTransaction {
 }
 
 export interface WalletConfig extends BaseConfig {
-  provider: MinaProviderInterface;
   chain: ChainController;
   client: Pick<typeof client, "resolveOrFail">;
 }
@@ -65,12 +64,12 @@ export class WalletController extends BaseController<
 
   constructor(config: WalletConfig, state: Partial<WalletState> = {}) {
     super(config, state);
-    this.provider = config.provider;
     this.chain = config.chain;
     this.initialize();
   }
 
-  public async init() {
+  public async init(provider: MinaProviderAbstract) {
+    this.provider = provider;
     this.update({ loading: true });
 
     try {
@@ -118,7 +117,15 @@ export class WalletController extends BaseController<
     }
   }
 
+  private ensureProvider(
+    provider: MinaProviderAbstract | null,
+  ): asserts provider is MinaProviderAbstract {
+    if (!(provider instanceof MinaProviderAbstract))
+      throw new Error("Wallet provider is not set");
+  }
+
   public async connect() {
+    this.ensureProvider(this.provider);
     this.update({ loading: true });
 
     try {
@@ -133,10 +140,12 @@ export class WalletController extends BaseController<
   }
 
   public signJsonMessage(message: { label: string; value: string }[]) {
+    this.ensureProvider(this.provider);
     return this.provider.signJsonMessage({ message });
   }
 
   public async createNullifier(message: number[]) {
+    this.ensureProvider(this.provider);
     return await this.provider.createNullifier({ message });
   }
 

@@ -6,7 +6,6 @@ import {
   PollManagerState,
 } from "./controllers/poll-manager-controller";
 import { WalletController, WalletState } from "./controllers/wallet-controller";
-import { WalletProvider } from "./providers/wallets/wallet-provider";
 import { PollStoreProvider } from "./providers/stores/poll-store-provider";
 
 interface Controllers {
@@ -44,11 +43,8 @@ export class Engine {
       initialState.chain,
     );
 
-    const walletProvider = new WalletProvider("");
-
     const wallet = new WalletController(
       {
-        provider: walletProvider,
         chain,
         client: client,
       },

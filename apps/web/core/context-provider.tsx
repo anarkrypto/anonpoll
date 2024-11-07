@@ -4,6 +4,7 @@ import { WalletState } from "@/core/controllers/wallet-controller";
 import { PollState } from "@/core/controllers/poll-controller";
 import { ChainState } from "@/core/controllers/chain-controller";
 import { PollManagerState } from "@/core/controllers/poll-manager-controller";
+import { AuroWalletProvider } from "./providers/wallets/auro-wallet-provider";
 
 type ZeroPollContextValue = {
   engine: Engine;
@@ -37,6 +38,8 @@ export function ZeroPollProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     engine.context.chain.start();
+    const walletProvider = new AuroWalletProvider();
+    engine.context.wallet.init(walletProvider)
 
     // Subscribe to sync states
     engine.context.chain.subscribe(setChainState);
