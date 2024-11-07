@@ -14,6 +14,7 @@ import { cn } from "@/lib/cn";
 import { useClientStore } from "@/lib/stores/client";
 import { useAuthStore } from "@/lib/stores/auth";
 import InstallAuroWalletModal from "@/components/install-auro-wallet-modal";
+import { ZeroPollProvider } from "@/core/context-provider";
 
 export const fontSans = FontSans({
   subsets: ["latin"],
@@ -44,7 +45,7 @@ export default function RootLayout({
     if (wallet.walletInstalled) {
       wallet.observeWalletChange();
     }
-  }, [wallet.walletInstalled])
+  }, [wallet.walletInstalled]);
 
   return (
     <html lang="en" className="h-full">
@@ -54,13 +55,15 @@ export default function RootLayout({
           fontSans.variable,
         )}
       >
-        <Header />
-        {children}
-        <Toaster />
-        <InstallAuroWalletModal
-          open={wallet.showInstallWalletModal}
-          onOpenChange={wallet.openChangeInstallWalletModal}
-        />
+        <ZeroPollProvider>
+          <Header />
+          {children}
+          <Toaster />
+          <InstallAuroWalletModal
+            open={wallet.showInstallWalletModal}
+            onOpenChange={wallet.openChangeInstallWalletModal}
+          />
+        </ZeroPollProvider>
       </body>
     </html>
   );
