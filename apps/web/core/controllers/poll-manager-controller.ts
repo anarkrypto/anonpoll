@@ -8,7 +8,7 @@ import { OptionsHashes } from "chain/dist/runtime/modules/poll";
 import { PollStoreInterface } from "../providers/stores/poll-store-interface";
 import { client } from "chain";
 
-type CreatePollData = Omit<z.infer<typeof pollInsertSchema>, "id">;
+export type CreatePollData = Omit<z.infer<typeof pollInsertSchema>, "id">;
 
 export interface PollManagerConfig extends BaseConfig {
   client: Pick<typeof client, "query" | "runtime" | "transaction">;
@@ -44,7 +44,9 @@ export class PollManagerController extends BaseController<
     this.store = config.store;
   }
 
-  public async create(data: CreatePollData): Promise<{ id: number }> {
+  public async create(
+    data: CreatePollData,
+  ): Promise<{ id: number; hash: string }> {
     if (!this.wallet.account) {
       throw new Error("Client or wallet not initialized");
     }
@@ -73,7 +75,6 @@ export class PollManagerController extends BaseController<
 
     return new Promise(async (resolve, reject) => {
       this.wallet.subscribe(async (_, changedState) => {
-
         if (changedState.transactions) {
           const transaction = changedState.transactions.find(
             ({ hash }) => hash === tx.transaction?.hash().toString(),
@@ -95,7 +96,10 @@ export class PollManagerController extends BaseController<
               ...data,
             });
 
-            resolve({ id: newPollId });
+            resolve({
+              id: newPollId,
+              hash: tx.transaction?.hash().toString() as string,
+            });
           }
 
           if (transaction?.status === "FAILURE") {
