@@ -5,7 +5,7 @@ import { Bool, MerkleMap, Poseidon, PublicKey } from "o1js";
 import { isPendingTransaction } from "../utils";
 import { WalletController } from "./wallet-controller";
 import { OptionsHashes } from "chain/dist/runtime/modules/poll";
-import { PollStoreInterface } from "../providers/stores/poll-store";
+import { AbstractPollStore } from "../providers/stores/poll-store";
 import { client } from "chain";
 
 export type CreatePollData = Omit<z.infer<typeof pollInsertSchema>, "id">;
@@ -13,7 +13,7 @@ export type CreatePollData = Omit<z.infer<typeof pollInsertSchema>, "id">;
 export interface PollManagerConfig extends BaseConfig {
   client: Pick<typeof client, "query" | "runtime" | "transaction">;
   wallet: WalletController;
-  store: PollStoreInterface;
+  store: AbstractPollStore;
 }
 
 export interface PollManagerState extends BaseState {
@@ -32,7 +32,7 @@ export class PollManagerController extends BaseController<
 > {
   client: Pick<typeof client, "query" | "runtime" | "transaction">;
   wallet: WalletController;
-  store: PollStoreInterface;
+  store: AbstractPollStore;
 
   constructor(
     config: PollManagerConfig,

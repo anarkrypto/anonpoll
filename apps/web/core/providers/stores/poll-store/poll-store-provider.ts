@@ -1,10 +1,10 @@
 import { PollData } from "@/types/poll";
 import { pollInsertSchema } from "@/schemas/poll";
 import { z } from "zod";
-import { PollStoreInterface } from "./poll-store-interface";
+import { AbstractPollStore } from "./abstract-poll-store";
 import { AbstractAuthStore } from "../auth-store/abstract-auth-store";
 
-export class PollStoreProvider implements PollStoreInterface {
+export class PollStoreProvider implements AbstractPollStore {
   constructor(
     private baseApiUrl: string,
     private authStore: AbstractAuthStore,

@@ -1,9 +1,9 @@
 import { PollData } from "@/types/poll";
-import { PollStoreInterface } from "./poll-store-interface";
+import { AbstractPollStore } from "./abstract-poll-store";
 import { pollInsertSchema } from "@/schemas/poll";
 import { z } from "zod";
 
-export class InMemoryPollStore implements PollStoreInterface {
+export class InMemoryPollStore implements AbstractPollStore {
   private polls: Map<number, PollData>;
 
   constructor(private publicKey: string) {
