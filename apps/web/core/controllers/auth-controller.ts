@@ -48,7 +48,10 @@ export class AuthController extends BaseController<AuthConfig, AuthState> {
       const { signature, publicKey } =
         await this.wallet.signJsonMessage(message);
 
-      await this.fetchAuthApi({ publicKey, signature, issuedAt });
+      const token = await this.fetchAuthApi({ publicKey, signature, issuedAt });
+
+      await this.config.store.set(token);
+
       this.update({ isAuthenticated: true });
     } catch (error) {
       throw error;
@@ -61,7 +64,7 @@ export class AuthController extends BaseController<AuthConfig, AuthState> {
     publicKey,
     signature,
     issuedAt,
-  }: z.infer<typeof authSchema>) {
+  }: z.infer<typeof authSchema>): Promise<string> {
     // The server api will be responsible for verifying the signature
     // and issuing a jwt token to the client cookie
     const response = await fetch("/api/auth", {
@@ -87,5 +90,10 @@ export class AuthController extends BaseController<AuthConfig, AuthState> {
           `Response Status: ${response.status} (${response.statusText})`,
       );
     }
+    const result = await response.json();
+    if (!result.token) {
+      throw new Error("No token returned from auth api");
+    }
+    return result.token;
   }
 }
