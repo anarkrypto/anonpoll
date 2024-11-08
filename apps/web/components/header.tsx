@@ -1,13 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { ChainStatus } from "./chain-status";
 import { Separator } from "./ui/separator";
 import { Montserrat } from "next/font/google";
 import { cn } from "@/lib/cn";
 import { truncateWalletAddress } from "@/lib/utils";
-import { useAuth } from "@/lib/stores/auth";
-import { useWalletStore } from "@/lib/stores/wallet";
 import Link from "next/link";
+import { useAuth, useWallet } from "@/core/hooks";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -24,13 +22,14 @@ export interface HeaderProps {
 }
 
 export default function Header() {
-  const { wallet, loading: loadingWallet } = useWalletStore();
+  const { account, loading: loadingWallet } = useWallet();
 
-  const {isAuthenticated, authenticate, loading: loadingAuth} = useAuth()
-
+  const { isAuthenticated, authenticate, loading: loadingAuth } = useAuth();
 
   const loading = loadingWallet || loadingAuth;
-  const showWallet = isAuthenticated && wallet;
+  const showWallet = isAuthenticated && account;
+
+  // TODO: add error handle to authenticate method
 
   return (
     <header className="flex justify-center border-b bg-white p-2 shadow-sm">
@@ -57,10 +56,10 @@ export default function Header() {
             {showWallet ? (
               <>
                 <div className="hidden text-sm sm:block">
-                  {truncateWalletAddress(wallet, 7)}
+                  {truncateWalletAddress(account, 7)}
                 </div>
                 <div className="text-xs sm:hidden">
-                  {truncateWalletAddress(wallet, 4)}
+                  {truncateWalletAddress(account, 4)}
                 </div>
               </>
             ) : (
