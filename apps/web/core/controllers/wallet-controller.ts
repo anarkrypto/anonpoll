@@ -120,11 +120,13 @@ export class WalletController extends BaseController<
   private ensureProvider(
     provider: MinaProviderAbstract | null,
   ): asserts provider is MinaProviderAbstract {
-    if (!(provider instanceof MinaProviderAbstract))
+    if (!provider) {
       throw new Error("Wallet provider is not set");
+    }
   }
 
   public async connect() {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     this.ensureProvider(this.provider);
     this.update({ loading: true });
 
