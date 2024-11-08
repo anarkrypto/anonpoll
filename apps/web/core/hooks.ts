@@ -5,6 +5,7 @@ import { PollState } from "./controllers/poll-controller";
 import { PendingTransaction } from "@proto-kit/sequencer";
 import { CreatePollData } from "./controllers/poll-manager-controller";
 import { useZeroPollContext } from "./context-provider";
+import { AuthState } from "./controllers/auth-controller";
 
 export const useChain = (): ChainState => {
   return useZeroPollContext().chainState;
@@ -13,6 +14,11 @@ export const useChain = (): ChainState => {
 export const useWallet = (): WalletState & { connect: () => Promise<void> } => {
   const { walletState, engine } = useZeroPollContext();
   return { ...walletState, connect: () => engine.context.wallet.connect() };
+};
+
+export const useAuth = (): AuthState & { authenticate: () => Promise<void> } => {
+  const { authState, engine } = useZeroPollContext();
+  return { ...authState, authenticate: () => engine.context.auth.authenticate() };
 };
 
 export const usePoll = (
