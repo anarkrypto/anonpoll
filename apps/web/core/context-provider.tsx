@@ -54,6 +54,7 @@ export function ZeroPollProvider({
     engine.context.chain.start();
     const walletProvider = new AuroWalletProvider();
     engine.context.wallet.init(walletProvider);
+    engine.context.auth.init();
 
     // Subscribe to sync states
     engine.context.chain.subscribe(setChainState);

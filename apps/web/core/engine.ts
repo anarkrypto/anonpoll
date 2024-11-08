@@ -8,12 +8,14 @@ import {
 import { WalletController, WalletState } from "./controllers/wallet-controller";
 import { PollStoreProvider } from "./providers/stores/poll-store/poll-store-provider";
 import { AuthStoreCookieProvider } from "./providers/stores/auth-store/auth-store-cookie-provider";
+import { AuthController, AuthState } from "./controllers/auth-controller";
 
 interface Controllers {
   wallet: WalletController;
   chain: ChainController;
   poll: PollController;
   pollManager: PollManagerController;
+  auth: AuthController;
 }
 
 export interface EngineConfig {
@@ -27,6 +29,7 @@ export interface EngineState {
   chain: ChainState;
   poll: PollState;
   pollManager: PollManagerState;
+  auth: AuthState;
 }
 
 export type EngineContext = Controllers;
@@ -61,6 +64,14 @@ export class Engine {
     const authStore = new AuthStoreCookieProvider();
     const pollStore = new PollStoreProvider(config.storeApiUrl, authStore);
 
+    const auth = new AuthController(
+      {
+        wallet,
+        store: authStore,
+      },
+      initialState.wallet,
+    );
+
     const pollManager = new PollManagerController(
       { store: pollStore, client, wallet },
       initialState.pollManager,
@@ -76,6 +87,7 @@ export class Engine {
       chain,
       poll,
       pollManager,
+      auth
     };
   }
 }
