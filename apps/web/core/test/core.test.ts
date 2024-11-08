@@ -28,11 +28,9 @@ describe("Poll Manager", () => {
     },
   });
 
-  const provider = new WalletProvider(PRIVATE_KEY);
   const chain = new ChainTestController(appChain);
 
   const wallet = new WalletController({
-    provider,
     chain,
     client: appChain,
   });
@@ -45,7 +43,8 @@ describe("Poll Manager", () => {
   });
 
   it("should init the wallet", async () => {
-    await wallet.init();
+    const provider = new WalletProvider(PRIVATE_KEY);
+    await wallet.init(provider);
     expect(wallet.account).toBeDefined();
   });
 
