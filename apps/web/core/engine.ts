@@ -6,7 +6,7 @@ import {
   PollManagerState,
 } from "./controllers/poll-manager-controller";
 import { WalletController, WalletState } from "./controllers/wallet-controller";
-import { PollStoreProvider } from "./providers/stores/poll-store-provider";
+import { PollStoreProvider } from "./providers/stores/poll-store/poll-store-provider";
 
 interface Controllers {
   wallet: WalletController;

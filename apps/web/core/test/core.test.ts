@@ -7,7 +7,7 @@ import { PollManagerController } from "../controllers/poll-manager-controller";
 import { WalletController } from "../controllers/wallet-controller";
 import { WalletProvider } from "../providers/wallets/wallet-provider";
 import { PrivateKey } from "o1js";
-import { InMemoryPollStore } from "../providers/stores/in-memory-poll-store";
+import { InMemoryPollStore } from "../providers/stores/poll-store";
 import { ChainTestController } from "./test-utils/chain-test-controller";
 import { PollController } from "../controllers/poll-controller";
 
