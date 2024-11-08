@@ -11,11 +11,13 @@ import { PollState } from "@/core/controllers/poll-controller";
 import { ChainState } from "@/core/controllers/chain-controller";
 import { PollManagerState } from "@/core/controllers/poll-manager-controller";
 import { AuroWalletProvider } from "./providers/wallets/auro-wallet-provider";
+import { AuthState } from "./controllers/auth-controller";
 
 type ZeroPollContextValue = {
   engine: Engine;
   chainState: ChainState;
   walletState: WalletState;
+  authState: AuthState;
   pollState: PollState;
   pollManagerState: PollManagerState;
 };
@@ -43,6 +45,9 @@ export function ZeroPollProvider({
   const [walletState, setWalletState] = useState<WalletState>(
     engine.context.wallet.state,
   );
+  const [authState, setAuthState] = useState<AuthState>(
+    engine.context.auth.state,
+  );
   const [pollState, setPollState] = useState<PollState>(
     engine.context.poll.state,
   );
@@ -59,6 +64,7 @@ export function ZeroPollProvider({
     // Subscribe to sync states
     engine.context.chain.subscribe(setChainState);
     engine.context.wallet.subscribe(setWalletState);
+    engine.context.auth.subscribe(setAuthState);
     engine.context.poll.subscribe(setPollState);
     engine.context.pollManager.subscribe(setPollManagerState);
     setPollManagerState(engine.context.pollManager.state);
@@ -78,6 +84,7 @@ export function ZeroPollProvider({
         engine,
         chainState,
         walletState,
+        authState,
         pollState,
         pollManagerState,
       }}
