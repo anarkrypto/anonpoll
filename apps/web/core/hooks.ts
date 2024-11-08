@@ -16,9 +16,14 @@ export const useWallet = (): WalletState & { connect: () => Promise<void> } => {
   return { ...walletState, connect: () => engine.context.wallet.connect() };
 };
 
-export const useAuth = (): AuthState & { authenticate: () => Promise<void> } => {
+export const useAuth = (): AuthState & {
+  authenticate: () => Promise<void>;
+} => {
   const { authState, engine } = useZeroPollContext();
-  return { ...authState, authenticate: () => engine.context.auth.authenticate() };
+  return {
+    ...authState,
+    authenticate: () => engine.context.auth.authenticate(),
+  };
 };
 
 export const usePoll = (
@@ -42,22 +47,32 @@ export const usePoll = (
   return { ...pollState, vote };
 };
 
-export const useCreatePoll = () => {
+export const useCreatePoll = (callbacks?: {
+  onError?: (message: string) => void;
+  onSuccess?: (result: { id: number; hash: string }) => void;
+}) => {
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<{ id: number; hash: string } | null>(null);
 
-  const {
-    engine: {
-      context: { pollManager },
-    },
-  } = useZeroPollContext();
+  const { engine } = useZeroPollContext();
 
   const createPoll = useCallback(
     async (data: CreatePollData) => {
-      const result = await pollManager.create(data);
-      setData(result);
+      setLoading(true);
+      try {
+        const result = await engine.context.pollManager.create(data);
+        setData(result);
+        callbacks?.onSuccess?.(result);
+      } catch (error) {
+        console.error(error);
+        const message = error instanceof Error ? error.message : "Unknown error";
+        callbacks?.onError?.(message);
+      } finally {
+        setLoading(false);
+      }
     },
-    [pollManager.create],
+    [engine.context.pollManager.create],
   );
 
-  return { createPoll, data };
+  return { createPoll, loading, data };
 };
