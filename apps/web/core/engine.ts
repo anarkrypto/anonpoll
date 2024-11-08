@@ -7,6 +7,7 @@ import {
 } from "./controllers/poll-manager-controller";
 import { WalletController, WalletState } from "./controllers/wallet-controller";
 import { PollStoreProvider } from "./providers/stores/poll-store/poll-store-provider";
+import { AuthStoreCookieProvider } from "./providers/stores/auth-store/auth-store-cookie-provider";
 
 interface Controllers {
   wallet: WalletController;
@@ -57,15 +58,16 @@ export class Engine {
       initialState.wallet,
     );
 
-    const store = new PollStoreProvider(config.storeApiUrl);
+    const authStore = new AuthStoreCookieProvider();
+    const pollStore = new PollStoreProvider(config.storeApiUrl, authStore);
 
     const pollManager = new PollManagerController(
-      { store, client, wallet },
+      { store: pollStore, client, wallet },
       initialState.pollManager,
     );
 
     const poll = new PollController(
-      { wallet, chain, client, store },
+      { wallet, chain, client, store: pollStore },
       initialState.poll,
     );
 

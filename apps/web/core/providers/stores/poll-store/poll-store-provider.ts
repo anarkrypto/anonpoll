@@ -2,15 +2,29 @@ import { PollData } from "@/types/poll";
 import { pollInsertSchema } from "@/schemas/poll";
 import { z } from "zod";
 import { PollStoreInterface } from "./poll-store-interface";
+import { AbstractAuthStore } from "../auth-store/abstract-auth-store";
 
 export class PollStoreProvider implements PollStoreInterface {
-  constructor(private baseApiUrl: string) {}
+  constructor(
+    private baseApiUrl: string,
+    private authStore: AbstractAuthStore,
+  ) {}
 
   public async getById(pollId: number): Promise<PollData> {
     const url = new URL(this.baseApiUrl);
     url.pathname = `/api/polls/${pollId}`;
 
-    const response = await fetch(url.toString());
+    const authToken = await this.authStore.get();
+
+    if (!authToken) {
+      throw new Error("not authenticated");
+    }
+
+    const response = await fetch(url.toString(), {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
 
     if (!response.ok) {
       const errorData = (await response.json().catch(() => null)) as {
@@ -32,10 +46,17 @@ export class PollStoreProvider implements PollStoreInterface {
     const url = new URL(this.baseApiUrl);
     url.pathname = "/api/polls";
 
+    const authToken = await this.authStore.get();
+
+    if (!authToken) {
+      throw new Error("not authenticated");
+    }
+
     const response = await fetch(url.toString(), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken}`,
       },
       body: JSON.stringify(data),
     });
