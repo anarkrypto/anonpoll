@@ -117,7 +117,7 @@ export class WalletController extends BaseController<
     }
   }
 
-  private ensureProvider(
+  private ensureProviderExists(
     provider: MinaProviderAbstract | null,
   ): asserts provider is MinaProviderAbstract {
     if (!provider) {
@@ -127,7 +127,7 @@ export class WalletController extends BaseController<
 
   public async connect() {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    this.ensureProvider(this.provider);
+    this.ensureProviderExists(this.provider);
     this.update({ loading: true });
 
     try {
@@ -142,12 +142,12 @@ export class WalletController extends BaseController<
   }
 
   public signJsonMessage(message: { label: string; value: string }[]) {
-    this.ensureProvider(this.provider);
+    this.ensureProviderExists(this.provider);
     return this.provider.signJsonMessage({ message });
   }
 
   public async createNullifier(message: number[]) {
-    this.ensureProvider(this.provider);
+    this.ensureProviderExists(this.provider);
     return await this.provider.createNullifier({ message });
   }
 
