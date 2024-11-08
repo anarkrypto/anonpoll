@@ -3,10 +3,11 @@ import { generateAuthJsonMessage } from "@/lib/auth";
 import { WalletController } from "./wallet-controller";
 import { authSchema } from "@/schemas/auth";
 import { z } from "zod";
-import Cookies from "js-cookie";
+import { AbstractAuthStore } from "../providers/stores/auth-store/abstract-auth-store";
 
 export interface AuthConfig extends BaseConfig {
   wallet: WalletController;
+  store: AbstractAuthStore;
 }
 
 export interface AuthState extends BaseState {
@@ -28,10 +29,10 @@ export class AuthController extends BaseController<AuthConfig, AuthState> {
     this.initialize();
   }
 
-  init(): boolean {
-    const token = Cookies.get("auth.token");
+  async init() {
+    this.update({ loading: true });
+    const token = await this.config.store.get();
     this.update({ isAuthenticated: !!token, loading: false });
-    return !!token;
   }
 
   public async authenticate(): Promise<void> {
