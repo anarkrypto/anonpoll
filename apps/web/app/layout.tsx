@@ -57,7 +57,7 @@ export default function RootLayout({
       >
         <ZeroPollProvider
           protokitGraphqlUrl={process.env.NEXT_PUBLIC_PROTOKIT_GRAPHQL_URL!}
-          storeApiUrl="/api"
+          storeApiUrl={process.env.NEXT_PUBLIC_SITE_URL!}
         >
           <Header />
           {children}
