@@ -197,7 +197,7 @@ export class WalletController extends BaseController<
         s: tx.signature.s.toString(),
       },
       isMessage: false,
-      status: status ? "SUCCESS" : "FAILURE",
+      status,
       statusMessage: statusMessage ?? null,
     };
   }
