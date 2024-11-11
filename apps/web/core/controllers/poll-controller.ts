@@ -7,14 +7,14 @@ import { ChainController } from "./chain-controller";
 import { mockProof } from "@/lib/utils";
 import { WalletController } from "./wallet-controller";
 import { isPendingTransaction } from "../utils";
-import { PollStoreInterface } from "../providers/stores/poll-store";
+import { AbstractPollStore } from "../providers/stores/poll-store";
 import { PollData } from "@/types/poll";
 
 export interface PollConfig extends BaseConfig {
   wallet: WalletController;
   chain: ChainController;
   client: Pick<typeof client, "query" | "runtime" | "transaction">;
-  store: PollStoreInterface;
+  store: AbstractPollStore;
 }
 
 export interface PollState extends BaseState {
@@ -32,7 +32,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
   private chain: ChainController;
   private client: Pick<typeof client, "query" | "runtime" | "transaction">;
   private voters = new Set<string>();
-  private store: PollStoreInterface;
+  private store: AbstractPollStore;
 
   readonly defaultState: PollState = {
     loading: false,
