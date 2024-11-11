@@ -15,6 +15,7 @@ import { useClientStore } from "@/lib/stores/client";
 import { useAuthStore } from "@/lib/stores/auth";
 import InstallAuroWalletModal from "@/components/install-auro-wallet-modal";
 import { ZeroPollProvider } from "@/core/context-provider";
+import { TransactionNotifications } from "@/components/transaction-notifications";
 
 export const fontSans = FontSans({
   subsets: ["latin"],
@@ -62,6 +63,7 @@ export default function RootLayout({
           <Header />
           {children}
           <Toaster />
+          <TransactionNotifications />
           <InstallAuroWalletModal
             open={wallet.showInstallWalletModal}
             onOpenChange={wallet.openChangeInstallWalletModal}
