@@ -20,9 +20,9 @@ import { useCallback, useState } from "react";
 import { generateSalt, isValidPublicKey } from "@/lib/utils";
 import { pollInsertSchema } from "@/schemas/poll";
 import { useToast } from "@/components/ui/use-toast";
-import { useCreatePoll } from "@/lib/stores/poll";
 import { useRouter } from "next/navigation";
 import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from "@/constants";
+import { useCreatePoll } from "@/core/hooks";
 
 const pollFormSchema = pollInsertSchema.omit({ id: true, salt: true });
 
@@ -51,10 +51,10 @@ export function PollForm() {
     onSuccess: (pollId) => {
       router.push(`/polls/${pollId}`);
     },
-    onError: (error) => {
+    onError: (message) => {
       toast({
         title: "Error",
-        description: error,
+        description: message,
         variant: "destructive",
       });
     },
