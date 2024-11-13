@@ -157,9 +157,10 @@ export class WalletController extends BaseController<
   }
 
   public addPendingTransaction(transaction: PendingTransaction) {
-    if (!this.transactions.has(transaction.hash.toString())) {
+    const hash = transaction.hash().toString();
+    if (!this.transactions.has(hash)) {
       this.transactions.set(
-        transaction.hash.toString(),
+        hash,
         this.buildTransaction(transaction, "PENDING"),
       );
 
