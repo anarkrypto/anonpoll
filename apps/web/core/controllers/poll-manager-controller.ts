@@ -74,40 +74,35 @@ export class PollManagerController extends BaseController<
     isPendingTransaction(tx.transaction);
     this.wallet.addPendingTransaction(tx.transaction);
 
-    return new Promise(async (resolve, reject) => {
-      this.wallet.subscribe(async (_, changedState) => {
-        if (changedState.transactions) {
-          const transaction = changedState.transactions.find(
-            ({ hash }) => hash === tx.transaction?.hash().toString(),
-          );
+    const hash = tx.transaction.hash().toString();
 
-          if (transaction?.status === "SUCCESS") {
-            const id = await this.client.query.runtime.Poll.lastPollId.get();
+    const receipt = await this.wallet.waitForTransactionReceipt(hash);
 
-            if (!id) {
-              return reject("Could not get poll id");
-            }
+    if (receipt.status === "FAILURE") {
+      throw new Error(receipt.statusMessage as string);
+    }
 
-            const newPollId = Number(id.toBigInt());
+    // TODO: refactor this
+    // Issue: this is not guaranteed to be the last poll id
+    const id = await this.getLastPollId();
 
-            // TODO: In the future, the data should be stored before create the transaction.
-
-            await this.store.persist({
-              id: newPollId,
-              ...data,
-            });
-
-            resolve({
-              id: newPollId,
-              hash: tx.transaction?.hash().toString() as string,
-            });
-          }
-
-          if (transaction?.status === "FAILURE") {
-            reject("Transaction failed");
-          }
-        }
-      });
+    // TODO: The data should be stored before create the transaction.
+    await this.store.persist({
+      id,
+      ...data,
     });
+
+    return {
+      id,
+      hash,
+    };
+  }
+
+  private async getLastPollId(): Promise<number> {
+    const id = await this.client.query.runtime.Poll.lastPollId.get();
+    if (!id) {
+      throw new Error("Could not get poll id");
+    }
+    return Number(id.toBigInt());
   }
 }
