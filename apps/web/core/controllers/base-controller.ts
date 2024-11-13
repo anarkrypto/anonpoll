@@ -116,9 +116,11 @@ export class BaseController<
    * Adds new listener to be notified of state changes.
    *
    * @param listener - The callback triggered when state changes.
+   * @returns A function to unsubscribe the listener.
    */
   subscribe(listener: Listener<State>) {
     this.internalListeners.add(listener);
+    return () => this.unsubscribe(listener);
   }
 
   /**
