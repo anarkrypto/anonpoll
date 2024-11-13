@@ -29,6 +29,10 @@ export interface TransactionJSON {
   statusMessage: string | null;
 }
 
+export interface TransactionReceipt extends TransactionJSON {
+  status: "SUCCESS" | "FAILURE";
+}
+
 export interface ConfirmedTransaction {
   tx: TransactionJSON;
   status: boolean;
@@ -78,6 +82,7 @@ export class WalletController extends BaseController<
 
       this.chain.subscribe((_, changedState) => {
         if (changedState.block) {
+          console.log("block", changedState.block);
           const myRecentConfirmedTransactions = changedState.block.txs
             .filter(({ tx }) => tx.sender === this.account)
             .map(({ tx, status, statusMessage }) => {
@@ -204,5 +209,26 @@ export class WalletController extends BaseController<
 
   get account(): string | null {
     return this.state.account;
+  }
+
+  async waitForTransactionReceipt(hash: string): Promise<TransactionReceipt> {
+    const transaction = this.transactions.get(hash);
+    if (!transaction) {
+      throw new Error("Transaction not found");
+    }
+    if (transaction.status === "SUCCESS" || transaction.status === "FAILURE") {
+      return transaction as TransactionReceipt;
+    }
+    return new Promise((resolve) => {
+      const unsubscribe = this.subscribe((_, partialState) => {
+        if (partialState.transactions) {
+          const tx = partialState.transactions.find((tx) => tx.hash === hash);
+          if (tx?.status === "SUCCESS" || tx?.status === "FAILURE") {
+            resolve(tx as TransactionReceipt);
+            unsubscribe();
+          }
+        }
+      });
+    });
   }
 }
