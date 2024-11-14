@@ -9,7 +9,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "./ui/button";
-import { usePoll } from "@/lib/stores/poll";
 import { useWalletStore } from "@/lib/stores/wallet";
 import { PollData } from "@/types/poll";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
@@ -19,36 +18,29 @@ import {
   CircleCheckBigIcon,
   CircleIcon,
   Share2Icon,
-  ShareIcon,
   ShieldCheckIcon,
 } from "lucide-react";
 import { generateCommitmentRoot } from "@/lib/utils";
-import { OptionHash } from "chain/dist/runtime/modules/poll";
 import { cn } from "@/lib/cn";
 import { Badge } from "./ui/badge";
 import { useToast } from "./ui/use-toast";
+import { usePoll } from "@/core/hooks";
+import { useVote } from "@/core/hooks/useVote";
 
 export function PollCard({
   id,
   title,
   description,
-  options,
   votersWallets,
-  salt,
-  createdAt,
 }: Omit<PollData, "creatorWallet">) {
   const [wallet, connectWallet] = useWalletStore((store) => [
     store.wallet,
     store.connectWallet,
   ]);
-  const {
-    vote,
-    votes: votesMap,
-    loading,
-    commitment,
-    voted,
-    voting,
-  } = usePoll(id);
+  const { options, loading, commitment } = usePoll(id);
+
+  const { vote, isPending: isVoting, isSuccess: isVoted } = useVote(id);
+
   const [openVotersModal, setOpenVotersModal] = useState(false);
   const [activeOptionHash, setActiveOptionHash] = useState<string | null>(null);
   const [loadProgressBar, setLoadProgressBar] = useState(false);
@@ -59,47 +51,32 @@ export function PollCard({
     return commitment === generateCommitmentRoot(votersWallets).toString();
   }, [votersWallets, commitment]);
 
-  const optionsVotes = useMemo(() => {
-    return options.map((option) => {
-      const hash = OptionHash.fromText(option, salt).toString();
-      const votesCount =
-        votesMap.find((vote) => vote.hash === hash)?.votesCount || 0;
-      const votesPercentage = (votesCount / votersWallets.length) * 100;
-      return {
-        text: option,
-        hash,
-        votesCount,
-        votesPercentage,
-      };
-    });
-  }, [votesMap, options, salt]);
-
-  const winnerOptionHash = useMemo(() => {
+  const winnerOption = useMemo(() => {
     // Return winner option hash.
     // If there is no vote, return null.
     // If there is a tie, return null.
-    if (optionsVotes.every((option) => option.votesCount === 0)) {
+    if (options.every((option) => option.votesCount === 0)) {
       return null;
     }
     const maxVotesCount = Math.max(
-      ...optionsVotes.map((option) => option.votesCount),
+      ...options.map((option) => option.votesCount),
     );
-    const topOptions = optionsVotes.filter(
+    const topOptions = options.filter(
       (option) => option.votesCount === maxVotesCount,
     );
     if (topOptions.length > 1) {
       return null;
     }
-    return topOptions[0]?.hash || null;
-  }, [optionsVotes]);
+    return topOptions[0] || null;
+  }, [options]);
 
   const handleVote = () => {
     if (!activeOptionHash) return;
-    vote(votersWallets, activeOptionHash, salt);
+    vote(activeOptionHash);
   };
 
   const handleSelectOption = (hash: string) => {
-    if (voted) return;
+    if (isVoted) return;
     setActiveOptionHash((prev) => (prev === hash ? null : hash));
   };
 
@@ -125,14 +102,14 @@ export function PollCard({
         <CardContent>
           <div className="flex flex-col gap-4">
             <ul className="flex flex-col gap-2">
-              {optionsVotes.map((option, index) => (
+              {options.map((option, index) => (
                 <li key={index}>
                   <Button
                     size="lg"
                     className={cn(
                       "relative w-full px-12",
                       activeOptionHash === option.hash &&
-                        "border-2 border-primary/40 bg-primary/20 hover:bg-primary/20 rounded-lg overflow-hidden",
+                        "overflow-hidden rounded-lg border-2 border-primary/40 bg-primary/20 hover:bg-primary/20",
                     )}
                     loading={loading}
                     onClick={() => handleSelectOption(option.hash)}
@@ -162,7 +139,7 @@ export function PollCard({
                     <div
                       className={cn(
                         "absolute right-2 top-1/2 -translate-y-1/2",
-                        winnerOptionHash === option.hash &&
+                        winnerOption?.hash === option.hash &&
                           "font-bold text-green-600",
                       )}
                     >
@@ -172,14 +149,14 @@ export function PollCard({
                 </li>
               ))}
             </ul>
-            {!!wallet && !voted && (
+            {!!wallet && !isVoted && (
               <Button
                 size="lg"
                 className="w-full"
                 type="submit"
                 onClick={handleVote}
                 disabled={!canVote}
-                loading={voting}
+                loading={isVoting}
               >
                 Vote
               </Button>
