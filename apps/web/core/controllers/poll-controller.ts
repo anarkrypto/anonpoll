@@ -32,6 +32,7 @@ export interface PollState extends BaseState {
     text: string;
     hash: string;
     votesCount: number;
+    votesPercentage: number;
   }[];
 }
 
@@ -86,14 +87,24 @@ export class PollController extends BaseController<PollConfig, PollState> {
         metadata.salt,
       );
 
+      const totalVotesCast = voteOptions.reduce(
+        (acc, option) => acc + option.votesCount,
+        0,
+      );
+
+      // TODO: Investigate implications of relying on the index of the options
+
       this.update({
         commitment,
         metadata,
         options: metadata.options.map((text, index) => {
+          const votesCount = voteOptions[index].votesCount || 0;
+          const votesPercentage = (votesCount / totalVotesCast) * 100;
           return {
             text,
             hash: voteOptions[index].hash,
             votesCount: voteOptions[index].votesCount,
+            votesPercentage,
           };
         }),
       });
