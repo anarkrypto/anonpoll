@@ -1,9 +1,11 @@
 import { AuthState } from "../controllers/auth-controller";
 import { useZeroPollContext } from "../context-provider";
 
-export const useAuth = (): AuthState & {
+export interface UseAuthReturn extends AuthState {
   authenticate: () => Promise<void>;
-} => {
+}
+
+export const useAuth = (): UseAuthReturn => {
   const { authState, engine } = useZeroPollContext();
   return {
     ...authState,

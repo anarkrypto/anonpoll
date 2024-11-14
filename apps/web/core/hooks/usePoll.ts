@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useZeroPollContext } from "../context-provider";
 import { PollState } from "../controllers/poll-controller";
 
-interface UsePollReturn {
+export interface UsePollReturn {
   data: Omit<PollState, "loading">;
   isLoading: boolean;
   isSuccess: boolean;
