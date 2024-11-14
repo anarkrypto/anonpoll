@@ -26,6 +26,7 @@ export interface PollConfig extends BaseConfig {
 
 export interface PollState extends BaseState {
   loading: boolean;
+  commitment: string | null;
   metadata: PollData | null;
   options: {
     text: string;
@@ -42,6 +43,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
   private store: AbstractPollStore;
 
   readonly defaultState: PollState = {
+    commitment: null,
     loading: false,
     metadata: null,
     options: [],
@@ -65,11 +67,18 @@ export class PollController extends BaseController<PollConfig, PollState> {
         return;
       }
 
-      this.update({ loading: true, metadata: null, options: [] });
+      this.update({
+        loading: true,
+        commitment: null,
+        metadata: null,
+        options: [],
+      });
 
       const metadata = await this.getMetadata(id);
 
       const voteOptions = await this.getVotesOptions(pollId);
+
+      const commitment = await this.getCommitment(pollId);
 
       this.compareHashes(
         voteOptions.map(({ hash }) => hash),
@@ -78,6 +87,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
       );
 
       this.update({
+        commitment,
         metadata,
         options: metadata.options.map((text, index) => {
           return {
@@ -125,6 +135,16 @@ export class PollController extends BaseController<PollConfig, PollState> {
     }
 
     return votesOptions;
+  }
+
+  private async getCommitment(pollId: UInt32) {
+    const commitment = await client.query.runtime.Poll.commitments.get(
+      UInt32.from(pollId),
+    );
+    if (!commitment) {
+      throw new Error("Poll not found");
+    }
+    return Field(commitment).toString();
   }
 
   private compareHashes(hashes: string[], optionsText: string[], salt: string) {
