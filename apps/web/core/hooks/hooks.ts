@@ -1,15 +1,10 @@
 import { useEffect, useState } from "react";
-import { ChainState } from "../controllers/chain-controller";
 import {
   TransactionReceipt,
   WalletState,
 } from "../controllers/wallet-controller";
 import { useZeroPollContext } from "../context-provider";
 import { AuthState } from "../controllers/auth-controller";
-
-export const useChain = (): ChainState => {
-  return useZeroPollContext().chainState;
-};
 
 export const useWallet = (): WalletState & { connect: () => Promise<void> } => {
   const { walletState, engine } = useZeroPollContext();
