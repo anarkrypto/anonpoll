@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
-import { ChainState } from "./controllers/chain-controller";
-import { WalletState } from "./controllers/wallet-controller";
-import { PollState } from "./controllers/poll-controller";
+import { ChainState } from "../controllers/chain-controller";
+import {
+  TransactionReceipt,
+  WalletState,
+} from "../controllers/wallet-controller";
+import { PollState } from "../controllers/poll-controller";
 import { PendingTransaction } from "@proto-kit/sequencer";
-import { CreatePollData } from "./controllers/poll-manager-controller";
-import { useZeroPollContext } from "./context-provider";
-import { AuthState } from "./controllers/auth-controller";
+import { CreatePollData } from "../controllers/poll-manager-controller";
+import { useZeroPollContext } from "../context-provider";
+import { AuthState } from "../controllers/auth-controller";
 
 export const useChain = (): ChainState => {
   return useZeroPollContext().chainState;
@@ -29,7 +32,7 @@ export const useAuth = (): AuthState & {
 export const usePoll = (
   id: number,
 ): PollState & {
-  vote: (id: number, optionHash: string) => Promise<PendingTransaction>;
+  vote: (optionHash: string) => Promise<PendingTransaction>;
 } => {
   const {
     engine: {
@@ -42,7 +45,7 @@ export const usePoll = (
     poll.loadPoll(id);
   }, [id]);
 
-  const vote = poll.vote;
+  const vote = (optionHash: string) => poll.vote(id, optionHash);
 
   return { ...pollState, vote };
 };
@@ -65,7 +68,8 @@ export const useCreatePoll = (callbacks?: {
         callbacks?.onSuccess?.(result);
       } catch (error) {
         console.error(error);
-        const message = error instanceof Error ? error.message : "Unknown error";
+        const message =
+          error instanceof Error ? error.message : "Unknown error";
         callbacks?.onError?.(message);
       } finally {
         setLoading(false);
@@ -75,4 +79,35 @@ export const useCreatePoll = (callbacks?: {
   );
 
   return { createPoll, loading, data };
+};
+
+export const useWaitForTransactionReceipt = ({
+  hash,
+}: {
+  hash?: string | null;
+}) => {
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<TransactionReceipt | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const { engine } = useZeroPollContext();
+  useEffect(() => {
+    if (!hash) {
+      setLoading(false);
+      setData(null);
+      setError(null);
+      return;
+    }
+    setLoading(true);
+    engine.context.wallet
+      .waitForTransactionReceipt(hash)
+      .then((result) => {
+        setData(result);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+      });
+  }, [engine.context.wallet.waitForTransactionReceipt, hash]);
+  return { loading, data, error };
 };
