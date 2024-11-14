@@ -29,25 +29,14 @@ export const useAuth = (): AuthState & {
   };
 };
 
-export const usePoll = (
-  id: number,
-): PollState & {
-  vote: (optionHash: string) => Promise<PendingTransaction>;
-} => {
-  const {
-    engine: {
-      context: { poll },
-    },
-    pollState,
-  } = useZeroPollContext();
+export const usePoll = (id: number): PollState => {
+  const { engine, pollState } = useZeroPollContext();
 
   useEffect(() => {
-    poll.loadPoll(id);
+    engine.context.poll.loadPoll(id);
   }, [id]);
 
-  const vote = (optionHash: string) => poll.vote(id, optionHash);
-
-  return { ...pollState, vote };
+  return { ...pollState };
 };
 
 export const useCreatePoll = (callbacks?: {
