@@ -4,21 +4,10 @@ import {
   WalletState,
 } from "../controllers/wallet-controller";
 import { useZeroPollContext } from "../context-provider";
-import { AuthState } from "../controllers/auth-controller";
 
 export const useWallet = (): WalletState & { connect: () => Promise<void> } => {
   const { walletState, engine } = useZeroPollContext();
   return { ...walletState, connect: () => engine.context.wallet.connect() };
-};
-
-export const useAuth = (): AuthState & {
-  authenticate: () => Promise<void>;
-} => {
-  const { authState, engine } = useZeroPollContext();
-  return {
-    ...authState,
-    authenticate: () => engine.context.auth.authenticate(),
-  };
 };
 
 export const useWaitForTransactionReceipt = ({
