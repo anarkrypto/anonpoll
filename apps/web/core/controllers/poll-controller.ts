@@ -74,11 +74,11 @@ export class PollController extends BaseController<PollConfig, PollState> {
         options: [],
       });
 
-      const metadata = await this.getMetadata(id);
-
-      const voteOptions = await this.getVotesOptions(pollId);
-
-      const commitment = await this.getCommitment(pollId);
+      const [metadata, voteOptions, commitment] = await Promise.all([
+        this.getMetadata(id),
+        this.getVotesOptions(pollId),
+        this.getCommitment(pollId),
+      ]);
 
       this.compareHashes(
         voteOptions.map(({ hash }) => hash),
