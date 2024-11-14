@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "./ui/button";
 import { useWalletStore } from "@/lib/stores/wallet";
-import { PollData } from "@/types/poll";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { DialogDescription, DialogProps } from "@radix-ui/react-dialog";
 import { useEffect, useMemo, useState } from "react";
@@ -26,18 +25,14 @@ import { Badge } from "./ui/badge";
 import { useToast } from "./ui/use-toast";
 import { usePoll } from "@/core/hooks";
 import { useVote } from "@/core/hooks/useVote";
+import { PollCardSkeleton } from "./poll-card-skeleton";
 
-export function PollCard({
-  id,
-  title,
-  description,
-  votersWallets,
-}: Omit<PollData, "creatorWallet">) {
+export function PollCard({ id }: { id: number }) {
   const [wallet, connectWallet] = useWalletStore((store) => [
     store.wallet,
     store.connectWallet,
   ]);
-  const { options, loading, commitment } = usePoll(id);
+  const { metadata, options, loading, commitment } = usePoll(id);
 
   const { vote, isPending: isVoting, isSuccess: isVoted } = useVote(id);
 
@@ -47,9 +42,11 @@ export function PollCard({
   const { toast } = useToast();
 
   const validProof = useMemo(() => {
-    if (!commitment) return false;
-    return commitment === generateCommitmentRoot(votersWallets).toString();
-  }, [votersWallets, commitment]);
+    if (!commitment || !metadata?.votersWallets) return false;
+    return (
+      commitment === generateCommitmentRoot(metadata.votersWallets).toString()
+    );
+  }, [metadata?.votersWallets, commitment]);
 
   const winnerOption = useMemo(() => {
     // Return winner option hash.
@@ -92,12 +89,18 @@ export function PollCard({
     };
   }, [loading, loadProgressBar]);
 
+  if (loading) {
+    return <PollCardSkeleton />;
+  }
+
   return (
     <>
       <Card className="w-full max-w-xl sm:p-4">
         <CardHeader>
-          <CardTitle>{title}</CardTitle>
-          {description && <CardDescription>{description}</CardDescription>}
+          <CardTitle>{metadata!.title}</CardTitle>
+          {metadata!.description?.trim() && (
+            <CardDescription>{metadata!.description}</CardDescription>
+          )}
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-4">
@@ -189,7 +192,7 @@ export function PollCard({
                   : "bg-red-100 text-red-700",
               )}
             >
-              {votersWallets.length}
+              {metadata!.votersWallets.length}
             </Badge>
           </Button>
           <Button
@@ -208,7 +211,7 @@ export function PollCard({
         </CardFooter>
       </Card>
       <VotersModal
-        votersWallets={votersWallets}
+        votersWallets={metadata!.votersWallets}
         open={openVotersModal}
         onOpenChange={setOpenVotersModal}
         validProof={validProof}
