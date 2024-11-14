@@ -1,14 +1,6 @@
 import { useEffect, useState } from "react";
-import {
-  TransactionReceipt,
-  WalletState,
-} from "../controllers/wallet-controller";
+import { TransactionReceipt } from "../controllers/wallet-controller";
 import { useZeroPollContext } from "../context-provider";
-
-export const useWallet = (): WalletState & { connect: () => Promise<void> } => {
-  const { walletState, engine } = useZeroPollContext();
-  return { ...walletState, connect: () => engine.context.wallet.connect() };
-};
 
 export const useWaitForTransactionReceipt = ({
   hash,
