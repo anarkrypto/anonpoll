@@ -60,7 +60,12 @@ export class PollController extends BaseController<PollConfig, PollState> {
     try {
       const pollId = UInt32.from(id);
 
-      this.update({ loading: true });
+      if (this.metadata?.id === id) {
+        // Do not load the same poll twice
+        return;
+      }
+
+      this.update({ loading: true, metadata: null, options: [] });
 
       const metadata = await this.getMetadata(id);
 
