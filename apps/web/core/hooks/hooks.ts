@@ -1,12 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ChainState } from "../controllers/chain-controller";
 import {
   TransactionReceipt,
   WalletState,
 } from "../controllers/wallet-controller";
-import { PollState } from "../controllers/poll-controller";
-import { PendingTransaction } from "@proto-kit/sequencer";
-import { CreatePollData } from "../controllers/poll-manager-controller";
 import { useZeroPollContext } from "../context-provider";
 import { AuthState } from "../controllers/auth-controller";
 
@@ -27,37 +24,6 @@ export const useAuth = (): AuthState & {
     ...authState,
     authenticate: () => engine.context.auth.authenticate(),
   };
-};
-
-export const useCreatePoll = (callbacks?: {
-  onError?: (message: string) => void;
-  onSuccess?: (result: { id: number; hash: string }) => void;
-}) => {
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<{ id: number; hash: string } | null>(null);
-
-  const { engine } = useZeroPollContext();
-
-  const createPoll = useCallback(
-    async (data: CreatePollData) => {
-      setLoading(true);
-      try {
-        const result = await engine.context.pollManager.create(data);
-        setData(result);
-        callbacks?.onSuccess?.(result);
-      } catch (error) {
-        console.error(error);
-        const message =
-          error instanceof Error ? error.message : "Unknown error";
-        callbacks?.onError?.(message);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [engine.context.pollManager.create],
-  );
-
-  return { createPoll, loading, data };
 };
 
 export const useWaitForTransactionReceipt = ({

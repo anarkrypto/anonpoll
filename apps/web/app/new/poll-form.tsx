@@ -47,7 +47,7 @@ export function PollForm() {
         : zodResolver(pollFormSchema),
   });
 
-  const { createPoll, loading: creatingPoll } = useCreatePoll({
+  const { createPoll, isPending: creatingPoll } = useCreatePoll({
     onSuccess: ({ id }) => {
       router.push(`/polls/${id}`);
     },
