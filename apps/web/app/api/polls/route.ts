@@ -2,7 +2,6 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { PollsRepositoryPostgres } from "@/repositories/prisma/polls-repository-postgres";
 import { verifyAuthJwtToken } from "@/lib/auth";
-import { cookies } from "next/headers";
 import { pollInsertSchema } from "@/schemas/poll";
 import { client } from "chain";
 import { UInt32 } from "@proto-kit/library";
@@ -16,7 +15,7 @@ export async function POST(request: NextRequest) {
     return Response.json({ message: error.message }, { status: 400 });
   }
 
-  const jwtToken = cookies().get("auth.token")?.value;
+  const jwtToken = request.headers.get("auth.token")?.replace("Bearer ", "");
 
   if (!jwtToken) {
     return Response.json({ message: "Unauthorized" }, { status: 401 });
