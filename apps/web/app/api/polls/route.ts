@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     return Response.json({ message: error.message }, { status: 400 });
   }
 
-  const jwtToken = request.headers.get("auth.token")?.replace("Bearer ", "");
+  const jwtToken = request.headers.get("Authorization")?.replace("Bearer ", "");
 
   if (!jwtToken) {
     return Response.json({ message: "Unauthorized" }, { status: 401 });
@@ -28,7 +28,9 @@ export async function POST(request: NextRequest) {
   }
 
   await client.start();
-  const poll = await client.query.runtime.Poll.commitments.get(UInt32.from(data.id));
+  const poll = await client.query.runtime.Poll.commitments.get(
+    UInt32.from(data.id),
+  );
   if (!poll) {
     return Response.json({ message: "Poll not found" }, { status: 404 });
   }
