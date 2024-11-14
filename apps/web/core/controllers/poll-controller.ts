@@ -1,4 +1,11 @@
-import { Bool, Field, MerkleMap, Poseidon, PublicKey } from "o1js";
+import {
+  Bool,
+  Field,
+  MerkleMap,
+  MerkleMapWitness,
+  Poseidon,
+  PublicKey,
+} from "o1js";
 import { UInt32 } from "@proto-kit/library";
 import { client } from "chain";
 import { canVote, OptionsHashes, Poll } from "chain/dist/runtime/modules/poll";
@@ -135,46 +142,65 @@ export class PollController extends BaseController<PollConfig, PollState> {
     });
   }
 
-  public async vote(id: number, optionHash: string) {
-    const pollId = UInt32.from(id);
+  public async vote(optionHash: string) {
+    this.validateVotePrerequisites();
 
+    const pollId = UInt32.from(this.state.metadata!.id);
+    const sender = PublicKey.fromBase58(this.wallet.account!);
+
+    const witness = this.createVotersWitness(sender);
+    const proof = await this.createVoteProof(witness, pollId);
+
+    return this.submitVoteTransaction(pollId, optionHash, proof);
+  }
+
+  private validateVotePrerequisites() {
     if (!this.wallet.account) {
       throw new Error("Wallet not initialized");
     }
+    if (!this.state.metadata) {
+      throw new Error("Poll not loaded");
+    }
+  }
 
-    const sender = PublicKey.fromBase58(this.wallet.account);
-
-    // reconstruct the merkle map with the voters's public key
+  private createVotersWitness(sender: PublicKey) {
     const map = new MerkleMap();
     this.voters.forEach((wallet) => {
       const hashKey = Poseidon.hash(PublicKey.fromBase58(wallet).toFields());
       map.set(hashKey, Bool(true).toField());
     });
 
-    // get the witness for the sender's public key
     const hashKey = Poseidon.hash(sender.toFields());
-    const witness = map.getWitness(hashKey);
+    return map.getWitness(hashKey);
+  }
 
-    // Ask for Auro Wallet to create a nullifier
+  private async createVoteProof(witness: MerkleMapWitness, pollId: UInt32) {
     const nullifier = await this.wallet.createNullifier([
       Number(pollId.toString()),
     ]);
-
     const publicOutput = await canVote(witness, nullifier, pollId);
+    return await mockProof(publicOutput);
+  }
 
-    const pollProof = await mockProof(publicOutput);
-
+  private async submitVoteTransaction(
+    pollId: UInt32,
+    optionHash: string,
+    proof: any,
+  ) {
     const poll = this.client.runtime.resolve("Poll");
-
-    const tx = await this.client.transaction(sender, async () => {
-      await poll.vote(pollId, Field(optionHash), pollProof);
-    });
+    const tx = await this.client.transaction(
+      PublicKey.fromBase58(this.wallet.account!),
+      async () => {
+        await poll.vote(pollId, Field(optionHash), proof);
+      },
+    );
 
     await tx.sign();
     await tx.send();
 
     isPendingTransaction(tx.transaction);
     this.wallet.addPendingTransaction(tx.transaction);
+
     return tx.transaction;
   }
 
