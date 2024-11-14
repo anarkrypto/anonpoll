@@ -1,13 +1,9 @@
 import { useState, useCallback, useEffect } from "react";
-import { PendingTransaction } from "@proto-kit/sequencer";
 import { useZeroPollContext } from "../context-provider";
 
-export interface UseVoteParams {
-  pollId: number;
-  callbacks?: {
-    onError?: (message: string) => void;
-    onSuccess?: (result: { hash: string }) => void;
-  };
+export interface UseVoteOptions {
+  onError?: (message: string) => void;
+  onSuccess?: (result: { hash: string }) => void;
 }
 
 export interface UseVoteReturn {
@@ -19,10 +15,10 @@ export interface UseVoteReturn {
   data: { hash: string } | null;
 }
 
-export const useVote = ({
-  pollId,
-  callbacks,
-}: UseVoteParams): UseVoteReturn => {
+export const useVote = (
+  pollId: number,
+  options?: UseVoteOptions,
+): UseVoteReturn => {
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<{ hash: string } | null>(null);
@@ -48,17 +44,17 @@ export const useVote = ({
         const result = await engine.context.poll.vote(optionHash);
 
         setData(result);
-        callbacks?.onSuccess?.(result);
+        options?.onSuccess?.(result);
       } catch (err) {
         const message =
           err instanceof Error ? err.message : "Failed to submit vote";
         setError(message);
-        callbacks?.onError?.(message);
+        options?.onError?.(message);
       } finally {
         setIsPending(false);
       }
     },
-    [pollId, engine.context.poll, callbacks],
+    [pollId, engine.context.poll, options],
   );
 
   return {
