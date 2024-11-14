@@ -1,4 +1,3 @@
-export * from "./hooks";
 export * from "./useWallet";
 export * from "./useAuth";
 export * from "./useChain";
