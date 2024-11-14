@@ -56,10 +56,9 @@ export function ZeroPollProvider({
   );
 
   useEffect(() => {
-    engine.context.chain.start();
+    engine.init();
     const walletProvider = new AuroWalletProvider();
     engine.context.wallet.init(walletProvider);
-    engine.context.auth.init();
 
     // Subscribe to sync states
     engine.context.chain.subscribe(setChainState);

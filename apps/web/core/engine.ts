@@ -56,7 +56,7 @@ export class Engine {
     const wallet = new WalletController(
       {
         chain,
-        client: client,
+        client,
       },
       initialState.wallet,
     );
@@ -87,7 +87,13 @@ export class Engine {
       chain,
       poll,
       pollManager,
-      auth
+      auth,
     };
+  }
+
+  async init() {
+    await client.start();
+    await this.context.chain.start();
+    await this.context.auth.init();
   }
 }
