@@ -23,8 +23,7 @@ import { generateCommitmentRoot } from "@/lib/utils";
 import { cn } from "@/lib/cn";
 import { Badge } from "./ui/badge";
 import { useToast } from "./ui/use-toast";
-import { usePoll } from "@/core/hooks";
-import { useVote } from "@/core/hooks/useVote";
+import { usePoll, useVote } from "@/core/hooks";
 import { PollCardSkeleton } from "./poll-card-skeleton";
 
 export function PollCard({ id }: { id: number }) {
@@ -32,7 +31,11 @@ export function PollCard({ id }: { id: number }) {
     store.wallet,
     store.connectWallet,
   ]);
-  const { metadata, options, loading, commitment } = usePoll(id);
+  const {
+    data: { metadata, options, commitment },
+    isLoading,
+    error,
+  } = usePoll(id);
 
   const { vote, isPending: isVoting, isSuccess: isVoted } = useVote(id);
 
@@ -80,16 +83,16 @@ export function PollCard({ id }: { id: number }) {
   const canVote = !!activeOptionHash && validProof;
 
   useEffect(() => {
-    if (loading || loadProgressBar) return;
+    if (isLoading || loadProgressBar) return;
     const timeout = setTimeout(() => {
       setLoadProgressBar(true);
     }, 1000);
     return () => {
       clearTimeout(timeout);
     };
-  }, [loading, loadProgressBar]);
+  }, [isLoading, loadProgressBar]);
 
-  if (loading) {
+  if (isLoading) {
     return <PollCardSkeleton />;
   }
 
@@ -114,7 +117,7 @@ export function PollCard({ id }: { id: number }) {
                       activeOptionHash === option.hash &&
                         "overflow-hidden rounded-lg border-2 border-primary/40 bg-primary/20 hover:bg-primary/20",
                     )}
-                    loading={loading}
+                    loading={isLoading}
                     onClick={() => handleSelectOption(option.hash)}
                     variant="outline"
                   >
@@ -168,7 +171,7 @@ export function PollCard({ id }: { id: number }) {
               <Button
                 size="lg"
                 className="w-full"
-                loading={loading}
+                loading={isLoading}
                 onClick={connectWallet}
               >
                 Connect your Auro Wallet
@@ -179,7 +182,7 @@ export function PollCard({ id }: { id: number }) {
         <CardFooter className="flex gap-2">
           <Button
             className="w-full"
-            loading={loading}
+            loading={isLoading}
             onClick={() => setOpenVotersModal(true)}
             variant="outline"
           >

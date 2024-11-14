@@ -29,16 +29,6 @@ export const useAuth = (): AuthState & {
   };
 };
 
-export const usePoll = (id: number): PollState => {
-  const { engine, pollState } = useZeroPollContext();
-
-  useEffect(() => {
-    engine.context.poll.loadPoll(id);
-  }, [id]);
-
-  return { ...pollState };
-};
-
 export const useCreatePoll = (callbacks?: {
   onError?: (message: string) => void;
   onSuccess?: (result: { id: number; hash: string }) => void;
