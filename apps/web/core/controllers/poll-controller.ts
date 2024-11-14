@@ -147,7 +147,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
     });
   }
 
-  public async vote(optionHash: string) {
+  public async vote(optionHash: string): Promise<{ hash: string }> {
     this.validateVotePrerequisites();
 
     const pollId = UInt32.from(this.state.metadata!.id);
@@ -156,7 +156,9 @@ export class PollController extends BaseController<PollConfig, PollState> {
     const witness = this.createVotersWitness(sender);
     const proof = await this.createVoteProof(witness, pollId);
 
-    return this.submitVoteTransaction(pollId, optionHash, proof);
+    const hash = await this.submitVoteTransaction(pollId, optionHash, proof);
+
+    return { hash };
   }
 
   private validateVotePrerequisites() {
@@ -206,7 +208,15 @@ export class PollController extends BaseController<PollConfig, PollState> {
     isPendingTransaction(tx.transaction);
     this.wallet.addPendingTransaction(tx.transaction);
 
-    return tx.transaction;
+    const hash = tx.transaction.hash().toString();
+
+    const receipt = await this.wallet.waitForTransactionReceipt(hash);
+
+    if (receipt.status === "FAILURE") {
+      throw new Error(receipt.statusMessage as string);
+    }
+
+    return hash;
   }
 
   public get metadata() {
