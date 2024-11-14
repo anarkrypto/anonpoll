@@ -12,7 +12,9 @@ export interface UseVoteParams {
 
 export interface UseVoteReturn {
   vote: (optionHash: string) => Promise<void>;
-  loading: boolean;
+  isPending: boolean;
+  isSuccess: boolean;
+  isError: boolean;
   error: string | null;
   data: { hash: string } | null;
 }
@@ -21,7 +23,7 @@ export const useVote = ({
   pollId,
   callbacks,
 }: UseVoteParams): UseVoteReturn => {
-  const [loading, setLoading] = useState(false);
+  const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<{ hash: string } | null>(null);
 
@@ -34,7 +36,7 @@ export const useVote = ({
 
   const vote = useCallback(
     async (optionHash: string) => {
-      setLoading(true);
+      setIsPending(true);
       setError(null);
       setData(null);
 
@@ -53,7 +55,7 @@ export const useVote = ({
         setError(message);
         callbacks?.onError?.(message);
       } finally {
-        setLoading(false);
+        setIsPending(false);
       }
     },
     [pollId, engine.context.poll, callbacks],
@@ -61,7 +63,9 @@ export const useVote = ({
 
   return {
     vote,
-    loading,
+    isPending,
+    isSuccess: !!data,
+    isError: !!error,
     error,
     data,
   };
