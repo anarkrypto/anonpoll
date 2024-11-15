@@ -79,42 +79,7 @@ export class WalletController extends BaseController<
     try {
       const account = await this.provider.getAccount();
       this.update({ account });
-
-      this.chain.subscribe((_, changedState) => {
-        if (changedState.block) {
-          console.log("block", changedState.block);
-          const myRecentConfirmedTransactions = changedState.block.txs
-            .filter(({ tx }) => tx.sender === this.account)
-            .map(({ tx, status, statusMessage }) => {
-              const pendingTransaction = new PendingTransaction({
-                methodId: Field(tx.methodId),
-                nonce: UInt64.from(tx.nonce),
-                isMessage: false,
-                sender: PublicKey.fromBase58(tx.sender),
-                argsFields: tx.argsFields.map((arg) => Field(arg)),
-                auxiliaryData: [],
-                signature: Signature.fromJSON({
-                  r: tx.signature.r,
-                  s: tx.signature.s,
-                }),
-              });
-              return this.buildTransaction(
-                pendingTransaction,
-                status ? "SUCCESS" : "FAILURE",
-                statusMessage,
-              );
-            });
-
-          if (myRecentConfirmedTransactions.length > 0) {
-            myRecentConfirmedTransactions.forEach((tx) => {
-              this.transactions.set(tx.hash, tx);
-            });
-            this.update({
-              transactions: Array.from(this.transactions.values()),
-            });
-          }
-        }
-      });
+      this.observeTransactions();
     } catch (error) {
       throw MinaProviderError.fromJson(error);
     } finally {
@@ -128,6 +93,43 @@ export class WalletController extends BaseController<
     if (!provider) {
       throw new Error("Wallet provider is not set");
     }
+  }
+
+  private observeTransactions() {
+    this.chain.subscribe((_, changedState) => {
+      if (changedState.block) {
+        const myRecentConfirmedTransactions = changedState.block.txs
+          .filter(({ tx }) => tx.sender === this.account)
+          .map(({ tx, status, statusMessage }) => {
+            const pendingTransaction = new PendingTransaction({
+              methodId: Field(tx.methodId),
+              nonce: UInt64.from(tx.nonce),
+              isMessage: false,
+              sender: PublicKey.fromBase58(tx.sender),
+              argsFields: tx.argsFields.map((arg) => Field(arg)),
+              auxiliaryData: [],
+              signature: Signature.fromJSON({
+                r: tx.signature.r,
+                s: tx.signature.s,
+              }),
+            });
+            return this.buildTransaction(
+              pendingTransaction,
+              status ? "SUCCESS" : "FAILURE",
+              statusMessage,
+            );
+          });
+
+        if (myRecentConfirmedTransactions.length > 0) {
+          myRecentConfirmedTransactions.forEach((tx) => {
+            this.transactions.set(tx.hash, tx);
+          });
+          this.update({
+            transactions: Array.from(this.transactions.values()),
+          });
+        }
+      }
+    });
   }
 
   public async connect() {
