@@ -89,7 +89,7 @@ describe("Poll Manager", () => {
 
     expect(poll.options[0].votesCount).toBe(0);
 
-    await poll.vote(pollId, poll.options[0].hash);
+    await poll.vote(poll.options[0].hash);
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
