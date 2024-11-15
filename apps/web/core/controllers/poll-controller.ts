@@ -141,7 +141,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
   }
 
   private async getCommitment(pollId: UInt32) {
-    const commitment = await client.query.runtime.Poll.commitments.get(
+    const commitment = await this.client.query.runtime.Poll.commitments.get(
       UInt32.from(pollId),
     );
     if (!commitment) {
