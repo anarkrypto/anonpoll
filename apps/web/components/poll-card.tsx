@@ -25,6 +25,7 @@ import { Badge } from "./ui/badge";
 import { useToast } from "./ui/use-toast";
 import { usePoll, useVote } from "@/core/hooks";
 import { PollCardSkeleton } from "./poll-card-skeleton";
+import { PollCardError } from "./poll-card-error";
 
 export function PollCard({ id }: { id: number }) {
   const [wallet, connectWallet] = useWalletStore((store) => [
@@ -92,7 +93,11 @@ export function PollCard({ id }: { id: number }) {
     };
   }, [isLoading, loadProgressBar]);
 
-  if (isLoading) {
+  if (error) {
+    return <PollCardError title={"Error fetching Poll"} description={error} />;
+  }
+
+  if (isLoading || !metadata) {
     return <PollCardSkeleton />;
   }
 
@@ -100,8 +105,8 @@ export function PollCard({ id }: { id: number }) {
     <>
       <Card className="w-full max-w-xl sm:p-4">
         <CardHeader>
-          <CardTitle>{metadata!.title}</CardTitle>
-          {metadata!.description?.trim() && (
+          <CardTitle>{metadata.title}</CardTitle>
+          {metadata.description?.trim() && (
             <CardDescription>{metadata!.description}</CardDescription>
           )}
         </CardHeader>
