@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from "react";
-import { useZeroPollContext } from "../context-provider";
+import { useState, useCallback, useEffect, useSyncExternalStore } from "react";
+import { useControllers } from "./useControllers";
 import { PollState } from "../controllers/poll-controller";
 
 export interface UsePollReturn {
@@ -12,23 +12,28 @@ export interface UsePollReturn {
 }
 
 export const usePoll = (id: number): UsePollReturn => {
-  const { engine, pollState } = useZeroPollContext();
+  const { poll: pollController } = useControllers();
   const [error, setError] = useState<string | null>(null);
+
+  const pollState = useSyncExternalStore(
+    pollController.subscribe,
+    () => pollController.state
+  );
 
   const loadPoll = useCallback(async () => {
     setError(null);
     try {
-      await engine.context.poll.loadPoll(id);
+      await pollController.loadPoll(id);
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Failed to load poll";
       setError(message);
     }
-  }, [id, engine.context.poll]);
+  }, [id, pollController]);
 
   useEffect(() => {
     loadPoll();
-  }, [id]);
+  }, [id, loadPoll]);
 
   return {
     data: {
@@ -37,7 +42,7 @@ export const usePoll = (id: number): UsePollReturn => {
       commitment: pollState.commitment,
     },
     isLoading: pollState.loading,
-    isSuccess: pollState.metadata !== null,
+    isSuccess: !pollState.loading && !error,
     isError: !!error,
     error,
     refetch: loadPoll,

@@ -1,8 +1,18 @@
 import { ChainState } from "../controllers/chain-controller";
-import { useZeroPollContext } from "../context-provider";
+import { useSyncExternalStore } from "react";
+import { useControllers } from "./useControllers";
 
 export interface UseChainReturn extends ChainState {}
 
 export const useChain = (): UseChainReturn => {
-  return useZeroPollContext().chainState;
+  const { chain: chanController } = useControllers();
+
+  const chainState = useSyncExternalStore(
+    chanController.subscribe,
+    () => chanController.state,
+  );
+
+  return {
+    ...chainState,
+  };
 };

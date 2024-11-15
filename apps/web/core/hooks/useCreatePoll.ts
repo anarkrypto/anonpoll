@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
-import { useZeroPollContext } from "../context-provider";
 import { CreatePollData } from "../controllers/poll-manager-controller";
+import { useControllers } from "./useControllers";
 
 export interface CreatePollResult {
   id: number;
@@ -19,7 +19,6 @@ export interface UseCreatePollReturn {
   isError: boolean;
   error: string | null;
   data: CreatePollResult | null;
-  reset: () => void;
 }
 
 export const useCreatePoll = (
@@ -28,8 +27,7 @@ export const useCreatePoll = (
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<CreatePollResult | null>(null);
-
-  const { engine } = useZeroPollContext();
+  const { pollManager: pollManagerController } = useControllers();
 
   const reset = useCallback(() => {
     setIsPending(false);
@@ -42,9 +40,8 @@ export const useCreatePoll = (
       setIsPending(true);
       setError(null);
       setData(null);
-
       try {
-        const result = await engine.context.pollManager.create(pollData);
+        const result = await pollManagerController.create(pollData);
         setData(result);
         options.onSuccess?.(result);
       } catch (err) {
@@ -56,20 +53,15 @@ export const useCreatePoll = (
         setIsPending(false);
       }
     },
-    [engine.context.pollManager.create, options],
+    [pollManagerController, options],
   );
-
-  // Derive boolean flags from state
-  const isError = !!error;
-  const isSuccess = !isPending && !error && !!data;
 
   return {
     createPoll,
     isPending,
-    isSuccess,
-    isError,
+    isSuccess: !isPending && !error && !!data,
+    isError: !!error,
     error,
     data,
-    reset,
   };
 };

@@ -1,11 +1,21 @@
 import { WalletState } from "../controllers/wallet-controller";
-import { useZeroPollContext } from "../context-provider";
+import { useCallback, useSyncExternalStore } from "react";
+import { useControllers } from "./useControllers";
 
 export interface UseWalletReturn extends WalletState {
   connect: () => Promise<void>;
 }
 
 export const useWallet = (): UseWalletReturn => {
-  const { walletState, engine } = useZeroPollContext();
-  return { ...walletState, connect: () => engine.context.wallet.connect() };
+  const { wallet: walletController } = useControllers();
+
+  const state = useSyncExternalStore(
+    walletController.subscribe,
+    () => walletController.state,
+  );
+
+  return {
+    ...state,
+    connect: useCallback(() => walletController.connect(), [walletController]),
+  };
 };

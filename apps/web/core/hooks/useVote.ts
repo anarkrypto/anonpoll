@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { useZeroPollContext } from "../context-provider";
+import { useControllers } from "./useControllers";
 
 export interface UseVoteOptions {
   onError?: (message: string) => void;
@@ -22,45 +22,37 @@ export const useVote = (
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<{ hash: string } | null>(null);
-
-  const { engine } = useZeroPollContext();
+  const { poll: pollController } = useControllers();
 
   useEffect(() => {
     // Preload the poll
-    engine.context.poll.loadPoll(pollId);
-  }, [pollId]);
+    pollController.loadPoll(pollId);
+  }, [pollId, pollController]);
 
   const vote = useCallback(
     async (optionHash: string) => {
       setIsPending(true);
       setError(null);
       setData(null);
-
       try {
-        // Ensure poll is loaded
-        await engine.context.poll.loadPoll(pollId);
-
-        // Submit vote transaction
-        const result = await engine.context.poll.vote(optionHash);
-
+        const result = await pollController.vote(optionHash);
         setData(result);
         options?.onSuccess?.(result);
       } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "Failed to submit vote";
+        const message = err instanceof Error ? err.message : "Unknown error";
         setError(message);
         options?.onError?.(message);
       } finally {
         setIsPending(false);
       }
     },
-    [pollId, engine.context.poll, options],
+    [pollController, options],
   );
 
   return {
     vote,
     isPending,
-    isSuccess: !!data,
+    isSuccess: !isPending && !error && !!data,
     isError: !!error,
     error,
     data,

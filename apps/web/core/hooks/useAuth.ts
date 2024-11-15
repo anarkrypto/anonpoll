@@ -1,14 +1,21 @@
 import { AuthState } from "../controllers/auth-controller";
-import { useZeroPollContext } from "../context-provider";
+import { useSyncExternalStore } from "react";
+import { useControllers } from "./useControllers";
 
 export interface UseAuthReturn extends AuthState {
   authenticate: () => Promise<void>;
 }
 
 export const useAuth = (): UseAuthReturn => {
-  const { authState, engine } = useZeroPollContext();
+  const { auth: authController } = useControllers();
+
+  const authState = useSyncExternalStore(
+    authController.subscribe,
+    () => authController.state,
+  );
+
   return {
     ...authState,
-    authenticate: () => engine.context.auth.authenticate(),
+    authenticate: () => authController.authenticate(),
   };
 };
