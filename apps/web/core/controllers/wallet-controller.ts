@@ -7,7 +7,7 @@ import { PendingTransaction } from "@proto-kit/sequencer";
 import { ChainController } from "./chain-controller";
 import { Field, PublicKey, Signature, UInt64 } from "o1js";
 import { MethodIdResolver } from "@proto-kit/module";
-import { client } from "chain";
+import type { client } from "chain";
 
 export type TransactionStatus = "PENDING" | "SUCCESS" | "FAILURE";
 

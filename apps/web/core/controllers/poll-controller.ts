@@ -7,7 +7,7 @@ import {
   PublicKey,
 } from "o1js";
 import { UInt32 } from "@proto-kit/library";
-import { client } from "chain";
+import type { client } from "chain";
 import { canVote, OptionsHashes, Poll } from "chain/dist/runtime/modules/poll";
 import { BaseConfig, BaseController, BaseState } from "./base-controller";
 import { ChainController } from "./chain-controller";
@@ -72,6 +72,8 @@ export class PollController extends BaseController<PollConfig, PollState> {
         // Do not load the same poll twice
         return;
       }
+
+      console.log("******** loading poll", id);
 
       this.update({
         loading: true,
