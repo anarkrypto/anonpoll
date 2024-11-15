@@ -40,7 +40,7 @@ export default function AuthPage() {
           size="lg"
           className="w-full px-8 py-6 text-lg"
           onClick={authenticate}
-          loading={loading}
+          loading={loading || isAuthenticated}
         >
           Connect Wallet
         </Button>
