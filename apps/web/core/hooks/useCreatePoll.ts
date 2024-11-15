@@ -29,12 +29,6 @@ export const useCreatePoll = (
   const [data, setData] = useState<CreatePollResult | null>(null);
   const { pollManager: pollManagerController } = useControllers();
 
-  const reset = useCallback(() => {
-    setIsPending(false);
-    setError(null);
-    setData(null);
-  }, []);
-
   const createPoll = useCallback(
     async (pollData: CreatePollData) => {
       setIsPending(true);
