@@ -6,6 +6,8 @@ import { cn } from "@/lib/cn";
 import { truncateWalletAddress } from "@/lib/utils";
 import Link from "next/link";
 import { useAuth, useWallet } from "@/core/hooks";
+import { useToast } from "./ui/use-toast";
+import { useState } from "react";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -22,14 +24,29 @@ export interface HeaderProps {
 }
 
 export default function Header() {
+
   const { account, loading: loadingWallet } = useWallet();
 
   const { isAuthenticated, authenticate, loading: loadingAuth } = useAuth();
 
+  const { toast } = useToast();
+
   const loading = loadingWallet || loadingAuth;
   const showWallet = isAuthenticated && account;
 
-  // TODO: add error handle to authenticate method
+  const handleAuthenticate = async () => {
+    try {
+      await authenticate();
+    } catch (error) {
+      console.error('Error connecting wallet', error);
+      const message = error instanceof Error ? error.message : "Check logs for more details";
+      toast({
+        title: "Error connecting wallet",
+        description: message,
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <header className="flex justify-center border-b bg-white p-2 shadow-sm">
@@ -52,7 +69,7 @@ export default function Header() {
         </div>
         <div>
           {/* wallet */}
-          <Button loading={loading} onClick={authenticate} variant="secondary">
+          <Button loading={loading} onClick={handleAuthenticate} variant="secondary">
             {showWallet ? (
               <>
                 <div className="hidden text-sm sm:block">
