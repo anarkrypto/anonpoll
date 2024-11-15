@@ -36,6 +36,11 @@ export interface PollState extends BaseState {
   }[];
 }
 
+interface VotingResult {
+  hash: string;
+  votesCount: number;
+}
+
 export class PollController extends BaseController<PollConfig, PollState> {
   private wallet: WalletController;
   private chain: ChainController;
@@ -75,36 +80,20 @@ export class PollController extends BaseController<PollConfig, PollState> {
         options: [],
       });
 
-      const [metadata, voteOptions, commitment] = await Promise.all([
+      const [metadata, votingResults, commitment] = await Promise.all([
         this.getMetadata(id),
-        this.getVotesOptions(pollId),
+        this.getVoteResults(pollId),
         this.getCommitment(pollId),
       ]);
 
+      // Check if the options hashes match the ones on-chain
       this.compareHashes(
-        voteOptions.map(({ hash }) => hash),
+        votingResults.map(({ hash }) => hash),
         metadata.options,
         metadata.salt,
       );
 
-      const totalVotesCast = voteOptions.reduce(
-        (acc, option) => acc + option.votesCount,
-        0,
-      );
-
-      // TODO: Investigate implications of relying on the index of the options
-
-      const options = metadata.options.map((text, index) => {
-        const votesCount = voteOptions[index].votesCount || 0;
-        const votesPercentage =
-          totalVotesCast === 0 ? 0 : (votesCount / totalVotesCast) * 100;
-        return {
-          text,
-          hash: voteOptions[index].hash,
-          votesCount: voteOptions[index].votesCount,
-          votesPercentage,
-        };
-      });
+      const options = this.buildOptions(metadata, votingResults);
 
       this.update({
         commitment,
@@ -112,7 +101,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
         options,
       });
 
-      this.observePoll(id);
+      this.observePoll();
     } catch (error) {
       throw error;
     } finally {
@@ -134,12 +123,12 @@ export class PollController extends BaseController<PollConfig, PollState> {
     return metadata;
   }
 
-  private async getVotesOptions(pollId: UInt32) {
+  private async getVoteResults(pollId: UInt32) {
     const votesOptions = (
       await this.client.query.runtime.Poll.votes.get(pollId)
     )?.options.map((option) => {
       return {
-        hash: option.hash.toString(),
+        hash: option.hash.toString() as string,
         votesCount: Number(option.votesCount.toBigInt()),
       };
     });
@@ -173,11 +162,48 @@ export class PollController extends BaseController<PollConfig, PollState> {
     }
   }
 
-  private observePoll(id: number) {
+  private buildOptions(metadata: PollData, votingResults: VotingResult[]) {
+    const totalVotesCast = votingResults.reduce(
+      (acc, option) => acc + option.votesCount,
+      0,
+    );
+
+    // TODO: Investigate implications of relying on the index of the options
+
+    return metadata.options.map((text, index) => {
+      const votesCount = votingResults[index].votesCount || 0;
+      const votesPercentage =
+        totalVotesCast === 0 ? 0 : (votesCount / totalVotesCast) * 100;
+      return {
+        text,
+        hash: votingResults[index].hash,
+        votesCount: votingResults[index].votesCount,
+        votesPercentage,
+      };
+    });
+  }
+
+  private observePoll() {
     this.chain.subscribe(async (_, changedState) => {
       if ("block" in changedState) {
-        await this.loadPoll(id);
+        await this.updateVotingResults();
       }
+    });
+  }
+
+  private async updateVotingResults() {
+    if (!this.metadata) {
+      throw new Error("Poll not loaded");
+    }
+
+    const votingResults = await this.getVoteResults(
+      UInt32.from(this.metadata.id),
+    );
+
+    const options = this.buildOptions(this.metadata, votingResults);
+
+    this.update({
+      options,
     });
   }
 
