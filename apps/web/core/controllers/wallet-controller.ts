@@ -45,6 +45,7 @@ export interface WalletConfig extends BaseConfig {
 }
 
 export interface WalletState extends BaseState {
+  initialized: boolean;
   account: string | null;
   loading: boolean;
   transactions: TransactionJSON[];
@@ -55,6 +56,7 @@ export class WalletController extends BaseController<
   WalletState
 > {
   readonly defaultState: WalletState = {
+    initialized: false,
     account: null,
     loading: false,
     transactions: [],
@@ -78,7 +80,7 @@ export class WalletController extends BaseController<
 
     try {
       const account = await this.provider.getAccount();
-      this.update({ account });
+      this.update({ account, initialized: true });
       this.observeTransactions();
     } catch (error) {
       throw MinaProviderError.fromJson(error);
