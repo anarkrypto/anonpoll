@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useSyncExternalStore } from "react";
-import { useControllers } from "./useControllers";
 import { PollState } from "../controllers/poll-controller";
+import { useEngine } from "../engine-context";
 
 export interface UsePollReturn {
   data: Omit<PollState, "loading">;
@@ -12,11 +12,14 @@ export interface UsePollReturn {
 }
 
 export const usePoll = (id: number): UsePollReturn => {
-  const { poll: pollController } = useControllers();
+
+  const { engine } = useEngine();
+  const pollController = engine.context.poll;
+
   const [error, setError] = useState<string | null>(null);
 
   const pollState = useSyncExternalStore(
-    pollController.subscribe,
+    (callback) => pollController.subscribe(callback),
     () => pollController.state
   );
 

@@ -8,7 +8,7 @@ export const useChain = (): UseChainReturn => {
   const { chain: chanController } = useControllers();
 
   const chainState = useSyncExternalStore(
-    chanController.subscribe,
+    (callback) => chanController.subscribe(callback),
     () => chanController.state,
   );
 

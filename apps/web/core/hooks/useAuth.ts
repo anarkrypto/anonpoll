@@ -10,7 +10,7 @@ export const useAuth = (): UseAuthReturn => {
   const { auth: authController } = useControllers();
 
   const authState = useSyncExternalStore(
-    authController.subscribe,
+    (callback) => authController.subscribe(callback),
     () => authController.state,
   );
 
