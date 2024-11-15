@@ -9,7 +9,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "./ui/button";
-import { useWalletStore } from "@/lib/stores/wallet";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { DialogDescription, DialogProps } from "@radix-ui/react-dialog";
 import { useEffect, useMemo, useState } from "react";
@@ -23,15 +22,12 @@ import { generateCommitmentRoot } from "@/lib/utils";
 import { cn } from "@/lib/cn";
 import { Badge } from "./ui/badge";
 import { useToast } from "./ui/use-toast";
-import { usePoll, useVote } from "@/core/hooks";
+import { usePoll, useVote, useWallet } from "@/core/hooks";
 import { PollCardSkeleton } from "./poll-card-skeleton";
 import { PollCardError } from "./poll-card-error";
 
 export function PollCard({ id }: { id: number }) {
-  const [wallet, connectWallet] = useWalletStore((store) => [
-    store.wallet,
-    store.connectWallet,
-  ]);
+  const { account, connect } = useWallet();
   const {
     data: { metadata, options, commitment },
     isLoading,
@@ -160,7 +156,7 @@ export function PollCard({ id }: { id: number }) {
                 </li>
               ))}
             </ul>
-            {!!wallet && !isVoted && (
+            {!!account && !isVoted && (
               <Button
                 size="lg"
                 className="w-full"
@@ -172,12 +168,12 @@ export function PollCard({ id }: { id: number }) {
                 Vote
               </Button>
             )}
-            {!wallet && (
+            {!account && (
               <Button
                 size="lg"
                 className="w-full"
                 loading={isLoading}
-                onClick={connectWallet}
+                onClick={connect}
               >
                 Connect your Auro Wallet
               </Button>
