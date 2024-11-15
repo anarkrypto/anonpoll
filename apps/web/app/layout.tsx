@@ -13,7 +13,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/cn";
 import { useClientStore } from "@/lib/stores/client";
 import { useAuthStore } from "@/lib/stores/auth";
-import InstallAuroWalletModal from "@/components/install-auro-wallet-modal";
 import { ZeroPollProvider } from "@/core/context-provider";
 import { TransactionNotifications } from "@/components/transaction-notifications";
 
@@ -64,10 +63,6 @@ export default function RootLayout({
           {children}
           <Toaster />
           <TransactionNotifications />
-          <InstallAuroWalletModal
-            open={wallet.showInstallWalletModal}
-            onOpenChange={wallet.openChangeInstallWalletModal}
-          />
         </ZeroPollProvider>
       </body>
     </html>

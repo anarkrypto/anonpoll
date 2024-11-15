@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Shield, Lock, Vote } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Montserrat } from "next/font/google";
-import { useWalletStore } from "@/lib/stores/wallet";
+import { useWallet } from "@/core/hooks";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -14,12 +13,10 @@ const montserrat = Montserrat({
 });
 
 export default function LandingPage() {
-  const [walletInstalled, openChangeInstallWalletModal] = useWalletStore(
-    (state) => [state.walletInstalled, state.openChangeInstallWalletModal],
-  );
+  const { initialized: walletInstalled } = useWallet();
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center p-4 mt-4 sm:mt-0">
+    <div className="mt-4 flex flex-1 flex-col items-center justify-center p-4 sm:mt-0">
       <main className="w-full max-w-4xl space-y-8">
         <div className="space-y-4">
           <h1
@@ -59,25 +56,12 @@ export default function LandingPage() {
         </div>
 
         <div className="flex justify-center">
-          {!walletInstalled ? (
-            <Button
-              size="lg"
-              className="px-8 py-6 text-lg"
-              onClick={() => {
-                openChangeInstallWalletModal(true);
-              }}
-            >
+          <Link href={walletInstalled ? "/new" : "/auth?next=/new"} passHref>
+            <Button size="lg" className="px-8 py-6 text-lg">
               Create a New Poll
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-          ) : (
-            <Link href="/new" passHref>
-              <Button size="lg" className="px-8 py-6 text-lg">
-                Create a New Poll
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
-          )}
+          </Link>
         </div>
 
         <div>
