@@ -2,17 +2,9 @@
 
 import "./globals.css";
 import { Inter as FontSans } from "next/font/google";
-import { useEffect } from "react";
-
-import { usePollBlockHeight } from "@/lib/stores/chain";
-import { useObserveBalance } from "@/lib/stores/balances";
-import { useNotifyTransactions, useWalletStore } from "@/lib/stores/wallet";
-
 import Header from "@/components/header";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/cn";
-import { useClientStore } from "@/lib/stores/client";
-import { useAuthStore } from "@/lib/stores/auth";
 import { ZeroPollProvider } from "@/core/context-provider";
 import { TransactionNotifications } from "@/components/transaction-notifications";
 
@@ -26,27 +18,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const wallet = useWalletStore();
-  const startClient = useClientStore((state) => state.start);
-  const verifyAuth = useAuthStore((state) => state.verifyAuth);
-
-  usePollBlockHeight();
-  useObserveBalance();
-  useNotifyTransactions();
-
-  useEffect(() => {
-    // init on mount
-    startClient();
-    wallet.initializeWallet();
-    verifyAuth();
-  }, []);
-
-  useEffect(() => {
-    if (wallet.walletInstalled) {
-      wallet.observeWalletChange();
-    }
-  }, [wallet.walletInstalled]);
-
   return (
     <html lang="en" className="h-full">
       <body
