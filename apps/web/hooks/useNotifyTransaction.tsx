@@ -36,13 +36,14 @@ export const notifyTransaction = (transaction: TransactionJSON) => {
 };
 
 export const useNotifyTransactions = () => {
-  const notifiedTransactions = useRef<TransactionJSON[]>([]);
+  const notifiedTransactions = useRef(new Set<string>());
   const { transactions } = useWallet();
   useEffect(() => {
     transactions.forEach((transaction) => {
-      if (notifiedTransactions.current.includes(transaction)) return;
+      const key = `${transaction.hash}-${transaction.status}`;
+      if (notifiedTransactions.current.has(key)) return;
       notifyTransaction(transaction);
-      notifiedTransactions.current.push(transaction);
+      notifiedTransactions.current.add(key);
     });
   }, [transactions]);
 };
