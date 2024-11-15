@@ -94,19 +94,22 @@ export class PollController extends BaseController<PollConfig, PollState> {
 
       // TODO: Investigate implications of relying on the index of the options
 
+      const options = metadata.options.map((text, index) => {
+        const votesCount = voteOptions[index].votesCount || 0;
+        const votesPercentage =
+          totalVotesCast === 0 ? 0 : (votesCount / totalVotesCast) * 100;
+        return {
+          text,
+          hash: voteOptions[index].hash,
+          votesCount: voteOptions[index].votesCount,
+          votesPercentage,
+        };
+      });
+
       this.update({
         commitment,
         metadata,
-        options: metadata.options.map((text, index) => {
-          const votesCount = voteOptions[index].votesCount || 0;
-          const votesPercentage = (votesCount / totalVotesCast) * 100;
-          return {
-            text,
-            hash: voteOptions[index].hash,
-            votesCount: voteOptions[index].votesCount,
-            votesPercentage,
-          };
-        }),
+        options,
       });
 
       this.observePoll(id);
