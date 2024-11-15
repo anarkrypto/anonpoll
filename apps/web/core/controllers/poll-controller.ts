@@ -73,8 +73,6 @@ export class PollController extends BaseController<PollConfig, PollState> {
         return;
       }
 
-      console.log("******** loading poll", id);
-
       this.update({
         loading: true,
         commitment: null,
