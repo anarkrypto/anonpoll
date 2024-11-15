@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useAuth } from "@/lib/stores/auth";
+import { useAuth } from "@/core/hooks";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
@@ -16,7 +16,7 @@ export default function AuthPage() {
   const next = useSearchParams().get("next") || "/";
   const router = useRouter();
 
-  const {isAuthenticated, authenticate, loading} = useAuth()
+  const { isAuthenticated, authenticate, loading } = useAuth();
 
   useEffect(() => {
     if (isAuthenticated) {
