@@ -1,9 +1,16 @@
-import React, { createContext, useContext, useEffect, useMemo } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { Engine, EngineConfig } from "@/core/engine";
 import { AuroWalletProvider } from "./providers/wallets/auro-wallet-provider";
 
 type EngineContextValue = {
   engine: Engine;
+  initialized: boolean;
 };
 
 const EngineContext = createContext({} as EngineContextValue);
@@ -14,21 +21,28 @@ export function EngineProvider({
   protokitGraphqlUrl,
   storeApiUrl,
 }: { children: React.ReactNode } & EngineConfig) {
+  const [initialized, setInitialized] = useState(false);
+
   const engine = useMemo(
     () => new Engine({ tickInterval, protokitGraphqlUrl, storeApiUrl }),
     [tickInterval, protokitGraphqlUrl, storeApiUrl],
   );
 
-  useEffect(() => {
-    engine.init();
+  const init = async () => {
+    await engine.init();
     if (AuroWalletProvider.isInstalled()) {
       const walletProvider = new AuroWalletProvider();
-      engine.context.wallet.init(walletProvider);
+      await engine.context.wallet.init(walletProvider);
     }
+    setInitialized(true);
+  };
+
+  useEffect(() => {
+    init();
   }, []);
 
   return (
-    <EngineContext.Provider value={{ engine }}>
+    <EngineContext.Provider value={{ engine, initialized }}>
       {children}
     </EngineContext.Provider>
   );
