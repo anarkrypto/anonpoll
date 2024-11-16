@@ -39,8 +39,7 @@
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
     "ts-jest": "^29.1.1",
-    "zod": "^3.22.4",
-    "zustand": "^4.4.6"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/jest": "^29.5.7",
