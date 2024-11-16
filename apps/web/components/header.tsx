@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@/components/ui/button";
 import { ChainStatus } from "./chain-status";
 import { Separator } from "./ui/separator";

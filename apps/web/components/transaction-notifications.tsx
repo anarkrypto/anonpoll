@@ -1,3 +1,5 @@
+"use client"
+
 import { useNotifyTransactions } from "@/hooks/useNotifyTransaction";
 import { Toaster } from "./ui/toaster";
 
