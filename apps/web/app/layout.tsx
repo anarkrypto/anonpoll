@@ -1,5 +1,3 @@
-"use client";
-
 import "./globals.css";
 import { Inter as FontSans } from "next/font/google";
 import Header from "@/components/header";
@@ -7,11 +5,17 @@ import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/cn";
 import { EngineProvider } from "@/core/engine-context";
 import { TransactionNotifications } from "@/components/transaction-notifications";
+import { Metadata } from "next";
 
 export const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
 });
+
+export const metadata: Metadata = {
+  title: "ZeroPoll",
+  description: "A private voting system powered by zero-knowledge proofs",
+}
 
 export default function RootLayout({
   children,
