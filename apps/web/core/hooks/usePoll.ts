@@ -12,15 +12,14 @@ export interface UsePollReturn {
 }
 
 export const usePoll = (id: number): UsePollReturn => {
-
-  const { engine } = useEngine();
+  const { engine, initialized } = useEngine();
   const pollController = engine.context.poll;
 
   const [error, setError] = useState<string | null>(null);
 
   const pollState = useSyncExternalStore(
     (callback) => pollController.subscribe(callback),
-    () => pollController.state
+    () => pollController.state,
   );
 
   const loadPoll = useCallback(async () => {
@@ -35,8 +34,8 @@ export const usePoll = (id: number): UsePollReturn => {
   }, [id, pollController]);
 
   useEffect(() => {
-    loadPoll();
-  }, [id, loadPoll]);
+    if (initialized) loadPoll();
+  }, [id, loadPoll, initialized]);
 
   return {
     data: {

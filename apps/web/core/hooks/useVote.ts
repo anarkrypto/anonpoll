@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { useControllers } from "./useControllers";
+import { useEngine } from "../engine-context";
 
 export interface UseVoteOptions {
   onError?: (message: string) => void;
@@ -23,11 +24,14 @@ export const useVote = (
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<{ hash: string } | null>(null);
   const { poll: pollController } = useControllers();
+  const { initialized } = useEngine();
 
   useEffect(() => {
     // Preload the poll
-    pollController.loadPoll(pollId);
-  }, [pollId, pollController]);
+    if (initialized) {
+      pollController.loadPoll(pollId);
+    }
+  }, [pollId, pollController, initialized]);
 
   const vote = useCallback(
     async (optionHash: string) => {
