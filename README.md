@@ -8,6 +8,25 @@ ___
 - This project is funded by Mina Protocol: [Check the proposal](https://forums.minaprotocol.com/t/zeropoll-voting-polls/6482) 🎉
 - This project is based on [Protokit framework](https://protokit.dev) and was set up with [`proto-kit/starter-kit`](https://github.com/proto-kit/starter-kit).
 
+### Key Features
+- **Private Voting**: Vote counts are public while keeping individual votes confidential
+- **Double-Vote Prevention**: Uses nullifier system to prevent multiple votes from same user
+- **Verifiable Results**: All votes include zero-knowledge proofs for eligibility verification
+- **Flexible Polls**: Support for up to 10 options per poll with real-time result tracking
+- **Decentralized**: Fully on-chain implementation with no central authority
+
+### Technical Stack
+- Built with O1js for zero-knowledge proofs
+- Proto-kit for blockchain runtime implementation
+- Merkle trees for efficient voter verification
+- React with TypeScript for frontend implementation
+
+### Security Features
+- Zero-knowledge proofs for voter eligibility
+- Poseidon hash function for option privacy
+- Nullifier-based double-vote prevention
+- Commitment-based voter set management
+
 ## Quick start
 
 The monorepo contains 1 package and 1 app:
