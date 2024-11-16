@@ -12,6 +12,7 @@ export const useWallet = (): UseWalletReturn => {
   const state = useSyncExternalStore(
     (callback) => walletController.subscribe(callback),
     () => walletController.state,
+    () => walletController.state,
   );
 
   return {

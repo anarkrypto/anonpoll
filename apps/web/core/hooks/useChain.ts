@@ -10,6 +10,7 @@ export const useChain = (): UseChainReturn => {
   const chainState = useSyncExternalStore(
     (callback) => chanController.subscribe(callback),
     () => chanController.state,
+    () => chanController.state,
   );
 
   return {

@@ -20,6 +20,7 @@ export const usePoll = (id: number): UsePollReturn => {
   const pollState = useSyncExternalStore(
     (callback) => pollController.subscribe(callback),
     () => pollController.state,
+    () => pollController.state,
   );
 
   const loadPoll = useCallback(async () => {
