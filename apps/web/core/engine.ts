@@ -92,8 +92,10 @@ export class Engine {
   }
 
   async init() {
-    await client.start();
-    await this.context.chain.start();
-    await this.context.auth.init();
+    await Promise.all([
+      client.start(),
+      this.context.chain.start(),
+      this.context.auth.init(),
+    ]);
   }
 }
