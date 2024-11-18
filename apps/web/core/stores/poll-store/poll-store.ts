@@ -4,7 +4,7 @@ import { z } from "zod";
 import { AbstractPollStore } from "./abstract-poll-store";
 import { AbstractAuthStore } from "../auth-store/abstract-auth-store";
 
-export class PollStoreProvider implements AbstractPollStore {
+export class PollStore implements AbstractPollStore {
   constructor(
     private baseApiUrl: string,
     private authStore: AbstractAuthStore,
