@@ -5,7 +5,7 @@ import { Poll } from "chain/dist/runtime/modules/poll";
 import { UInt64 } from "@proto-kit/library";
 import { PollManagerController } from "../controllers/poll-manager-controller";
 import { WalletController } from "../controllers/wallet-controller";
-import { WalletProvider } from "../providers/wallets/wallet-provider";
+import { WalletProvider } from "../signers/wallet";
 import { PrivateKey } from "o1js";
 import { InMemoryPollStore } from "../providers/stores/poll-store";
 import { ChainTestController } from "./test-utils/chain-test-controller";

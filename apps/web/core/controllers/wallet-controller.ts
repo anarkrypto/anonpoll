@@ -1,8 +1,8 @@
 import { BaseConfig, BaseController, BaseState } from "./base-controller";
 import {
-  MinaProviderAbstract,
-  MinaProviderError,
-} from "../providers/wallets/base-wallet-provider";
+  MinaSignerAbstract,
+  MinaSignerError,
+} from "../signers/base-signer";
 import { PendingTransaction } from "@proto-kit/sequencer";
 import { ChainController } from "./chain-controller";
 import { Field, PublicKey, Signature, UInt64 } from "o1js";
@@ -62,7 +62,7 @@ export class WalletController extends BaseController<
     transactions: [],
   };
 
-  provider: MinaProviderAbstract | null = null;
+  provider: MinaSignerAbstract | null = null;
 
   private chain: ChainController;
 
@@ -74,7 +74,7 @@ export class WalletController extends BaseController<
     this.initialize();
   }
 
-  public async init(provider: MinaProviderAbstract) {
+  public async init(provider: MinaSignerAbstract) {
     this.provider = provider;
     this.update({ loading: true });
 
@@ -83,15 +83,15 @@ export class WalletController extends BaseController<
       this.update({ account, initialized: true });
       this.observeTransactions();
     } catch (error) {
-      throw MinaProviderError.fromJson(error);
+      throw MinaSignerError.fromJson(error);
     } finally {
       this.update({ loading: false });
     }
   }
 
   private ensureProviderExists(
-    provider: MinaProviderAbstract | null,
-  ): asserts provider is MinaProviderAbstract {
+    provider: MinaSignerAbstract | null,
+  ): asserts provider is MinaSignerAbstract {
     if (!provider) {
       throw new Error("Wallet provider is not set");
     }
@@ -144,7 +144,7 @@ export class WalletController extends BaseController<
 
       this.update({ account });
     } catch (error) {
-      throw MinaProviderError.fromJson(error);
+      throw MinaSignerError.fromJson(error);
     } finally {
       this.update({ loading: false });
     }

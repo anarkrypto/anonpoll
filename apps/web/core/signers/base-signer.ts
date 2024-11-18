@@ -1,6 +1,6 @@
 import { Nullifier } from "o1js";
 import { z } from "zod";
-export abstract class MinaProviderAbstract {
+export abstract class MinaSignerAbstract {
   abstract requestAccount: () => Promise<string>;
   abstract getAccount: () => Promise<string>;
   abstract on: (event: "accountsChanged", handler: (event: any) => void) => void;
@@ -16,7 +16,7 @@ export abstract class MinaProviderAbstract {
   }>;
 }
 
-export class MinaProviderError extends Error {
+export class MinaSignerError extends Error {
   code: number;
   data: unknown;
 
@@ -36,9 +36,9 @@ export class MinaProviderError extends Error {
       })
       .safeParse(json);
     if (success) {
-      return new MinaProviderError(data.message, data.code, data.data);
+      return new MinaSignerError(data.message, data.code, data.data);
     } else {
-      return new MinaProviderError("Unknown error", 0);
+      return new MinaSignerError("Unknown error", 0);
     }
   }
 }

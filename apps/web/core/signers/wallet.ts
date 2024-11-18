@@ -1,8 +1,8 @@
 import MinaClient from "mina-signer";
-import { MinaProviderAbstract } from "./base-wallet-provider";
+import { MinaSignerAbstract } from "./base-signer";
 import { Nullifier } from "o1js";
 
-export class WalletProvider implements MinaProviderAbstract {
+export class Wallet implements MinaSignerAbstract {
   #privateKey: string;
   client: MinaClient;
 

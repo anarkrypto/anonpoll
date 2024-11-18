@@ -8,7 +8,7 @@ import React, {
   useState,
 } from "react";
 import { Engine, EngineConfig } from "@/core/engine";
-import { AuroWalletProvider } from "./providers/wallets/auro-wallet-provider";
+import { AuroWallet } from "./signers/auro-wallet";
 
 type EngineContextValue = {
   engine: Engine;
@@ -32,8 +32,8 @@ export function EngineProvider({
 
   const init = async () => {
     await engine.init();
-    if (AuroWalletProvider.isInstalled()) {
-      const walletProvider = new AuroWalletProvider();
+    if (AuroWallet.isInstalled()) {
+      const walletProvider = new AuroWallet();
       await engine.context.wallet.init(walletProvider);
     }
     setInitialized(true);

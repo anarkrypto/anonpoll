@@ -1,5 +1,5 @@
 import { Nullifier } from "o1js";
-import { MinaProviderAbstract } from "./base-wallet-provider";
+import { MinaSignerAbstract } from "./base-signer";
 
 type Group = {
   x: bigint;
@@ -19,7 +19,7 @@ type JsonNullifier = {
   };
 };
 
-interface AuroWalletProviderInterface {
+interface AuroWalletInterface {
   // https://docs.aurowallet.com/general/reference/api-reference/methods/mina_requestaccounts
   requestAccounts: () => Promise<string[]>;
 
@@ -48,11 +48,11 @@ interface AuroWalletProviderInterface {
   }>;
 }
 
-export class AuroWalletProvider implements MinaProviderAbstract {
-  provider: AuroWalletProviderInterface;
+export class AuroWallet implements MinaSignerAbstract {
+  provider: AuroWalletInterface;
 
   constructor() {
-    this.provider = (window as any).mina as AuroWalletProviderInterface;
+    this.provider = (window as any).mina as AuroWalletInterface;
   }
 
   static isInstalled() {

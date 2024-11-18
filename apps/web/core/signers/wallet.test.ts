@@ -1,5 +1,5 @@
 import { Nullifier } from "o1js";
-import { WalletProvider } from "./wallet-provider";
+import { Wallet } from "./wallet";
 
 const PRIVATE_KEY = "EKDii5d1dA7DDw6NZwN7jF7qcdYR5MVjZ9TfESv1gc2TvmvV2WAE";
 const PUBLIC_KEY = "B62qmRM1veRpkCG2DmWW1EgpKUG9v1rzSJmVk8NFKbWoQNnTn5DSFdT";
@@ -17,10 +17,10 @@ const PUBLIC_NULLIFIER = {
 };
 
 describe("WalletProvider", () => {
-  let walletProvider: WalletProvider;
+  let walletProvider: Wallet;
 
   beforeEach(() => {
-    walletProvider = new WalletProvider(PRIVATE_KEY);
+    walletProvider = new Wallet(PRIVATE_KEY);
   });
 
   test("should initialize with private key and create MinaClient", () => {
