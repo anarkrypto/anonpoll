@@ -3,7 +3,7 @@ import { AbstractAuthStore } from "./abstract-auth-store";
 
 const AUTH_TOKEN_KEY = "auth.token";
 
-export class AuthStoreCookieProvider implements AbstractAuthStore {
+export class AuthStoreCookie implements AbstractAuthStore {
   async get() {
     return Cookies.get(AUTH_TOKEN_KEY) || null;
   }

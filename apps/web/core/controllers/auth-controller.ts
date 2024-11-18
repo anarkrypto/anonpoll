@@ -3,7 +3,7 @@ import { generateAuthJsonMessage } from "@/lib/auth";
 import { WalletController } from "./wallet-controller";
 import { authSchema } from "@/schemas/auth";
 import { z } from "zod";
-import { AbstractAuthStore } from "../providers/stores/auth-store/abstract-auth-store";
+import { AbstractAuthStore } from "../stores/auth-store/abstract-auth-store";
 
 export interface AuthConfig extends BaseConfig {
   wallet: WalletController;

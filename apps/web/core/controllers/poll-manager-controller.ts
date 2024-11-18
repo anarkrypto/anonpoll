@@ -5,7 +5,7 @@ import { Bool, MerkleMap, Poseidon, PublicKey } from "o1js";
 import { isPendingTransaction } from "../utils";
 import { WalletController } from "./wallet-controller";
 import { OptionsHashes } from "chain/dist/runtime/modules/poll";
-import { AbstractPollStore } from "../providers/stores/poll-store";
+import { AbstractPollStore } from "../stores/poll-store";
 import type { client } from "chain";
 
 export type CreatePollData = Omit<z.infer<typeof pollInsertSchema>, "id">;

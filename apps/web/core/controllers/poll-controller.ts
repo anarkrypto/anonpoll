@@ -14,7 +14,7 @@ import { ChainController } from "./chain-controller";
 import { mockProof } from "@/lib/utils";
 import { WalletController } from "./wallet-controller";
 import { isPendingTransaction } from "../utils";
-import { AbstractPollStore } from "../providers/stores/poll-store";
+import { AbstractPollStore } from "../stores/poll-store";
 import { PollData } from "@/types/poll";
 
 export interface PollConfig extends BaseConfig {
