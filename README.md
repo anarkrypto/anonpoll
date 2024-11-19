@@ -137,6 +137,8 @@ UI will be accessible at `https://localhost` and GQL inspector will be available
 
 #### Configuration
 
+For security reasons, modify the `POSTGRES_PASSWORD` and `REDIS_PASSWORD` envs found in the `packages/chain/src/environments/sovereign/.env` file.
+
 Go to `docker/proxy/Caddyfile` and replace the `*` matcher with your domain.
 ```
 yourdomain.com {
