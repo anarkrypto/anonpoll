@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Shield, Lock, Vote } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Montserrat } from "next/font/google";
-import { useWallet } from "@/core/hooks";
+import { useAuth } from "@/core/hooks";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -13,7 +13,7 @@ const montserrat = Montserrat({
 });
 
 export default function LandingPage() {
-  const { initialized: walletInstalled } = useWallet();
+  const { isAuthenticated } = useAuth();
 
   return (
     <div className="mt-4 flex flex-1 flex-col items-center justify-center p-4 sm:mt-0">
@@ -56,7 +56,7 @@ export default function LandingPage() {
         </div>
 
         <div className="flex justify-center">
-          <Link href={walletInstalled ? "/new" : "/auth?next=/new"} passHref>
+          <Link href={isAuthenticated ? "/new" : "/auth?next=/new"} passHref>
             <Button size="lg" className="px-8 py-6 text-lg">
               Create a New Poll
               <ArrowRight className="ml-2 h-5 w-5" />
