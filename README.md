@@ -52,6 +52,11 @@ cd zeropoll
 
 # ensures you have the right node.js version
 nvm use
+
+# ensure you have the right pnpm version
+corepack enable
+
+# install dependencies
 pnpm install
 ```
 
