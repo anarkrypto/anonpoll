@@ -11,11 +11,15 @@ import {
 } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth, useWallet } from "@/core/hooks";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
-export default function AuthPage() {
-  const next = useSearchParams().get("next") || "/";
+export default function AuthPage({
+  searchParams,
+}: {
+  searchParams: { next?: string };
+}) {
+  const next = searchParams.next || "/";
   const router = useRouter();
 
   const { initialized: walletInitialized } = useWallet();
@@ -29,7 +33,6 @@ export default function AuthPage() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.refresh();
       router.push(next);
     }
   }, [isAuthenticated]);
