@@ -21,7 +21,7 @@ import { generateSalt, isValidPublicKey } from "@/lib/utils";
 import { pollInsertSchema } from "@/schemas/poll";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from "@/constants";
+import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from "@/core/constants";
 import { useCreatePoll } from "@/core/hooks";
 
 const pollFormSchema = pollInsertSchema.omit({ id: true, salt: true });

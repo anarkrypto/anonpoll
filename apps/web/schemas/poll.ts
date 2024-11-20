@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { publicKeySchema } from "./auth";
-import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from "@/constants";
+import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from "@/core/constants";
 
 export const pollInsertSchema = z.object({
   id: z.number(),
