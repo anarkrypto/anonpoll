@@ -49,7 +49,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
   private wallet: WalletController;
   private chain: ChainController;
   private client: Pick<typeof client, "query" | "runtime" | "transaction">;
-  private voters = new Set<string>();
+  private voters = new Set<PublicKey>();
   private store: AbstractPollStore;
 
   readonly defaultState: PollState = {
@@ -104,6 +104,10 @@ export class PollController extends BaseController<PollConfig, PollState> {
         metadata,
         options,
       });
+
+      metadata.votersWallets.forEach((wallet) =>
+        this.voters.add(PublicKey.fromBase58(wallet)),
+      );
 
       this.observePoll();
     } catch (error) {
@@ -236,13 +240,19 @@ export class PollController extends BaseController<PollConfig, PollState> {
 
   private createVotersWitness(sender: PublicKey) {
     const map = new MerkleMap();
-    this.voters.forEach((wallet) => {
-      const hashKey = Poseidon.hash(PublicKey.fromBase58(wallet).toFields());
+
+    const senderHashKey = Poseidon.hash(sender.toFields());
+    map.set(senderHashKey, Bool(true).toField());
+
+    this.voters.forEach((publicKey) => {
+      if (publicKey.equals(sender).toBoolean()) {
+        return;
+      }
+      const hashKey = Poseidon.hash(publicKey.toFields());
       map.set(hashKey, Bool(true).toField());
     });
 
-    const hashKey = Poseidon.hash(sender.toFields());
-    return map.getWitness(hashKey);
+    return map.getWitness(senderHashKey);
   }
 
   private async mockProof(publicOutput: PollPublicOutput): Promise<PollProof> {
