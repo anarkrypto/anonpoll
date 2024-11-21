@@ -8,10 +8,14 @@ import {
 } from "o1js";
 import { UInt32 } from "@proto-kit/library";
 import type { client } from "chain";
-import { canVote, OptionsHashes } from "chain/dist/runtime/modules/poll";
+import {
+  canVote,
+  OptionsHashes,
+  PollProof,
+  PollPublicOutput,
+} from "chain/dist/runtime/modules/poll";
 import { BaseConfig, BaseController, BaseState } from "./base-controller";
 import { ChainController } from "./chain-controller";
-import { mockProof } from "@/lib/utils";
 import { WalletController } from "./wallet-controller";
 import { isPendingTransaction } from "../utils";
 import { AbstractPollStore } from "../stores/poll-store";
@@ -241,12 +245,22 @@ export class PollController extends BaseController<PollConfig, PollState> {
     return map.getWitness(hashKey);
   }
 
+  private async mockProof(publicOutput: PollPublicOutput): Promise<PollProof> {
+    const dummy = await PollProof.dummy([], [""], 2);
+    return new PollProof({
+      proof: dummy.proof,
+      maxProofsVerified: 2,
+      publicInput: undefined,
+      publicOutput,
+    });
+  }
+
   private async createVoteProof(witness: MerkleMapWitness, pollId: UInt32) {
     const nullifier = await this.wallet.createNullifier([
       Number(pollId.toString()),
     ]);
     const publicOutput = await canVote(witness, nullifier, pollId);
-    return await mockProof(publicOutput);
+    return await this.mockProof(publicOutput);
   }
 
   private async submitVoteTransaction(
