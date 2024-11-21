@@ -110,6 +110,7 @@ export class ChainController extends BaseController<ChainConfig, ChainState> {
             height: data.network.unproven.block.height,
             txs: data.block.txs || [],
           },
+          online: true,
         });
       }
     } catch (error) {
@@ -126,9 +127,6 @@ export class ChainController extends BaseController<ChainConfig, ChainState> {
         () => this.loadBlock(),
         this.config.tickInterval,
       );
-      await this.update({
-        online: true,
-      });
     } catch (error) {
       throw error;
     } finally {
