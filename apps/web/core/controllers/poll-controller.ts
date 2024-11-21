@@ -219,9 +219,8 @@ export class PollController extends BaseController<PollConfig, PollState> {
     this.validateVotePrerequisites();
 
     const pollId = UInt32.from(this.state.metadata!.id);
-    const sender = PublicKey.fromBase58(this.wallet.account!);
 
-    const witness = this.createVotersWitness(sender);
+    const witness = this.createVotersWitness();
     const proof = await this.createVoteProof(witness, pollId);
 
     const hash = await this.submitVoteTransaction(pollId, optionHash, proof);
@@ -236,11 +235,15 @@ export class PollController extends BaseController<PollConfig, PollState> {
     if (!this.state.metadata) {
       throw new Error("Poll not loaded");
     }
+    if (!this.voters.has(this.wallet.publicKey())) {
+      throw new Error("Wallet is not allowed to vote");
+    }
   }
 
-  private createVotersWitness(sender: PublicKey) {
+  private createVotersWitness() {
     const map = new MerkleMap();
 
+    const sender = this.wallet.publicKey();
     const senderHashKey = Poseidon.hash(sender.toFields());
     map.set(senderHashKey, Bool(true).toField());
 
