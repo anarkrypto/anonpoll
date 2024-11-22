@@ -13,9 +13,12 @@ export const fontSans = FontSans({
 });
 
 export const metadata: Metadata = {
-  title: "ZeroPoll",
+  title: {
+    default: "ZeroPoll",
+    template: "%s | ZeroPoll",
+  },
   description: "A private voting system powered by zero-knowledge proofs",
-}
+};
 
 export default function RootLayout({
   children,
