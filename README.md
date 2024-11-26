@@ -51,7 +51,7 @@ git clone https://github.com/anarkrypto/zeropoll zeropoll
 cd zeropoll
 
 # ensures you have the right node.js version
-nvm use
+nvm install && nvm use
 
 # ensure you have the right pnpm version
 corepack enable
