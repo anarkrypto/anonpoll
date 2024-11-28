@@ -1,14 +1,19 @@
 import { IPFSNode } from "./ipfs-node";
+import { IPFSAPIServer } from "./api-server";
 
-const node = new IPFSNode({
-	storagePath: process.env.IPFS_STORAGE_PATH || "./ipfs-storage"
-});
+async function main() {
+	const node = new IPFSNode();
+	await node.start();
 
-node.start().catch(console.error);
+	const apiServer = new IPFSAPIServer(node);
+	apiServer.start(process.env.PORT ? parseInt(process.env.PORT) : 5001);
 
-process.on("SIGINT", async () => {
-	await node.stop();
-	process.exit(0);
-});
+	// Handle cleanup on shutdown
+	process.on("SIGINT", async () => {
+		await apiServer.stop();
+		await node.stop();
+		process.exit(0);
+	});
+}
 
-export default IPFSNode;
+main().catch(console.error);
