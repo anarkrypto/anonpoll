@@ -97,7 +97,8 @@ export class IPFSAPIServer {
 
 				const decoder = new TextDecoder();
 				const data = decoder.decode(block.Data);
-				return res.json(data);
+				res.setHeader("Content-Type", "text/plain");
+				return res.send(data);
 			} catch (error) {
 				return this.handleError(res, error);
 			}
