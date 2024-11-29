@@ -70,7 +70,7 @@ export class IPFSAPIServer {
 	}
 
 	private setupBlockGetRoute(app: express.Application): void {
-		app.get("/api/v0/block/get", async (req: Request, res: Response) => {
+		app.post("/api/v0/block/get", async (req: Request, res: Response) => {
 			try {
 				const cidStr = req.query.arg as string;
 				if (!cidStr) {
