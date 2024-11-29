@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import { CID } from "multiformats/cid";
 import { Server } from "http";
 import { IPFSNode } from "./ipfs-node";
+import multer from "multer";
 
 export class IPFSAPIServer {
 	private server: Server | null = null;
@@ -46,25 +47,35 @@ export class IPFSAPIServer {
 	}
 
 	private setupBlockPutRoute(app: express.Application): void {
-		app.post("/api/v0/block/put", async (req: Request, res: Response) => {
+		const upload = multer({
+			storage: multer.memoryStorage(),
+			limits: {
+				fileSize: 1024 * 1024 // 1MB limit
+			}
+		});
+
+		app.post("/api/v0/block/put", upload.single("file"), async (req, res) => {
 			try {
-				if (!req.body.data) {
+				if (!req.file) {
 					return res.status(400).json({
-						Message: "data is required",
+						Message: "file is required",
 						Code: 1,
 						Type: "error"
 					});
 				}
 
-				const data = Buffer.from(req.body.data);
-				const cid = await this.node.putBlock(data);
+				const cid = await this.node.putBlock(req.file.buffer);
 
 				return res.status(200).json({
 					Key: cid.toString(),
-					Size: data.length
+					Size: req.file.buffer.length
 				});
 			} catch (error) {
-				return this.handleError(res, error) as any;
+				return res.status(500).json({
+					Message: error instanceof Error ? error.message : "Unknown error",
+					Code: 1,
+					Type: "error"
+				}) as any;
 			}
 		});
 	}
