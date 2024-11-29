@@ -84,10 +84,9 @@ export class IPFSAPIServer {
 				const cid = CID.parse(cidStr);
 				const block = await this.node.getBlock(cid);
 
-				return res.json({
-					Data: block.Data,
-					Links: block.Links
-				});
+				const decoder = new TextDecoder();
+				const data = decoder.decode(block.Data);
+				return res.json(data);
 			} catch (error) {
 				return this.handleError(res, error);
 			}
