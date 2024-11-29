@@ -86,7 +86,7 @@ export class IPFSAPIServer {
 				const cidStr = req.query.arg as string;
 				if (!cidStr) {
 					return res.status(400).json({
-						Message: 'argument "key" is required',
+						Message: 'argument "arg" is required',
 						Code: 1,
 						Type: "error"
 					}) as any;
