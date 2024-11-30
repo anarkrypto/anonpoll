@@ -2,9 +2,10 @@ import { IPFSNode } from "./ipfs-node";
 import { IPFSAPIServer } from "./api-server";
 import { rm } from "fs/promises";
 import { join } from "path";
+import { DATASTORE_DIR } from "./config";
 
 describe("IPFSAPIServer", () => {
-	const testDir = join(process.cwd(), "ipfs-storage");
+	const testDir = join(process.cwd(), DATASTORE_DIR);
 	let node: IPFSNode;
 	let server: IPFSAPIServer;
 	let port: number;

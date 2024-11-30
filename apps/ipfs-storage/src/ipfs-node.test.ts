@@ -2,9 +2,10 @@ import { IPFSNode } from "./ipfs-node";
 import { rm } from "fs/promises";
 import { join } from "path";
 import { CID } from "multiformats/cid";
+import { DATASTORE_DIR } from "./config";
 
 describe("IPFSNode", () => {
-	const testDir = join(process.cwd(), "ipfs-storage");
+	const testDir = join(process.cwd(), DATASTORE_DIR);
 	let node: IPFSNode;
 
 	beforeEach(async () => {

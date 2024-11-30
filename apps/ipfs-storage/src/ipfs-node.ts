@@ -20,7 +20,7 @@ export class IPFSNode {
 	constructor(options: NodeOptions = {}) {
 		this.libp2p = null;
 		this.blockstore = null;
-		this.storagePath = options.storagePath || "./ipfs-storage";
+		this.storagePath = options.storagePath || "./.datastore";
 	}
 
 	async start(): Promise<void> {
