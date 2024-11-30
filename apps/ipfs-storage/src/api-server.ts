@@ -5,6 +5,7 @@ import { CID } from "multiformats/cid";
 import { Server } from "http";
 import { IPFSNode } from "./ipfs-node";
 import multer from "multer";
+import { FILESIZE_LIMIT } from "./config";
 
 export class IPFSAPIServer {
 	private server: Server | null = null;
@@ -49,7 +50,7 @@ export class IPFSAPIServer {
 		const upload = multer({
 			storage: multer.memoryStorage(),
 			limits: {
-				fileSize: 1024 * 1024 // 1MB limit
+				fileSize: FILESIZE_LIMIT
 			}
 		});
 
