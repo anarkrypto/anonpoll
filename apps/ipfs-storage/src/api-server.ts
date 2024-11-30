@@ -43,7 +43,6 @@ export class IPFSAPIServer {
 	private setupRoutes(app: express.Application): void {
 		this.setupBlockPutRoute(app);
 		this.setupBlockGetRoute(app);
-		this.setupPinAddRoute(app);
 	}
 
 	private setupBlockPutRoute(app: express.Application): void {
@@ -101,30 +100,6 @@ export class IPFSAPIServer {
 				return res.send(data);
 			} catch (error) {
 				return this.handleError(res, error);
-			}
-		});
-	}
-
-	private setupPinAddRoute(app: express.Application): void {
-		app.post("/api/v0/pin/add", async (req: Request, res: Response) => {
-			try {
-				const cidStr = req.query.arg as string;
-				if (!cidStr) {
-					return res.status(400).json({
-						Message: 'argument "key" is required',
-						Code: 1,
-						Type: "error"
-					});
-				}
-
-				const cid = CID.parse(cidStr);
-				await this.node.pinBlock(cid);
-
-				return res.json({
-					Pins: [cidStr]
-				});
-			} catch (error) {
-				return this.handleError(res, error) as any;
 			}
 		});
 	}
