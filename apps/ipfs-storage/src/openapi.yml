@@ -1,0 +1,111 @@
+openapi: 3.0.0
+info:
+  title: IPFS Node API
+  description: API for interacting with IPFS Node implementation
+  version: 1.0.0
+servers:
+  - url: http://localhost:5001
+    description: Local IPFS node
+
+paths:
+  /api/v0/block/put:
+    post:
+      summary: Store a new block
+      description: Add a block to the IPFS node's blockstore. The block will be automatically pinned.
+      tags:
+        - Blocks
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The file to store as a block
+      responses:
+        "200":
+          description: Block successfully stored and pinned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Key:
+                    type: string
+                    description: The CID of the stored block
+                    example: "bafybeieai5buqqz4mn32n3fwdduyh4wufmd5utokh3il4jdf4y4zzemqg4"
+                  Size:
+                    type: number
+                    description: Size of the stored data in bytes
+                    example: 12
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/v0/block/get:
+    post:
+      summary: Retrieve a block
+      description: Get a block from the IPFS node's blockstore by its CID
+      tags:
+        - Blocks
+      parameters:
+        - name: arg
+          in: query
+          description: The CID of the block to retrieve
+          required: true
+          schema:
+            type: string
+          example: "bafybeieai5buqqz4mn32n3fwdduyh4wufmd5utokh3il4jdf4y4zzemqg4"
+      responses:
+        "200":
+          description: Block successfully retrieved
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+                description: The raw block data
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        Message:
+          type: string
+          description: Error message
+          example: "file is required"
+        Code:
+          type: integer
+          description: Error code
+          example: 1
+        Type:
+          type: string
+          description: Error type
+          example: "error"
