@@ -7,38 +7,101 @@ import { sha256 } from "multiformats/hashes/sha2";
 import * as dagPB from "@ipld/dag-pb";
 import { encode, decode } from "@ipld/dag-pb";
 import { FSBlockstore } from "./fs-blockstore";
+import { bootstrap } from "@libp2p/bootstrap";
+import { identify } from "@libp2p/identify";
+import { kadDHT, removePublicAddressesMapper } from "@libp2p/kad-dht";
+import bootstrappers from "./bootstrappers";
+import { createEd25519PeerId } from "@libp2p/peer-id-factory";
+import fs from "fs/promises";
+import path from "path";
+import { privateKeyFromProtobuf } from "@libp2p/crypto/keys";
 
 export interface NodeOptions {
 	storagePath?: string;
+	port?: number;
 }
 
 export class IPFSNode {
 	private libp2p: Libp2p | null;
 	private blockstore: FSBlockstore | null;
 	private storagePath: string;
+	private port: number;
+	private keyPath: string;
 
 	constructor(options: NodeOptions = {}) {
 		this.libp2p = null;
 		this.blockstore = null;
 		this.storagePath = options.storagePath || "./.datastore";
+		this.port = options.port || 4002;
+		this.keyPath = path.join(this.storagePath, "peer-key");
+	}
+
+	private async loadOrCreatePrivateKey() {
+		try {
+			// Try to load existing key from storage
+			const existingKeyData = await fs.readFile(this.keyPath);
+			return privateKeyFromProtobuf(new Uint8Array(existingKeyData));
+		} catch (error) {
+			// If key doesn't exist or there's an error reading it, create a new one
+			const peerId = await createEd25519PeerId();
+			if (!peerId.privateKey) {
+				throw new Error("Failed to generate private key");
+			}
+			await fs.mkdir(path.dirname(this.keyPath), { recursive: true });
+			await fs.writeFile(this.keyPath, peerId.privateKey);
+			return privateKeyFromProtobuf(peerId.privateKey);
+		}
 	}
 
 	async start(): Promise<void> {
 		this.blockstore = new FSBlockstore(this.storagePath);
 		await this.blockstore.open();
 
+		const privateKey = await this.loadOrCreatePrivateKey();
+
 		this.libp2p = await createLibp2p({
+			privateKey,
 			addresses: {
-				listen: ["/ip4/127.0.0.1/tcp/0"]
+				listen: [`/ip4/0.0.0.0/tcp/${this.port}`, `/ip6/::/tcp/${this.port}`]
 			},
 			transports: [tcp()],
 			streamMuxers: [yamux()],
-			connectionEncrypters: [noise()]
+			connectionEncrypters: [noise()],
+			services: {
+				kadDHT: kadDHT({
+					protocol: "/ipfs/kad/1.0.0",
+					peerInfoMapper: removePublicAddressesMapper,
+					clientMode: false
+				}),
+				identify: identify({
+					protocolPrefix: "ipfs"
+				})
+			},
+			peerDiscovery: [
+				bootstrap({
+					list: [...bootstrappers]
+				})
+			]
+		});
+
+		this.libp2p.addEventListener("peer:discovery", (evt) => {
+			console.log("Discovered peer:", evt.detail.id.toString());
+		});
+
+		this.libp2p.addEventListener("peer:connect", (evt) => {
+			console.log("Connected to peer:", evt.detail.toString());
 		});
 
 		await this.libp2p.start();
+
 		console.log("libp2p node started");
 		console.log(`Storage location: ${this.storagePath}`);
+		console.log(`Listening on port: ${this.port}`);
+
+		console.log("Node addresses:");
+		this.libp2p.getMultiaddrs().forEach((addr) => {
+			console.log(addr.toString());
+		});
 	}
 
 	async stop(): Promise<void> {
