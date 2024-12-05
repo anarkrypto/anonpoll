@@ -5,8 +5,6 @@ import { tls } from "@libp2p/tls";
 import { yamux } from "@chainsafe/libp2p-yamux";
 import { CID } from "multiformats/cid";
 import { sha256 } from "multiformats/hashes/sha2";
-import * as dagPB from "@ipld/dag-pb";
-import { encode, decode } from "@ipld/dag-pb";
 import { FSBlockstore } from "./fs-blockstore";
 import { bootstrap } from "@libp2p/bootstrap";
 import { identify, identifyPush } from "@libp2p/identify";
@@ -134,15 +132,12 @@ export class IPFSNode {
 	async putBlock(data: Uint8Array): Promise<CID> {
 		if (!this.blockstore) throw new Error("Blockstore not initialized");
 
-		const dagNode = encode({
-			Data: data,
-			Links: []
-		});
+		const hash = await sha256.digest(data);
+		const rawCode = 0x55; // raw format code
+		const cid = CID.createV1(rawCode, hash);
 
-		const hash = await sha256.digest(dagNode);
-		const cid = CID.createV1(dagPB.code, hash);
+		await this.blockstore.put(cid, data);
 
-		await this.blockstore.put(cid, dagNode);
 		return cid;
 	}
 
@@ -151,44 +146,38 @@ export class IPFSNode {
 			throw new Error("Node not fully initialized");
 		}
 
+		const fetchBlock = async (
+			fromNetwork: boolean = false
+		): Promise<Uint8Array> => {
+			if (fromNetwork) {
+				console.log("Fetching from network:", cid.toString());
+				const abortController = new AbortController();
+				const timeout = setTimeout(() => abortController.abort(), 15000);
+
+				try {
+					const block = await this.bitswap!.want(cid, {
+						signal: abortController.signal
+					});
+					clearTimeout(timeout);
+					return block;
+				} catch (error) {
+					throw new Error(`Network fetch failed: ${(error as Error).message}`);
+				}
+			} else {
+				return await this.blockstore!.get(cid);
+			}
+		};
+
 		try {
-			// First try to get from local blockstore
-			const data = await this.blockstore.get(cid);
-			const decoded = decode(data);
+			// Try local first, then network
+			const data = await fetchBlock().catch(() => fetchBlock(true));
+
 			return {
-				Data: decoded.Data || new Uint8Array(),
-				Links: decoded.Links
+				Data: data,
+				Links: []
 			};
 		} catch (error) {
-			// If not found locally, try to fetch from network
-			console.log(
-				`Block ${cid.toString()} not found locally, fetching from network...`
-			);
-			try {
-				const abortController = new AbortController();
-				const timeout = setTimeout(() => {
-					abortController.abort();
-				}, 15000);
-				const block = await this.bitswap.want(cid, {
-					signal: abortController.signal
-				});
-				clearTimeout(timeout);
-				const decoded = decode(block);
-
-				// Todo: validate poll by size and format
-
-				// Store the fetched block locally
-				await this.blockstore.put(cid, block);
-
-				return {
-					Data: decoded.Data || new Uint8Array(),
-					Links: decoded.Links
-				};
-			} catch (error) {
-				throw new Error(
-					`Failed to fetch block from network: ${(error as Error).message}`
-				);
-			}
+			throw new Error(`Block retrieval failed: ${(error as Error).message}`);
 		}
 	}
 
