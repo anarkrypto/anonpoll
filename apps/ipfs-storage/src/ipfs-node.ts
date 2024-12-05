@@ -20,6 +20,7 @@ import { defaultLogger } from "@libp2p/logger";
 import * as libp2pInfo from "libp2p/version";
 import type { Bitswap } from "@helia/bitswap";
 import { name, version } from "./version";
+import { ping } from "@libp2p/ping";
 
 export interface NodeOptions {
 	storagePath?: string;
@@ -82,7 +83,8 @@ export class IPFSNode {
 				}),
 				identifyPush: identifyPush({
 					agentVersion
-				})
+				}),
+				ping: ping()
 			},
 			peerDiscovery: [
 				bootstrap({

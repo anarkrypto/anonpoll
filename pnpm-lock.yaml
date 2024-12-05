@@ -64,6 +64,9 @@ importers:
       '@libp2p/peer-id-factory':
         specifier: ^4.2.4
         version: 4.2.4
+      '@libp2p/ping':
+        specifier: ^2.0.12
+        version: 2.0.12
       '@libp2p/tcp':
         specifier: ^10.0.13
         version: 10.0.13
@@ -2147,6 +2150,17 @@ packages:
       multiformats: 13.3.1
       protons-runtime: 5.5.0
       uint8arraylist: 2.4.8
+      uint8arrays: 5.1.0
+    dev: false
+
+  /@libp2p/ping@2.0.12:
+    resolution: {integrity: sha512-wJKJ9PmAQbcXl/V5iZfmypztptVS6mRAZjpidDHOwUxSTmxgnd9HadJEgiQ1dUJjaMe4JUmLhb3+ym+RS48alg==}
+    dependencies:
+      '@libp2p/crypto': 5.0.7
+      '@libp2p/interface': 2.2.1
+      '@libp2p/interface-internal': 2.1.1
+      '@multiformats/multiaddr': 12.3.4
+      it-byte-stream: 1.1.0
       uint8arrays: 5.1.0
     dev: false
 
