@@ -1,6 +1,7 @@
 import { createLibp2p, Libp2p } from "libp2p";
 import { tcp } from "@libp2p/tcp";
 import { noise } from "@chainsafe/libp2p-noise";
+import { tls } from "@libp2p/tls";
 import { yamux } from "@chainsafe/libp2p-yamux";
 import { CID } from "multiformats/cid";
 import { sha256 } from "multiformats/hashes/sha2";
@@ -74,7 +75,7 @@ export class IPFSNode {
 			},
 			transports: [tcp()],
 			streamMuxers: [yamux()],
-			connectionEncrypters: [noise()],
+			connectionEncrypters: [noise(), tls()],
 			services: {
 				kadDHT: kadDHT(),
 				identify: identify({
