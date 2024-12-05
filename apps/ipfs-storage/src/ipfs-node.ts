@@ -9,7 +9,7 @@ import { encode, decode } from "@ipld/dag-pb";
 import { FSBlockstore } from "./fs-blockstore";
 import { bootstrap } from "@libp2p/bootstrap";
 import { identify } from "@libp2p/identify";
-import { kadDHT, removePublicAddressesMapper } from "@libp2p/kad-dht";
+import { kadDHT } from "@libp2p/kad-dht";
 import bootstrappers from "./bootstrappers";
 import { createEd25519PeerId } from "@libp2p/peer-id-factory";
 import fs from "fs/promises";
@@ -44,11 +44,9 @@ export class IPFSNode {
 
 	private async loadOrCreatePrivateKey() {
 		try {
-			// Try to load existing key from storage
 			const existingKeyData = await fs.readFile(this.keyPath);
 			return privateKeyFromProtobuf(new Uint8Array(existingKeyData));
 		} catch (error) {
-			// If key doesn't exist or there's an error reading it, create a new one
 			const peerId = await createEd25519PeerId();
 			if (!peerId.privateKey) {
 				throw new Error("Failed to generate private key");
@@ -74,11 +72,7 @@ export class IPFSNode {
 			streamMuxers: [yamux()],
 			connectionEncrypters: [noise()],
 			services: {
-				kadDHT: kadDHT({
-					protocol: "/ipfs/kad/1.0.0",
-					peerInfoMapper: removePublicAddressesMapper,
-					clientMode: false
-				}),
+				kadDHT: kadDHT(),
 				identify: identify({
 					protocolPrefix: "ipfs"
 				})
