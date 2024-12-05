@@ -8,7 +8,7 @@ import * as dagPB from "@ipld/dag-pb";
 import { encode, decode } from "@ipld/dag-pb";
 import { FSBlockstore } from "./fs-blockstore";
 import { bootstrap } from "@libp2p/bootstrap";
-import { identify } from "@libp2p/identify";
+import { identify, identifyPush } from "@libp2p/identify";
 import { kadDHT } from "@libp2p/kad-dht";
 import bootstrappers from "./bootstrappers";
 import { createEd25519PeerId } from "@libp2p/peer-id-factory";
@@ -79,6 +79,9 @@ export class IPFSNode {
 				kadDHT: kadDHT(),
 				identify: identify({
 					protocolPrefix: "ipfs",
+					agentVersion
+				}),
+				identifyPush: identifyPush({
 					agentVersion
 				})
 			},
