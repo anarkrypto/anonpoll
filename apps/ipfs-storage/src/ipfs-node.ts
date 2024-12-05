@@ -18,7 +18,9 @@ import { privateKeyFromProtobuf } from "@libp2p/crypto/keys";
 import { createBitswap } from "@helia/bitswap";
 import { libp2pRouting } from "@helia/routers";
 import { defaultLogger } from "@libp2p/logger";
+import * as libp2pInfo from "libp2p/version";
 import type { Bitswap } from "@helia/bitswap";
+import { name, version } from "./version";
 
 export interface NodeOptions {
 	storagePath?: string;
@@ -63,6 +65,8 @@ export class IPFSNode {
 
 		const privateKey = await this.loadOrCreatePrivateKey();
 
+		const agentVersion = `${name}/${version} ${libp2pInfo.name}/${libp2pInfo.version} UserAgent=${process.version}`;
+
 		this.libp2p = await createLibp2p({
 			privateKey,
 			addresses: {
@@ -74,7 +78,8 @@ export class IPFSNode {
 			services: {
 				kadDHT: kadDHT(),
 				identify: identify({
-					protocolPrefix: "ipfs"
+					protocolPrefix: "ipfs",
+					agentVersion
 				})
 			},
 			peerDiscovery: [
