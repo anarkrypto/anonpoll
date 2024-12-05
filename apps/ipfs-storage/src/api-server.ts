@@ -66,8 +66,6 @@ export class IPFSAPIServer {
 
 				const cid = await this.node.putBlock(req.file.buffer);
 
-				await this.node.pinBlock(cid);
-
 				return res.status(200).json({
 					Key: cid.toString(),
 					Size: req.file.buffer.length

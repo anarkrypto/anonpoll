@@ -55,20 +55,6 @@ export class FSBlockstore extends BaseBlockstore {
 		}
 	}
 
-	async pin(cid: CID): Promise<void> {
-		if (!(await this.has(cid))) {
-			throw new Error("Cannot pin - block not found");
-		}
-		this.pins.set(cid.toString(), {
-			cid,
-			timestamp: Date.now()
-		});
-	}
-
-	isPinned(cid: CID): boolean {
-		return this.pins.has(cid.toString());
-	}
-
 	async close(): Promise<void> {
 		// Nothing to do for fs
 	}

@@ -180,9 +180,4 @@ export class IPFSNode {
 			throw new Error(`Block retrieval failed: ${(error as Error).message}`);
 		}
 	}
-
-	async pinBlock(cid: CID): Promise<void> {
-		if (!this.blockstore) throw new Error("Blockstore not initialized");
-		await this.blockstore.pin(cid);
-	}
 }
