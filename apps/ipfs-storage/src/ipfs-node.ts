@@ -88,7 +88,7 @@ export class IPFSNode {
 			},
 			peerDiscovery: [
 				bootstrap({
-					list: [...bootstrappers]
+					list: bootstrappers
 				})
 			]
 		});
