@@ -91,7 +91,7 @@ export class IPFSNode {
 		});
 
 		this.libp2p.addEventListener("peer:discovery", (evt) => {
-			console.log("Discovered peer:", evt.detail.id.toString());
+			console.log("Discovered peer:", evt.detail.multiaddrs.toString());
 		});
 
 		this.libp2p.addEventListener("peer:connect", (evt) => {
