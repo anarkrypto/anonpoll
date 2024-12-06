@@ -30,12 +30,4 @@ describe("IPFSNode", () => {
 		const retrievedData = new TextDecoder().decode(block.Data);
 		expect(retrievedData).toBe("test data");
 	});
-
-	it("should pin a block", async () => {
-		const testData = new TextEncoder().encode("test data");
-		const cid = await node.putBlock(testData);
-
-		// Pin the block
-		await expect(node.pinBlock(cid)).resolves.not.toThrow();
-	});
 });

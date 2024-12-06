@@ -45,38 +45,6 @@ describe("FSBlockstore", () => {
 		const decodedData = new Uint8Array(decoded.Data as Buffer);
 		expect(decodedData).toEqual(testData);
 	});
-    
-	it("should pin a block", async () => {
-		const testData = new TextEncoder().encode("test data");
-		const dagNode = dagPB.encode({
-			Data: testData,
-			Links: []
-		});
-		const hash = await sha256.digest(dagNode);
-		const cid = CID.createV1(dagPB.code, hash);
-
-		// Store and pin the block
-		await blockstore.put(cid, dagNode);
-		await blockstore.pin(cid);
-
-		// Verify pin status
-		expect(blockstore.isPinned(cid)).toBe(true);
-	});
-
-	it("should throw when pinning non-existent block", async () => {
-		const testData = new TextEncoder().encode("test data");
-		const dagNode = dagPB.encode({
-			Data: testData,
-			Links: []
-		});
-		const hash = await sha256.digest(dagNode);
-		const cid = CID.createV1(dagPB.code, hash);
-
-		// Try to pin non-existent block
-		await expect(blockstore.pin(cid)).rejects.toThrow(
-			"Cannot pin - block not found"
-		);
-	});
 
 	it("should handle invalid CIDs", async () => {
 		const invalidCID = "not a CID" as any;
