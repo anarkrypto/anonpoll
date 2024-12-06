@@ -8,10 +8,14 @@ import {
 } from "o1js";
 import { UInt32 } from "@proto-kit/library";
 import type { client } from "chain";
-import { canVote, OptionsHashes, Poll } from "chain/dist/runtime/modules/poll";
+import {
+  canVote,
+  OptionsHashes,
+  PollProof,
+  PollPublicOutput,
+} from "chain/dist/runtime/modules/poll";
 import { BaseConfig, BaseController, BaseState } from "./base-controller";
 import { ChainController } from "./chain-controller";
-import { mockProof } from "@/lib/utils";
 import { WalletController } from "./wallet-controller";
 import { isPendingTransaction } from "../utils";
 import { AbstractPollStore } from "../stores/poll-store";
@@ -45,7 +49,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
   private wallet: WalletController;
   private chain: ChainController;
   private client: Pick<typeof client, "query" | "runtime" | "transaction">;
-  private voters = new Set<string>();
+  private voters = new Set<PublicKey>();
   private store: AbstractPollStore;
 
   readonly defaultState: PollState = {
@@ -100,6 +104,10 @@ export class PollController extends BaseController<PollConfig, PollState> {
         metadata,
         options,
       });
+
+      metadata.votersWallets.forEach((wallet) =>
+        this.voters.add(PublicKey.fromBase58(wallet)),
+      );
 
       this.observePoll();
     } catch (error) {
@@ -211,9 +219,8 @@ export class PollController extends BaseController<PollConfig, PollState> {
     this.validateVotePrerequisites();
 
     const pollId = UInt32.from(this.state.metadata!.id);
-    const sender = PublicKey.fromBase58(this.wallet.account!);
 
-    const witness = this.createVotersWitness(sender);
+    const witness = this.createVotersWitness();
     const proof = await this.createVoteProof(witness, pollId);
 
     const hash = await this.submitVoteTransaction(pollId, optionHash, proof);
@@ -228,17 +235,37 @@ export class PollController extends BaseController<PollConfig, PollState> {
     if (!this.state.metadata) {
       throw new Error("Poll not loaded");
     }
+    if (!this.voters.has(this.wallet.publicKey())) {
+      throw new Error("Wallet is not allowed to vote");
+    }
   }
 
-  private createVotersWitness(sender: PublicKey) {
+  private createVotersWitness() {
     const map = new MerkleMap();
-    this.voters.forEach((wallet) => {
-      const hashKey = Poseidon.hash(PublicKey.fromBase58(wallet).toFields());
+
+    const sender = this.wallet.publicKey();
+    const senderHashKey = Poseidon.hash(sender.toFields());
+    map.set(senderHashKey, Bool(true).toField());
+
+    this.voters.forEach((publicKey) => {
+      if (publicKey.equals(sender).toBoolean()) {
+        return;
+      }
+      const hashKey = Poseidon.hash(publicKey.toFields());
       map.set(hashKey, Bool(true).toField());
     });
 
-    const hashKey = Poseidon.hash(sender.toFields());
-    return map.getWitness(hashKey);
+    return map.getWitness(senderHashKey);
+  }
+
+  private async mockProof(publicOutput: PollPublicOutput): Promise<PollProof> {
+    const dummy = await PollProof.dummy([], [""], 2);
+    return new PollProof({
+      proof: dummy.proof,
+      maxProofsVerified: 2,
+      publicInput: undefined,
+      publicOutput,
+    });
   }
 
   private async createVoteProof(witness: MerkleMapWitness, pollId: UInt32) {
@@ -246,7 +273,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
       Number(pollId.toString()),
     ]);
     const publicOutput = await canVote(witness, nullifier, pollId);
-    return await mockProof(publicOutput);
+    return await this.mockProof(publicOutput);
   }
 
   private async submitVoteTransaction(
