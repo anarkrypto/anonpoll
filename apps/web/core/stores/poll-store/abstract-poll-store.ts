@@ -4,5 +4,7 @@ import { z } from "zod";
 
 export abstract class AbstractPollStore {
   abstract get(cid: string): Promise<PollData>;
-  abstract put(data: z.infer<typeof pollInsertSchema>): Promise<void>;
+  abstract put(
+    data: z.infer<typeof pollInsertSchema>,
+  ): Promise<{ cid: string }>;
 }
