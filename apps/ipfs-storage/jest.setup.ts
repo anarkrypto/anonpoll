@@ -1,1 +1,1 @@
-import './src/custom-event-polyfill';
+import './src/utils/custom-event-polyfill';

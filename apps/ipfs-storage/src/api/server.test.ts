@@ -1,8 +1,8 @@
-import { IPFSNode } from "./ipfs-node";
-import { IPFSAPIServer } from "./api-server";
+import { IPFSNode } from "../ipfs/node";
+import { IPFSAPIServer } from "./server";
 import { rm } from "fs/promises";
 import { join } from "path";
-import { DATASTORE_DIR } from "./config";
+import { DATASTORE_DIR } from "../config/config";
 
 describe("IPFSAPIServer", () => {
 	const testDir = join(process.cwd(), DATASTORE_DIR);

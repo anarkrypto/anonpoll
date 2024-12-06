@@ -3,9 +3,9 @@ import type { Request, Response } from "express";
 import bodyParser from "body-parser";
 import { CID } from "multiformats/cid";
 import { Server } from "http";
-import { IPFSNode } from "./ipfs-node";
+import { IPFSNode } from "../ipfs/node";
 import multer from "multer";
-import { FILESIZE_LIMIT } from "./config";
+import { FILESIZE_LIMIT } from "../config/config";
 
 export class IPFSAPIServer {
 	private server: Server | null = null;

@@ -1,4 +1,4 @@
-import './custom-event-polyfill';
+import '../utils/custom-event-polyfill';
 import { createLibp2p, Libp2p } from "libp2p";
 import { tcp } from "@libp2p/tcp";
 import { noise } from "@chainsafe/libp2p-noise";
@@ -10,7 +10,7 @@ import { FSBlockstore } from "./fs-blockstore";
 import { bootstrap } from "@libp2p/bootstrap";
 import { identify, identifyPush } from "@libp2p/identify";
 import { kadDHT } from "@libp2p/kad-dht";
-import bootstrappers from "./bootstrappers";
+import bootstrappers from "../config/bootstrappers";
 import { createEd25519PeerId } from "@libp2p/peer-id-factory";
 import fs from "fs/promises";
 import path from "path";
@@ -20,7 +20,7 @@ import { libp2pRouting } from "@helia/routers";
 import { defaultLogger } from "@libp2p/logger";
 import * as libp2pInfo from "libp2p/version";
 import type { Bitswap } from "@helia/bitswap";
-import { name, version } from "./version";
+import { name, version } from "../config/version";
 import { ping } from "@libp2p/ping";
 
 export interface NodeOptions {

@@ -1,8 +1,8 @@
-import { IPFSNode } from "./ipfs-node";
+import { IPFSNode } from "./node";
 import { rm } from "fs/promises";
 import { join } from "path";
 import { CID } from "multiformats/cid";
-import { DATASTORE_DIR } from "./config";
+import { DATASTORE_DIR } from "../config/config";
 
 describe("IPFSNode", () => {
 	const testDir = join(process.cwd(), DATASTORE_DIR);

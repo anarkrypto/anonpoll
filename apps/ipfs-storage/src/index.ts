@@ -1,5 +1,5 @@
-import { IPFSNode } from "./ipfs-node";
-import { IPFSAPIServer } from "./api-server";
+import { IPFSNode } from "./ipfs/node";
+import { IPFSAPIServer } from "./api/server";
 
 async function main() {
 	const node = new IPFSNode();
