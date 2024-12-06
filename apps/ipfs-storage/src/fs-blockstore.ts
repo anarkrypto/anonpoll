@@ -11,12 +11,10 @@ interface PinItem {
 
 export class FSBlockstore extends BaseBlockstore {
 	private path: string;
-	private pins: Map<string, PinItem>;
 
 	constructor(path: string) {
 		super();
 		this.path = path;
-		this.pins = new Map();
 	}
 
 	async open(): Promise<void> {
