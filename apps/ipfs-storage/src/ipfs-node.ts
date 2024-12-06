@@ -1,3 +1,4 @@
+import './custom-event-polyfill';
 import { createLibp2p, Libp2p } from "libp2p";
 import { tcp } from "@libp2p/tcp";
 import { noise } from "@chainsafe/libp2p-noise";
