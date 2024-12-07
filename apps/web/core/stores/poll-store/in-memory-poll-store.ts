@@ -1,26 +1,29 @@
-import { PollData } from "@/types/poll";
 import { AbstractPollStore } from "./abstract-poll-store";
 import { pollInsertSchema } from "@/schemas/poll";
+import { PollData } from "@/types/poll";
 import { z } from "zod";
+import { CID } from "multiformats/cid";
+import { sha256 } from "multiformats/hashes/sha2";
+import * as raw from "multiformats/codecs/raw";
 
-export class InMemoryPollStore implements AbstractPollStore {
-  private polls: Map<number, PollData>;
+export class InMemoryPollStore extends AbstractPollStore {
+  private polls: Map<string, PollData> = new Map();
+  private publicKey: string;
 
-  constructor(private publicKey: string) {
-    this.polls = new Map<number, PollData>();
+  constructor(publicKey: string) {
+    super();
+    this.publicKey = publicKey;
   }
 
-  async getById(pollId: number): Promise<PollData> {
-    const poll = this.polls.get(pollId);
-
+  async get(cid: string): Promise<PollData> {
+    const poll = this.polls.get(cid);
     if (!poll) {
-      throw new Error(`Poll with id ${pollId} not found`);
+      throw new Error(`Poll with id ${cid} not found`);
     }
-
     return poll;
   }
 
-  async persist(data: z.infer<typeof pollInsertSchema>): Promise<void> {
+  async put(data: z.infer<typeof pollInsertSchema>): Promise<{ cid: string }> {
     try {
       // Validate the data using the schema
       pollInsertSchema.parse(data);
@@ -32,8 +35,14 @@ export class InMemoryPollStore implements AbstractPollStore {
         creatorWallet: this.publicKey,
       };
 
+      // Generate CID
+      const hash = await sha256.digest(new TextEncoder().encode(JSON.stringify(pollData)));
+      const cid = CID.createV1(raw.code, hash);
+
       // Store in the Map
-      this.polls.set(data.id, pollData);
+      this.polls.set(cid.toString(), pollData);
+
+      return { cid: cid.toString() };
     } catch (error) {
       if (error instanceof z.ZodError) {
         throw new Error(`Invalid poll data: ${error.message}`);
