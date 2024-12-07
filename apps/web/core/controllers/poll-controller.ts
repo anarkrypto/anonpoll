@@ -1,12 +1,12 @@
 import {
   Bool,
+  CircuitString,
   Field,
   MerkleMap,
   MerkleMapWitness,
   Poseidon,
   PublicKey,
 } from "o1js";
-import { UInt32 } from "@proto-kit/library";
 import type { client } from "chain";
 import {
   canVote,
@@ -31,7 +31,7 @@ export interface PollConfig extends BaseConfig {
 export interface PollState extends BaseState {
   loading: boolean;
   commitment: string | null;
-  metadata: PollData | null;
+  metadata: (PollData & { cid: string }) | null;
   options: {
     text: string;
     hash: string;
@@ -68,11 +68,9 @@ export class PollController extends BaseController<PollConfig, PollState> {
     this.initialize();
   }
 
-  public async loadPoll(id: number) {
+  public async loadPoll(cid: string) {
     try {
-      const pollId = UInt32.from(id);
-
-      if (this.metadata?.id === id) {
+      if (this.metadata?.cid === cid) {
         // Do not load the same poll twice
         return;
       }
@@ -85,9 +83,9 @@ export class PollController extends BaseController<PollConfig, PollState> {
       });
 
       const [metadata, votingResults, commitment] = await Promise.all([
-        this.getMetadata(id),
-        this.getVoteResults(pollId),
-        this.getCommitment(pollId),
+        this.getMetadata(cid),
+        this.getVoteResults(cid),
+        this.getCommitment(cid),
       ]);
 
       // Check if the options hashes match the ones on-chain
@@ -101,7 +99,10 @@ export class PollController extends BaseController<PollConfig, PollState> {
 
       this.update({
         commitment,
-        metadata,
+        metadata: {
+          ...metadata,
+          cid,
+        },
         options,
       });
 
@@ -117,12 +118,12 @@ export class PollController extends BaseController<PollConfig, PollState> {
     }
   }
 
-  private async getMetadata(id: number) {
-    if (this.state.metadata?.id === id) {
+  private async getMetadata(pollCid: string) {
+    if (this.state.metadata?.cid === pollCid) {
       return this.state.metadata;
     }
 
-    const metadata = await this.store.getById(id);
+    const metadata = await this.store.get(pollCid);
 
     if (metadata.options.length < 2) {
       throw new Error("Poll must have at least 2 options");
@@ -131,9 +132,11 @@ export class PollController extends BaseController<PollConfig, PollState> {
     return metadata;
   }
 
-  private async getVoteResults(pollId: UInt32) {
+  private async getVoteResults(pollCid: string) {
     const votesOptions = (
-      await this.client.query.runtime.Poll.votes.get(pollId)
+      await this.client.query.runtime.Poll.votes.get(
+        CircuitString.fromString(pollCid),
+      )
     )?.options.map((option) => {
       return {
         hash: option.hash.toString() as string,
@@ -148,9 +151,9 @@ export class PollController extends BaseController<PollConfig, PollState> {
     return votesOptions;
   }
 
-  private async getCommitment(pollId: UInt32) {
+  private async getCommitment(pollCid: string) {
     const commitment = await this.client.query.runtime.Poll.commitments.get(
-      UInt32.from(pollId),
+      CircuitString.fromString(pollCid),
     );
     if (!commitment) {
       throw new Error("Poll not found");
@@ -204,9 +207,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
       throw new Error("Poll not loaded");
     }
 
-    const votingResults = await this.getVoteResults(
-      UInt32.from(this.metadata.id),
-    );
+    const votingResults = await this.getVoteResults(this.metadata.cid);
 
     const options = this.buildOptions(this.metadata, votingResults);
 
@@ -218,12 +219,12 @@ export class PollController extends BaseController<PollConfig, PollState> {
   public async vote(optionHash: string): Promise<{ hash: string }> {
     this.validateVotePrerequisites();
 
-    const pollId = UInt32.from(this.state.metadata!.id);
+    const pollCid = CircuitString.fromString(this.state.metadata!.cid);
 
     const witness = this.createVotersWitness();
-    const proof = await this.createVoteProof(witness, pollId);
+    const proof = await this.createVoteProof(witness, pollCid);
 
-    const hash = await this.submitVoteTransaction(pollId, optionHash, proof);
+    const hash = await this.submitVoteTransaction(pollCid, optionHash, proof);
 
     return { hash };
   }
@@ -268,16 +269,19 @@ export class PollController extends BaseController<PollConfig, PollState> {
     });
   }
 
-  private async createVoteProof(witness: MerkleMapWitness, pollId: UInt32) {
-    const nullifier = await this.wallet.createNullifier([
-      Number(pollId.toString()),
-    ]);
-    const publicOutput = await canVote(witness, nullifier, pollId);
+  private async createVoteProof(
+    witness: MerkleMapWitness,
+    pollCid: CircuitString,
+  ) {
+    const nullifier = await this.wallet.createNullifier(
+      CircuitString.toFields(pollCid).map((field) => Number(field.toBigInt())),
+    );
+    const publicOutput = await canVote(witness, nullifier, pollCid);
     return await this.mockProof(publicOutput);
   }
 
   private async submitVoteTransaction(
-    pollId: UInt32,
+    pollCid: CircuitString,
     optionHash: string,
     proof: any,
   ) {
@@ -285,7 +289,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
     const tx = await this.client.transaction(
       PublicKey.fromBase58(this.wallet.account!),
       async () => {
-        await poll.vote(pollId, Field(optionHash), proof);
+        await poll.vote(pollCid, Field(optionHash), proof);
       },
     );
 
