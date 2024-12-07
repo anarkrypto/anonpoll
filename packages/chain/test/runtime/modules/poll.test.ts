@@ -102,6 +102,19 @@ describe("Poll", () => {
 		expect(commitment?.toBigInt()).toBe(commitmentRoot.toBigInt());
 	});
 
+	it("should not allow creating a poll with the same CID", async () => {
+		const tx = await appChain.transaction(alicePublicKey, async () => {
+			await poll.createPoll(pollCid, commitmentRoot, optionsHashes);
+		});
+
+		await tx.sign();
+		await tx.send();
+		const block = await appChain.produceBlock();
+				
+		expect(block?.transactions[0].status.toBoolean()).toBe(false);
+		expect(block?.transactions[0].statusMessage).toMatch(/Poll already exists/);
+	});
+
 	it("should allow a valid vote with correct proof", async () => {
 		const nullifier = Nullifier.fromJSON(
 			Nullifier.createTestNullifier(
