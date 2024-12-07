@@ -14,7 +14,8 @@ import {
 	MerkleMapWitness,
 	Nullifier,
 	ZkProgram,
-	Provable
+	Provable,
+	CircuitString
 } from "o1js";
 
 export class VoteOption extends Struct({
@@ -107,7 +108,7 @@ export class PollPublicOutput extends Struct({
 export async function canVote(
 	witness: MerkleMapWitness,
 	nullifier: Nullifier,
-	pollCid: Field
+	pollCid: CircuitString
 ): Promise<PollPublicOutput> {
 	const key = Poseidon.hash(nullifier.getPublicKey().toFields());
 	const [computedRoot, computedKey] = witness.computeRootAndKeyV2(
@@ -115,7 +116,7 @@ export async function canVote(
 	);
 	computedKey.assertEquals(key);
 
-	const message = [pollCid];
+	const message = CircuitString.toFields(pollCid);
 	nullifier.verify(message);
 
 	return new PollPublicOutput({
@@ -129,7 +130,7 @@ export const pollProgram = ZkProgram({
 	publicOutput: PollPublicOutput,
 	methods: {
 		canVote: {
-			privateInputs: [MerkleMapWitness, Nullifier, Field],
+			privateInputs: [MerkleMapWitness, Nullifier, CircuitString],
 			method: canVote
 		}
 	}
@@ -139,13 +140,13 @@ export class PollProof extends ZkProgram.Proof(pollProgram) {}
 
 @runtimeModule()
 export class Poll extends RuntimeModule {
-	@state() public commitments = StateMap.from<Field, Field>(Field, Field);
+	@state() public commitments = StateMap.from<CircuitString, Field>(CircuitString, Field);
 	@state() public nullifiers = StateMap.from<Field, Bool>(Field, Bool);
-	@state() public votes = StateMap.from<Field, VoteOptions>(Field, VoteOptions);
+	@state() public votes = StateMap.from<CircuitString, VoteOptions>(CircuitString, VoteOptions);
 
 	@runtimeMethod()
 	public async createPoll(
-		cid: Field,
+		cid: CircuitString,
 		commitment: Field,
 		optionsHashes: OptionsHashes
 	) {
@@ -156,7 +157,7 @@ export class Poll extends RuntimeModule {
 	}
 
 	@runtimeMethod()
-	async vote(cid: Field, optionHash: Field, poolProof: PollProof) {
+	async vote(cid: CircuitString, optionHash: Field, poolProof: PollProof) {
 		/*
 			NOTE: This proof verification was based on private-airdrop-workshop repo, but it has
 			known vulnerabilities while Protokit is in development:

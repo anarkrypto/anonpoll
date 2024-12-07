@@ -7,7 +7,15 @@ import {
 	PollPublicOutput,
 	canVote
 } from "../../../src/runtime/modules/poll";
-import { Field, PrivateKey, Nullifier, MerkleMap, Poseidon, Bool } from "o1js";
+import {
+	Field,
+	PrivateKey,
+	Nullifier,
+	MerkleMap,
+	Poseidon,
+	Bool,
+	CircuitString
+} from "o1js";
 import { Pickles } from "o1js/dist/node/snarky";
 import { dummyBase64Proof } from "o1js/dist/node/lib/proof-system/zkprogram";
 import { log } from "@proto-kit/common";
@@ -33,7 +41,7 @@ describe("Poll", () => {
 
 	let poll: Poll;
 	let commitmentRoot: Field;
-	let pollCid: Field;
+	let pollCid: CircuitString;
 
 	const alicePrivateKey = PrivateKey.fromBigInt(BigInt(1));
 	const alicePublicKey = alicePrivateKey.toPublicKey();
@@ -59,7 +67,7 @@ describe("Poll", () => {
 	const noHash = optionsHashes.hashes[1];
 
 	// Mock CID as a Field
-	pollCid = Field.random();
+	pollCid = CircuitString.fromString("poll-cid");
 
 	async function mockProof(publicOutput: PollPublicOutput): Promise<PollProof> {
 		const [, proof] = Pickles.proofOfBase64(await dummyBase64Proof(), 2);
@@ -96,14 +104,13 @@ describe("Poll", () => {
 
 	it("should allow a valid vote with correct proof", async () => {
 		const nullifier = Nullifier.fromJSON(
-			Nullifier.createTestNullifier([Field.from(pollCid)], alicePrivateKey)
+			Nullifier.createTestNullifier(
+				CircuitString.toFields(pollCid),
+				alicePrivateKey
+			)
 		);
 
-		const publicOutput = await canVote(
-			aliceWitness,
-			nullifier,
-			pollCid
-		);
+		const publicOutput = await canVote(aliceWitness, nullifier, pollCid);
 		const pollProof = await mockProof(publicOutput);
 
 		const tx = await appChain.transaction(alicePublicKey, async () => {
@@ -125,14 +132,13 @@ describe("Poll", () => {
 
 	it("should prevent voting with a reused nullifier", async () => {
 		const nullifier = Nullifier.fromJSON(
-			Nullifier.createTestNullifier([Field.from(pollCid)], alicePrivateKey)
+			Nullifier.createTestNullifier(
+				CircuitString.toFields(pollCid),
+				alicePrivateKey
+			)
 		);
 
-		const publicOutput = await canVote(
-			aliceWitness,
-			nullifier,
-			pollCid
-		);
+		const publicOutput = await canVote(aliceWitness, nullifier, pollCid);
 		const pollProof = await mockProof(publicOutput);
 
 		const tx = await appChain.transaction(alicePublicKey, async () => {
@@ -160,14 +166,13 @@ describe("Poll", () => {
 		poll = appChain.runtime.resolve("Poll");
 
 		const nullifier = Nullifier.fromJSON(
-			Nullifier.createTestNullifier([Field.from(pollCid)], bobPrivateKey)
+			Nullifier.createTestNullifier(
+				CircuitString.toFields(pollCid),
+				bobPrivateKey
+			)
 		);
 
-		const publicOutput = await canVote(
-			bobWitness,
-			nullifier,
-			pollCid
-		);
+		const publicOutput = await canVote(bobWitness, nullifier, pollCid);
 		const pollProof = await mockProof(publicOutput);
 
 		const tx = await appChain.transaction(bobPublicKey, async () => {
@@ -201,14 +206,13 @@ describe("Poll", () => {
 		const charlieWitness = map.getWitness(charlieHashKey);
 
 		const nullifier = Nullifier.fromJSON(
-			Nullifier.createTestNullifier([Field.from(pollCid)], charliePrivateKey)
+			Nullifier.createTestNullifier(
+				CircuitString.toFields(pollCid),
+				charliePrivateKey
+			)
 		);
 
-		const publicOutput = await canVote(
-			charlieWitness,
-			nullifier,
-			pollCid
-		);
+		const publicOutput = await canVote(charlieWitness, nullifier, pollCid);
 		const pollProof = await mockProof(publicOutput);
 
 		const tx = await appChain.transaction(charliePublicKey, async () => {
