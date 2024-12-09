@@ -3,7 +3,7 @@ import { CreatePollData } from "../controllers/poll-manager-controller";
 import { useControllers } from "./useControllers";
 
 export interface CreatePollResult {
-  id: number;
+  cid: string;
   hash: string;
 }
 
