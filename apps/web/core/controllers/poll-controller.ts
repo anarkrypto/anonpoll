@@ -49,7 +49,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
   private wallet: WalletController;
   private chain: ChainController;
   private client: Pick<typeof client, "query" | "runtime" | "transaction">;
-  private voters = new Set<PublicKey>();
+  private voters = new Map<string, PublicKey>();
   private store: AbstractPollStore;
 
   readonly defaultState: PollState = {
@@ -107,7 +107,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
       });
 
       metadata.votersWallets.forEach((wallet) =>
-        this.voters.add(PublicKey.fromBase58(wallet)),
+        this.voters.set(wallet, PublicKey.fromBase58(wallet)),
       );
 
       this.observePoll();
@@ -236,7 +236,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
     if (!this.state.metadata) {
       throw new Error("Poll not loaded");
     }
-    if (!this.voters.has(this.wallet.publicKey())) {
+    if (!this.voters.has(this.wallet.account)) {
       throw new Error("Wallet is not allowed to vote");
     }
   }
