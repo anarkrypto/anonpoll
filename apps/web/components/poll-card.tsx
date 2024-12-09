@@ -26,15 +26,15 @@ import { usePoll, useVote, useWallet } from "@/core/hooks";
 import { PollCardSkeleton } from "./poll-card-skeleton";
 import { PollCardError } from "./poll-card-error";
 
-export function PollCard({ id }: { id: number }) {
+export function PollCard({ cid }: { cid: string }) {
   const { account, connect } = useWallet();
   const {
     data: { metadata, options, commitment },
     isLoading,
     error,
-  } = usePoll(id);
+  } = usePoll(cid);
 
-  const { vote, isPending: isVoting, isSuccess: isVoted } = useVote(id);
+  const { vote, isPending: isVoting, isSuccess: isVoted } = useVote(cid);
 
   const [openVotersModal, setOpenVotersModal] = useState(false);
   const [activeOptionHash, setActiveOptionHash] = useState<string | null>(null);
