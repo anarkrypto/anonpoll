@@ -10,6 +10,7 @@ import { PrivateKey } from "o1js";
 import { InMemoryPollStore } from "../stores/poll-store";
 import { ChainTestController } from "./test-utils/chain-test-controller";
 import { PollController } from "../controllers/poll-controller";
+import { CID } from "multiformats/cid";
 
 const PRIVATE_KEY = "EKDii5d1dA7DDw6NZwN7jF7qcdYR5MVjZ9TfESv1gc2TvmvV2WAE";
 
@@ -36,6 +37,7 @@ describe("Poll Manager", () => {
   });
 
   let store: InMemoryPollStore;
+  let pollCid: string
 
   beforeAll(async () => {
     await appChain.start();
@@ -69,12 +71,14 @@ describe("Poll Manager", () => {
 
     expect(pollResult).toBeDefined();
 
-    expect(pollResult.id).toBe(1);
+    const cid = CID.parse(pollResult.cid);
+
+    expect(cid.version).toBe(1);
+
+    pollCid = pollResult.cid;
   });
 
   it("should load and vote in the poll", async () => {
-
-    const pollId = 1
 
     const poll = await new PollController({
       client: appChain,
@@ -83,7 +87,7 @@ describe("Poll Manager", () => {
       store,
     });
 
-    await poll.loadPoll(pollId);
+    await poll.loadPoll(pollCid);
 
     expect(poll.options.length).toBe(2);
 
