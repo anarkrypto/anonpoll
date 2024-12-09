@@ -24,7 +24,7 @@ import { useRouter } from "next/navigation";
 import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from "@/core/constants";
 import { useCreatePoll } from "@/core/hooks";
 
-const pollFormSchema = pollInsertSchema.omit({ id: true, salt: true });
+const pollFormSchema = pollInsertSchema.omit({ salt: true });
 
 type PollFormData = z.infer<typeof pollFormSchema>;
 
