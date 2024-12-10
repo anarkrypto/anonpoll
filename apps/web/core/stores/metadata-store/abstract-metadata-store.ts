@@ -5,7 +5,7 @@
 * Feel free to implement your own solution or something like IPFS, GIT, Bittorrent, etc.
 */
 
-export abstract class AbstractContentStore<Data = Record<string, any>> {
+export abstract class AbstractMetadataStore<Data = Record<string, any>> {
   abstract get(key: string): Promise<Data>;
   abstract put(data: Data): Promise<{ key: string }>;
 }

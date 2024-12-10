@@ -7,7 +7,7 @@ import { PollManagerController } from "../controllers/poll-manager-controller";
 import { WalletController } from "../controllers/wallet-controller";
 import { Wallet } from "../signers/wallet";
 import { PrivateKey } from "o1js";
-import { InMemoryContentStore } from "../stores/content-store";
+import { InMemoryMetadataStore } from "../stores/metadata-store";
 import { ChainTestController } from "./test-utils/chain-test-controller";
 import { PollController } from "../controllers/poll-controller";
 import { CID } from "multiformats/cid";
@@ -37,7 +37,7 @@ describe("Poll Manager", () => {
     client: appChain,
   });
 
-  let store: InMemoryContentStore<PollData>;
+  let store: InMemoryMetadataStore<PollData>;
   let pollId: string
 
   beforeAll(async () => {
@@ -54,7 +54,7 @@ describe("Poll Manager", () => {
   it("should create a poll", async () => {
     await chain.start();
 
-    store = new InMemoryContentStore<PollData>();
+    store = new InMemoryMetadataStore<PollData>();
 
     const pollManager = new PollManagerController({
       client: appChain,

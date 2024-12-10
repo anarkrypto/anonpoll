@@ -18,7 +18,7 @@ import { BaseConfig, BaseController, BaseState } from "./base-controller";
 import { ChainController } from "./chain-controller";
 import { WalletController } from "./wallet-controller";
 import { isPendingTransaction } from "../utils";
-import { AbstractContentStore } from "../stores/content-store";
+import { AbstractMetadataStore } from "../stores/metadata-store";
 import { PollData } from "@/types/poll";
 import { MetadataEncryptionV1 } from "../utils/metadata-encryption-v1";
 import { EncryptedMetadataV1 } from "@/schemas/poll";
@@ -27,7 +27,7 @@ export interface PollConfig extends BaseConfig {
   wallet: WalletController;
   chain: ChainController;
   client: Pick<typeof client, "query" | "runtime" | "transaction">;
-  store: AbstractContentStore<PollData>;
+  store: AbstractMetadataStore<PollData>;
 }
 
 export interface PollState extends BaseState {
@@ -52,7 +52,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
   private chain: ChainController;
   private client: Pick<typeof client, "query" | "runtime" | "transaction">;
   private voters = new Map<string, PublicKey>();
-  private store: AbstractContentStore<PollData | EncryptedMetadataV1>;
+  private store: AbstractMetadataStore<PollData | EncryptedMetadataV1>;
 
   readonly defaultState: PollState = {
     commitment: null,
@@ -133,7 +133,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
     const metadata = await this.store.get(pollId);
 
     let decryptedMetadata = metadata as PollData;
-    
+
     if (MetadataEncryptionV1.isEncryptedMetadataV1(metadata)) {
       if (!encryptionKey) {
         throw new Error("No encryption key provided for encrypted poll");

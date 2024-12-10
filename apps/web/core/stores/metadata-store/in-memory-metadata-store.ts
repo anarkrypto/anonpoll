@@ -1,15 +1,15 @@
-import { AbstractContentStore } from "./abstract-content-store";
+import { AbstractMetadataStore } from "./abstract-metadata-store";
 import { CID } from "multiformats/cid";
 import { sha256 } from "multiformats/hashes/sha2";
 import * as raw from "multiformats/codecs/raw";
 
-export class InMemoryContentStore<
+export class InMemoryMetadataStore<
   Data = Record<string, any>,
-> extends AbstractContentStore<Data> {
-  private contents: Map<string, Data> = new Map();
+> extends AbstractMetadataStore<Data> {
+  private metadatas: Map<string, Data> = new Map();
 
   async get(key: string): Promise<Data> {
-    const data = this.contents.get(key);
+    const data = this.metadatas.get(key);
     if (!data) {
       throw new Error(`Content for key ${key} not found`);
     }
@@ -19,7 +19,7 @@ export class InMemoryContentStore<
   async put(data: Data): Promise<{ key: string }> {
     const key = await this.generateKey(data);
 
-    this.contents.set(key.toString(), data);
+    this.metadatas.set(key.toString(), data);
 
     return { key: key.toString() };
   }

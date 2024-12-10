@@ -1,13 +1,13 @@
-import { AbstractContentStore } from "./abstract-content-store";
+import { AbstractMetadataStore } from "./abstract-metadata-store";
 import { AbstractAuthStore } from "../auth-store/abstract-auth-store";
 import { CID } from "multiformats/cid";
 import { isCID } from "@/core/utils/cid";
 
 /**
- * An IPFS-based content store compatible with Kubo's API
+ * An IPFS-based metadata store compatible with Kubo's API
  */
-export class IpfsContentStore<Data = Record<string, any>>
-  implements AbstractContentStore<Data>
+export class IpfsMetadataStore<Data = Record<string, any>>
+  implements AbstractMetadataStore<Data>
 {
   constructor(
     private ipfsApiUrl: string,
