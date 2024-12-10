@@ -1,5 +1,5 @@
 import { BaseConfig, BaseController, BaseState } from "./base-controller";
-import { pollInsertSchema } from "@/schemas/poll";
+import { EncryptedMetadataV1, pollInsertSchema } from "@/schemas/poll";
 import { z } from "zod";
 import { Bool, CircuitString, MerkleMap, Poseidon, PublicKey } from "o1js";
 import { isPendingTransaction } from "../utils";
@@ -7,6 +7,7 @@ import { WalletController } from "./wallet-controller";
 import { OptionsHashes } from "chain/dist/runtime/modules/poll";
 import { AbstractContentStore } from "../stores/content-store";
 import type { client } from "chain";
+import { MetadataEncryptionV1 } from "../utils/metadata-encryption-v1";
 
 export type CreatePollData = z.infer<typeof pollInsertSchema>;
 
@@ -47,6 +48,7 @@ export class PollManagerController extends BaseController<
 
   public async create(
     data: CreatePollData,
+    encryptionKey?: string,
   ): Promise<{ id: string; hash: string }> {
     if (!this.wallet.account) {
       throw new Error("Client or wallet not initialized");
@@ -64,10 +66,18 @@ export class PollManagerController extends BaseController<
 
     const optionsHashes = OptionsHashes.fromTexts(data.options, data.salt);
 
-    const { key: id } = await this.store.put(data);
+    const storeData = encryptionKey
+      ? await this.encrypt(data, encryptionKey)
+      : data;
+
+    const { key: id } = await this.store.put(storeData);
 
     const tx = await this.client.transaction(sender, async () => {
-      await poll.createPoll(CircuitString.fromString(id), map.getRoot(), optionsHashes);
+      await poll.createPoll(
+        CircuitString.fromString(id),
+        map.getRoot(),
+        optionsHashes,
+      );
     });
 
     await tx.sign();
@@ -88,5 +98,13 @@ export class PollManagerController extends BaseController<
       id,
       hash,
     };
+  }
+
+  private async encrypt(
+    data: CreatePollData,
+    key: string,
+  ): Promise<EncryptedMetadataV1> {
+    const metadataEncryptionV1 = new MetadataEncryptionV1(key);
+    return await metadataEncryptionV1.encrypt(JSON.stringify(data));
   }
 }

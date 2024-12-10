@@ -1,10 +1,12 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { CreatePollData } from "../controllers/poll-manager-controller";
 import { useControllers } from "./useControllers";
+import { MetadataEncryptionV1 } from "../utils/metadata-encryption-v1";
 
 export interface CreatePollResult {
   id: string;
   hash: string;
+  encryptionKey: string;
 }
 
 export interface UseCreatePollOptions {
@@ -29,15 +31,20 @@ export const useCreatePoll = (
   const [data, setData] = useState<CreatePollResult | null>(null);
   const { pollManager: pollManagerController } = useControllers();
 
+  const encryptionKey = useMemo(() => MetadataEncryptionV1.generateKey(), []);
+
   const createPoll = useCallback(
     async (pollData: CreatePollData) => {
       setIsPending(true);
       setError(null);
       setData(null);
       try {
-        const result = await pollManagerController.create(pollData);
-        setData(result);
-        options.onSuccess?.(result);
+        const result = await pollManagerController.create(
+          pollData,
+          encryptionKey,
+        );
+        setData({ ...result, encryptionKey });
+        options.onSuccess?.({ ...result, encryptionKey });
       } catch (err) {
         const message = err instanceof Error ? err.message : "Unknown error";
         setError(message);

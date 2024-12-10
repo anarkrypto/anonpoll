@@ -20,6 +20,8 @@ import { WalletController } from "./wallet-controller";
 import { isPendingTransaction } from "../utils";
 import { AbstractContentStore } from "../stores/content-store";
 import { PollData } from "@/types/poll";
+import { MetadataEncryptionV1 } from "../utils/metadata-encryption-v1";
+import { EncryptedMetadataV1 } from "@/schemas/poll";
 
 export interface PollConfig extends BaseConfig {
   wallet: WalletController;
@@ -50,7 +52,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
   private chain: ChainController;
   private client: Pick<typeof client, "query" | "runtime" | "transaction">;
   private voters = new Map<string, PublicKey>();
-  private store: AbstractContentStore<PollData>;
+  private store: AbstractContentStore<PollData | EncryptedMetadataV1>;
 
   readonly defaultState: PollState = {
     commitment: null,
@@ -68,7 +70,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
     this.initialize();
   }
 
-  public async loadPoll(id: string) {
+  public async loadPoll(id: string, encryptionKey?: string) {
     try {
       if (this.metadata?.id === id) {
         // Do not load the same poll twice
@@ -83,7 +85,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
       });
 
       const [metadata, votingResults, commitment] = await Promise.all([
-        this.getMetadata(id),
+        this.getMetadata(id, encryptionKey),
         this.getVoteResults(id),
         this.getCommitment(id),
       ]);
@@ -97,10 +99,12 @@ export class PollController extends BaseController<PollConfig, PollState> {
 
       const options = this.buildOptions(metadata, votingResults);
 
+      let decryptedMetadata = metadata;
+
       this.update({
         commitment,
         metadata: {
-          ...metadata,
+          ...decryptedMetadata,
           id,
         },
         options,
@@ -118,18 +122,33 @@ export class PollController extends BaseController<PollConfig, PollState> {
     }
   }
 
-  private async getMetadata(pollId: string) {
+  private async getMetadata(
+    pollId: string,
+    encryptionKey?: string,
+  ): Promise<PollData> {
     if (this.state.metadata?.id === pollId) {
       return this.state.metadata;
     }
 
     const metadata = await this.store.get(pollId);
 
-    if (metadata.options.length < 2) {
+    let decryptedMetadata = metadata as PollData;
+
+    console.log("MetadataEncryptionV1.isEncryptedMetadataV1(metadata)", MetadataEncryptionV1.isEncryptedMetadataV1(metadata), metadata)
+
+    if (MetadataEncryptionV1.isEncryptedMetadataV1(metadata)) {
+      if (!encryptionKey) {
+        throw new Error("No encryption key provided for encrypted poll");
+      }
+      const metadataEncryptionV1 = new MetadataEncryptionV1(encryptionKey);
+      decryptedMetadata = await metadataEncryptionV1.decrypt(metadata);
+    }
+
+    if (decryptedMetadata.options.length < 2) {
       throw new Error("Poll must have at least 2 options");
     }
 
-    return metadata;
+    return decryptedMetadata;
   }
 
   private async getVoteResults(pollId: string) {
