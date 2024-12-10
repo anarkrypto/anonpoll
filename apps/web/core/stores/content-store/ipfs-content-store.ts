@@ -15,7 +15,6 @@ export class IpfsContentStore<Data = Record<string, any>>
   ) {}
 
   public async get(cid: string): Promise<Data> {
-
     if (!isCID(cid)) {
       throw new Error("Invalid CID received from IPFS");
     }
@@ -63,7 +62,7 @@ export class IpfsContentStore<Data = Record<string, any>>
 
     // Create form data with the JSON content (IPFS API expects a file)
     const formData = new FormData();
-    const jsonBlob = new Blob([JSON.stringify(data)], {
+    const jsonBlob = new Blob([JSON.stringify(data, null, 2)], {
       type: "application/json",
     });
     formData.append("file", jsonBlob);
