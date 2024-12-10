@@ -1,6 +1,7 @@
 import { AbstractContentStore } from "./abstract-content-store";
 import { AbstractAuthStore } from "../auth-store/abstract-auth-store";
 import { CID } from "multiformats/cid";
+import { isCID } from "@/core/utils/cid";
 
 /**
  * An IPFS-based content store compatible with Kubo's API
@@ -14,6 +15,11 @@ export class IpfsContentStore<Data = Record<string, any>>
   ) {}
 
   public async get(cid: string): Promise<Data> {
+
+    if (!isCID(cid)) {
+      throw new Error("Invalid CID received from IPFS");
+    }
+
     const url = new URL(this.ipfsApiUrl);
     url.pathname = "/api/v0/block/get";
     url.searchParams.append("arg", cid);
@@ -84,11 +90,9 @@ export class IpfsContentStore<Data = Record<string, any>>
 
     const result = (await response.json()) as { Key: string; Size: number };
 
-    try {
-      CID.parse(result.Key);
-      return { key: result.Key };
-    } catch (e) {
+    if (!isCID(result.Key)) {
       throw new Error("Invalid CID received from IPFS");
     }
+    return { key: result.Key };
   }
 }
