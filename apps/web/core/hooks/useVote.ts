@@ -3,6 +3,7 @@ import { useControllers } from "./useControllers";
 import { useEngine } from "../engine-context";
 
 export interface UseVoteOptions {
+  encryptionKey?: string;
   onError?: (message: string) => void;
   onSuccess?: (result: { hash: string }) => void;
 }
@@ -29,7 +30,7 @@ export const useVote = (
   useEffect(() => {
     // Preload the poll
     if (initialized) {
-      pollController.loadPoll(pollId);
+      pollController.loadPoll(pollId, options?.encryptionKey);
     }
   }, [pollId, pollController, initialized]);
 
