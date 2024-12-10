@@ -133,9 +133,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
     const metadata = await this.store.get(pollId);
 
     let decryptedMetadata = metadata as PollData;
-
-    console.log("MetadataEncryptionV1.isEncryptedMetadataV1(metadata)", MetadataEncryptionV1.isEncryptedMetadataV1(metadata), metadata)
-
+    
     if (MetadataEncryptionV1.isEncryptedMetadataV1(metadata)) {
       if (!encryptionKey) {
         throw new Error("No encryption key provided for encrypted poll");
