@@ -1,17 +1,19 @@
-import { PollData } from "@/types/poll";
-import { pollInsertSchema } from "@/schemas/poll";
-import { z } from "zod";
-import { AbstractPollStore } from "./abstract-poll-store";
+import { AbstractContentStore } from "./abstract-content-store";
 import { AbstractAuthStore } from "../auth-store/abstract-auth-store";
 import { CID } from "multiformats/cid";
 
-export class IpfsPollStore implements AbstractPollStore {
+/**
+ * An IPFS-based content store compatible with Kubo's API
+ */
+export class IpfsContentStore<Data = Record<string, any>>
+  implements AbstractContentStore<Data>
+{
   constructor(
     private ipfsApiUrl: string,
     private authStore: AbstractAuthStore,
   ) {}
 
-  public async get(cid: string) {
+  public async get(cid: string): Promise<Data> {
     const url = new URL(this.ipfsApiUrl);
     url.pathname = "/api/v0/block/get";
     url.searchParams.append("arg", cid);
@@ -36,18 +38,15 @@ export class IpfsPollStore implements AbstractPollStore {
       } | null;
 
       const errorMessage =
-        errorData?.Message || "Failed to fetch poll data from IPFS";
+        errorData?.Message || "Failed to fetch data from IPFS";
       throw new Error(errorMessage);
     }
 
     const data = await response.text();
-    return JSON.parse(data) as PollData;
+    return JSON.parse(data);
   }
 
-  public async put(data: z.infer<typeof pollInsertSchema>) {
-    // Validate the data first
-    pollInsertSchema.parse(data);
-
+  public async put(data: Data): Promise<{ key: string }> {
     const url = new URL(this.ipfsApiUrl);
     url.pathname = "/api/v0/block/put";
 
@@ -56,7 +55,7 @@ export class IpfsPollStore implements AbstractPollStore {
       throw new Error("not authenticated");
     }
 
-    // Create form data with the JSON content
+    // Create form data with the JSON content (IPFS API expects a file)
     const formData = new FormData();
     const jsonBlob = new Blob([JSON.stringify(data)], {
       type: "application/json",
@@ -79,18 +78,15 @@ export class IpfsPollStore implements AbstractPollStore {
       } | null;
 
       const errorMessage =
-        errorData?.Message || "Failed to persist poll data to IPFS";
+        errorData?.Message || "Failed to persist data data to IPFS";
       throw new Error(errorMessage);
     }
 
-    // The response includes the CID of the stored data
     const result = (await response.json()) as { Key: string; Size: number };
 
-    // You might want to store or return the CID for future reference
-    // For now, we'll just validate it's a valid CID
     try {
       CID.parse(result.Key);
-      return { cid: result.Key };
+      return { key: result.Key };
     } catch (e) {
       throw new Error("Invalid CID received from IPFS");
     }
