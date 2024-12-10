@@ -69,6 +69,9 @@ export class MetadataEncryptionV1 {
   }
 
   async decrypt(encryptedMetadata: EncryptedMetadataV1): Promise<any> {
+
+    encryptedMetadataSchemaV1.parse(encryptedMetadata);
+
     const iv = Buffer.from(encryptedMetadata.crypto.cipherparams.iv, "hex");
 
     const decipher = crypto.createDecipheriv(this.ALGORITHM, this.key, iv);
@@ -82,10 +85,7 @@ export class MetadataEncryptionV1 {
     // Unpad to get original data
     const originalBuffer = this.unpadBuffer(paddedBuffer);
 
-    const result = JSON.parse(originalBuffer.toString("utf8"));
-
-    // Validate schema
-    return encryptedMetadataSchemaV1.parse(result);
+    return JSON.parse(originalBuffer.toString("utf8"));
   }
 
   static isValidKey(key: string): boolean {
