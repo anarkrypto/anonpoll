@@ -1,19 +1,20 @@
 import { BaseConfig, BaseController, BaseState } from "./base-controller";
-import { pollInsertSchema } from "@/schemas/poll";
+import { EncryptedMetadataV1, pollInsertSchema } from "@/schemas/poll";
 import { z } from "zod";
-import { Bool, MerkleMap, Poseidon, PublicKey } from "o1js";
+import { Bool, CircuitString, MerkleMap, Poseidon, PublicKey } from "o1js";
 import { isPendingTransaction } from "../utils";
 import { WalletController } from "./wallet-controller";
 import { OptionsHashes } from "chain/dist/runtime/modules/poll";
-import { AbstractPollStore } from "../stores/poll-store";
+import { AbstractMetadataStore } from "../stores/metadata-store";
 import type { client } from "chain";
+import { MetadataEncryptionV1 } from "../utils/metadata-encryption-v1";
 
-export type CreatePollData = Omit<z.infer<typeof pollInsertSchema>, "id">;
+export type CreatePollData = z.infer<typeof pollInsertSchema>;
 
 export interface PollManagerConfig extends BaseConfig {
   client: Pick<typeof client, "query" | "runtime" | "transaction">;
   wallet: WalletController;
-  store: AbstractPollStore;
+  store: AbstractMetadataStore;
 }
 
 export interface PollManagerState extends BaseState {
@@ -32,7 +33,7 @@ export class PollManagerController extends BaseController<
 > {
   client: Pick<typeof client, "query" | "runtime" | "transaction">;
   wallet: WalletController;
-  store: AbstractPollStore;
+  store: AbstractMetadataStore;
 
   constructor(
     config: PollManagerConfig,
@@ -47,7 +48,8 @@ export class PollManagerController extends BaseController<
 
   public async create(
     data: CreatePollData,
-  ): Promise<{ id: number; hash: string }> {
+    encryptionKey?: string,
+  ): Promise<{ id: string; hash: string }> {
     if (!this.wallet.account) {
       throw new Error("Client or wallet not initialized");
     }
@@ -64,8 +66,18 @@ export class PollManagerController extends BaseController<
 
     const optionsHashes = OptionsHashes.fromTexts(data.options, data.salt);
 
+    const storeData = encryptionKey
+      ? await this.encrypt(data, encryptionKey)
+      : data;
+
+    const { key: id } = await this.store.put(storeData);
+
     const tx = await this.client.transaction(sender, async () => {
-      await poll.createPoll(map.getRoot(), optionsHashes);
+      await poll.createPoll(
+        CircuitString.fromString(id),
+        map.getRoot(),
+        optionsHashes,
+      );
     });
 
     await tx.sign();
@@ -82,27 +94,17 @@ export class PollManagerController extends BaseController<
       throw new Error(receipt.statusMessage as string);
     }
 
-    // TODO: refactor this
-    // Issue: this is not guaranteed to be the last poll id
-    const id = await this.getLastPollId();
-
-    // TODO: The data should be stored before create the transaction.
-    await this.store.persist({
-      id,
-      ...data,
-    });
-
     return {
       id,
       hash,
     };
   }
 
-  private async getLastPollId(): Promise<number> {
-    const id = await this.client.query.runtime.Poll.lastPollId.get();
-    if (!id) {
-      throw new Error("Could not get poll id");
-    }
-    return Number(id.toBigInt());
+  private async encrypt(
+    data: CreatePollData,
+    key: string,
+  ): Promise<EncryptedMetadataV1> {
+    const metadataEncryptionV1 = new MetadataEncryptionV1(key);
+    return await metadataEncryptionV1.encrypt(JSON.stringify(data));
   }
 }

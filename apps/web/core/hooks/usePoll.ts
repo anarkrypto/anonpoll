@@ -11,7 +11,7 @@ export interface UsePollReturn {
   refetch: () => Promise<void>;
 }
 
-export const usePoll = (id: number): UsePollReturn => {
+export const usePoll = (id: string, encryptionKey?: string): UsePollReturn => {
   const { engine, initialized } = useEngine();
   const pollController = engine.context.poll;
 
@@ -26,7 +26,7 @@ export const usePoll = (id: number): UsePollReturn => {
   const loadPoll = useCallback(async () => {
     setError(null);
     try {
-      await pollController.loadPoll(id);
+      await pollController.loadPoll(id, encryptionKey);
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Failed to load poll";

@@ -35,7 +35,7 @@ export default function RootLayout({
       >
         <EngineProvider
           protokitGraphqlUrl={process.env.NEXT_PUBLIC_PROTOKIT_GRAPHQL_URL!}
-          storeApiUrl={process.env.NEXT_PUBLIC_SITE_URL!}
+          ipfsApiUrl={process.env.NEXT_PUBLIC_IPFS_API_URL!}
         >
           <Header />
           {children}

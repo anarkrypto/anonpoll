@@ -1,12 +1,12 @@
 import {
   Bool,
+  CircuitString,
   Field,
   MerkleMap,
   MerkleMapWitness,
   Poseidon,
   PublicKey,
 } from "o1js";
-import { UInt32 } from "@proto-kit/library";
 import type { client } from "chain";
 import {
   canVote,
@@ -18,20 +18,22 @@ import { BaseConfig, BaseController, BaseState } from "./base-controller";
 import { ChainController } from "./chain-controller";
 import { WalletController } from "./wallet-controller";
 import { isPendingTransaction } from "../utils";
-import { AbstractPollStore } from "../stores/poll-store";
+import { AbstractMetadataStore } from "../stores/metadata-store";
 import { PollData } from "@/types/poll";
+import { MetadataEncryptionV1 } from "../utils/metadata-encryption-v1";
+import { EncryptedMetadataV1 } from "@/schemas/poll";
 
 export interface PollConfig extends BaseConfig {
   wallet: WalletController;
   chain: ChainController;
   client: Pick<typeof client, "query" | "runtime" | "transaction">;
-  store: AbstractPollStore;
+  store: AbstractMetadataStore<PollData>;
 }
 
 export interface PollState extends BaseState {
   loading: boolean;
   commitment: string | null;
-  metadata: PollData | null;
+  metadata: (PollData & { id: string }) | null;
   options: {
     text: string;
     hash: string;
@@ -49,8 +51,8 @@ export class PollController extends BaseController<PollConfig, PollState> {
   private wallet: WalletController;
   private chain: ChainController;
   private client: Pick<typeof client, "query" | "runtime" | "transaction">;
-  private voters = new Set<PublicKey>();
-  private store: AbstractPollStore;
+  private voters = new Map<string, PublicKey>();
+  private store: AbstractMetadataStore<PollData | EncryptedMetadataV1>;
 
   readonly defaultState: PollState = {
     commitment: null,
@@ -68,10 +70,8 @@ export class PollController extends BaseController<PollConfig, PollState> {
     this.initialize();
   }
 
-  public async loadPoll(id: number) {
+  public async loadPoll(id: string, encryptionKey?: string) {
     try {
-      const pollId = UInt32.from(id);
-
       if (this.metadata?.id === id) {
         // Do not load the same poll twice
         return;
@@ -85,9 +85,9 @@ export class PollController extends BaseController<PollConfig, PollState> {
       });
 
       const [metadata, votingResults, commitment] = await Promise.all([
-        this.getMetadata(id),
-        this.getVoteResults(pollId),
-        this.getCommitment(pollId),
+        this.getMetadata(id, encryptionKey),
+        this.getVoteResults(id),
+        this.getCommitment(id),
       ]);
 
       // Check if the options hashes match the ones on-chain
@@ -99,14 +99,19 @@ export class PollController extends BaseController<PollConfig, PollState> {
 
       const options = this.buildOptions(metadata, votingResults);
 
+      let decryptedMetadata = metadata;
+
       this.update({
         commitment,
-        metadata,
+        metadata: {
+          ...decryptedMetadata,
+          id,
+        },
         options,
       });
 
       metadata.votersWallets.forEach((wallet) =>
-        this.voters.add(PublicKey.fromBase58(wallet)),
+        this.voters.set(wallet, PublicKey.fromBase58(wallet)),
       );
 
       this.observePoll();
@@ -117,23 +122,38 @@ export class PollController extends BaseController<PollConfig, PollState> {
     }
   }
 
-  private async getMetadata(id: number) {
-    if (this.state.metadata?.id === id) {
+  private async getMetadata(
+    pollId: string,
+    encryptionKey?: string,
+  ): Promise<PollData> {
+    if (this.state.metadata?.id === pollId) {
       return this.state.metadata;
     }
 
-    const metadata = await this.store.getById(id);
+    const metadata = await this.store.get(pollId);
 
-    if (metadata.options.length < 2) {
+    let decryptedMetadata = metadata as PollData;
+
+    if (MetadataEncryptionV1.isEncryptedMetadataV1(metadata)) {
+      if (!encryptionKey) {
+        throw new Error("No encryption key provided for encrypted poll");
+      }
+      const metadataEncryptionV1 = new MetadataEncryptionV1(encryptionKey);
+      decryptedMetadata = await metadataEncryptionV1.decrypt(metadata);
+    }
+
+    if (decryptedMetadata.options.length < 2) {
       throw new Error("Poll must have at least 2 options");
     }
 
-    return metadata;
+    return decryptedMetadata;
   }
 
-  private async getVoteResults(pollId: UInt32) {
+  private async getVoteResults(pollId: string) {
     const votesOptions = (
-      await this.client.query.runtime.Poll.votes.get(pollId)
+      await this.client.query.runtime.Poll.votes.get(
+        CircuitString.fromString(pollId),
+      )
     )?.options.map((option) => {
       return {
         hash: option.hash.toString() as string,
@@ -148,9 +168,9 @@ export class PollController extends BaseController<PollConfig, PollState> {
     return votesOptions;
   }
 
-  private async getCommitment(pollId: UInt32) {
+  private async getCommitment(pollId: string) {
     const commitment = await this.client.query.runtime.Poll.commitments.get(
-      UInt32.from(pollId),
+      CircuitString.fromString(pollId),
     );
     if (!commitment) {
       throw new Error("Poll not found");
@@ -204,9 +224,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
       throw new Error("Poll not loaded");
     }
 
-    const votingResults = await this.getVoteResults(
-      UInt32.from(this.metadata.id),
-    );
+    const votingResults = await this.getVoteResults(this.metadata.id);
 
     const options = this.buildOptions(this.metadata, votingResults);
 
@@ -218,7 +236,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
   public async vote(optionHash: string): Promise<{ hash: string }> {
     this.validateVotePrerequisites();
 
-    const pollId = UInt32.from(this.state.metadata!.id);
+    const pollId = CircuitString.fromString(this.state.metadata!.id);
 
     const witness = this.createVotersWitness();
     const proof = await this.createVoteProof(witness, pollId);
@@ -235,7 +253,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
     if (!this.state.metadata) {
       throw new Error("Poll not loaded");
     }
-    if (!this.voters.has(this.wallet.publicKey())) {
+    if (!this.voters.has(this.wallet.account)) {
       throw new Error("Wallet is not allowed to vote");
     }
   }
@@ -268,16 +286,19 @@ export class PollController extends BaseController<PollConfig, PollState> {
     });
   }
 
-  private async createVoteProof(witness: MerkleMapWitness, pollId: UInt32) {
-    const nullifier = await this.wallet.createNullifier([
-      Number(pollId.toString()),
-    ]);
+  private async createVoteProof(
+    witness: MerkleMapWitness,
+    pollId: CircuitString,
+  ) {
+    const nullifier = await this.wallet.createNullifier(
+      CircuitString.toFields(pollId).map((field) => Number(field.toBigInt())),
+    );
     const publicOutput = await canVote(witness, nullifier, pollId);
     return await this.mockProof(publicOutput);
   }
 
   private async submitVoteTransaction(
-    pollId: UInt32,
+    pollId: CircuitString,
     optionHash: string,
     proof: any,
   ) {

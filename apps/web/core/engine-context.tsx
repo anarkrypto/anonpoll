@@ -21,13 +21,13 @@ export function EngineProvider({
   children,
   tickInterval,
   protokitGraphqlUrl,
-  storeApiUrl,
+  ipfsApiUrl,
 }: { children: React.ReactNode } & EngineConfig) {
   const [initialized, setInitialized] = useState(false);
 
   const engine = useMemo(
-    () => new Engine({ tickInterval, protokitGraphqlUrl, storeApiUrl }),
-    [tickInterval, protokitGraphqlUrl, storeApiUrl],
+    () => new Engine({ tickInterval, protokitGraphqlUrl, ipfsApiUrl }),
+    [tickInterval, protokitGraphqlUrl, ipfsApiUrl],
   );
 
   const init = async () => {

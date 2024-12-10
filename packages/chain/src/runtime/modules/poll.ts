@@ -14,7 +14,8 @@ import {
 	MerkleMapWitness,
 	Nullifier,
 	ZkProgram,
-	Provable
+	Provable,
+	CircuitString
 } from "o1js";
 
 export class VoteOption extends Struct({
@@ -107,7 +108,7 @@ export class PollPublicOutput extends Struct({
 export async function canVote(
 	witness: MerkleMapWitness,
 	nullifier: Nullifier,
-	pollId: UInt32
+	pollId: CircuitString
 ): Promise<PollPublicOutput> {
 	const key = Poseidon.hash(nullifier.getPublicKey().toFields());
 	const [computedRoot, computedKey] = witness.computeRootAndKeyV2(
@@ -115,7 +116,7 @@ export async function canVote(
 	);
 	computedKey.assertEquals(key);
 
-	const message = [Field.from(pollId.value)];
+	const message = CircuitString.toFields(pollId);
 	nullifier.verify(message);
 
 	return new PollPublicOutput({
@@ -129,7 +130,7 @@ export const pollProgram = ZkProgram({
 	publicOutput: PollPublicOutput,
 	methods: {
 		canVote: {
-			privateInputs: [MerkleMapWitness, Nullifier, UInt32],
+			privateInputs: [MerkleMapWitness, Nullifier, CircuitString],
 			method: canVote
 		}
 	}
@@ -139,25 +140,24 @@ export class PollProof extends ZkProgram.Proof(pollProgram) {}
 
 @runtimeModule()
 export class Poll extends RuntimeModule {
-	@state() public commitments = StateMap.from<UInt32, Field>(UInt32, Field);
+	@state() public commitments = StateMap.from<CircuitString, Field>(CircuitString, Field);
 	@state() public nullifiers = StateMap.from<Field, Bool>(Field, Bool);
-	@state() public votes = StateMap.from<UInt32, VoteOptions>(
-		UInt32,
-		VoteOptions
-	);
-	@state() public lastPollId = State.from<UInt32>(UInt32);
+	@state() public votes = StateMap.from<CircuitString, VoteOptions>(CircuitString, VoteOptions);
 
 	@runtimeMethod()
-	public async createPoll(commitment: Field, optionsHashes: OptionsHashes) {
-		const lastId = (await this.lastPollId.get()).orElse(UInt32.from(0));
-		const newId = UInt32.Unsafe.fromField(lastId.add(1).value);
-		await this.commitments.set(newId, commitment);
-		await this.votes.set(newId, VoteOptions.fromOptionsHashes(optionsHashes));
-		await this.lastPollId.set(newId);
+	public async createPoll(
+		id: CircuitString,
+		commitment: Field,
+		optionsHashes: OptionsHashes
+	) {
+		const checkCommitment = await this.commitments.get(id);
+		assert(checkCommitment.isSome.not(), "Poll already exists");
+		await this.commitments.set(id, commitment);
+		await this.votes.set(id, VoteOptions.fromOptionsHashes(optionsHashes));
 	}
 
 	@runtimeMethod()
-	async vote(pollId: UInt32, optionHash: Field, poolProof: PollProof) {
+	async vote(id: CircuitString, optionHash: Field, poolProof: PollProof) {
 		/*
 			NOTE: This proof verification was based on private-airdrop-workshop repo, but it has
 			known vulnerabilities while Protokit is in development:
@@ -169,7 +169,7 @@ export class Poll extends RuntimeModule {
 
 		poolProof.verify();
 
-		const commitment = await this.commitments.get(pollId);
+		const commitment = await this.commitments.get(id);
 
 		assert(commitment.isSome, "Poll does not exist");
 
@@ -186,10 +186,10 @@ export class Poll extends RuntimeModule {
 
 		await this.nullifiers.set(poolProof.publicOutput.nullifier, Bool(true));
 
-		const currentVotes = await this.votes.get(pollId);
+		const currentVotes = await this.votes.get(id);
 
 		await this.votes.set(
-			pollId,
+			id,
 			VoteOptions.cast(currentVotes.value, optionHash)
 		);
 	}

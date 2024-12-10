@@ -5,11 +5,13 @@ import { Poll } from "chain/dist/runtime/modules/poll";
 import { UInt64 } from "@proto-kit/library";
 import { PollManagerController } from "../controllers/poll-manager-controller";
 import { WalletController } from "../controllers/wallet-controller";
-import { WalletProvider } from "../signers/wallet";
+import { Wallet } from "../signers/wallet";
 import { PrivateKey } from "o1js";
-import { InMemoryPollStore } from "../stores/poll-store";
+import { InMemoryMetadataStore } from "../stores/metadata-store";
 import { ChainTestController } from "./test-utils/chain-test-controller";
 import { PollController } from "../controllers/poll-controller";
+import { CID } from "multiformats/cid";
+import { PollData } from "@/types/poll";
 
 const PRIVATE_KEY = "EKDii5d1dA7DDw6NZwN7jF7qcdYR5MVjZ9TfESv1gc2TvmvV2WAE";
 
@@ -35,7 +37,8 @@ describe("Poll Manager", () => {
     client: appChain,
   });
 
-  let store: InMemoryPollStore;
+  let store: InMemoryMetadataStore<PollData>;
+  let pollId: string
 
   beforeAll(async () => {
     await appChain.start();
@@ -43,7 +46,7 @@ describe("Poll Manager", () => {
   });
 
   it("should init the wallet", async () => {
-    const provider = new WalletProvider(PRIVATE_KEY);
+    const provider = new Wallet(PRIVATE_KEY);
     await wallet.init(provider);
     expect(wallet.account).toBeDefined();
   });
@@ -51,7 +54,7 @@ describe("Poll Manager", () => {
   it("should create a poll", async () => {
     await chain.start();
 
-    store = new InMemoryPollStore(wallet.account as string);
+    store = new InMemoryMetadataStore<PollData>();
 
     const pollManager = new PollManagerController({
       client: appChain,
@@ -69,12 +72,14 @@ describe("Poll Manager", () => {
 
     expect(pollResult).toBeDefined();
 
-    expect(pollResult.id).toBe(1);
+    const cid = CID.parse(pollResult.id);
+
+    expect(cid.version).toBe(1);
+
+    pollId = pollResult.id;
   });
 
   it("should load and vote in the poll", async () => {
-
-    const pollId = 1
 
     const poll = await new PollController({
       client: appChain,

@@ -6,6 +6,7 @@ import { Server } from "http";
 import { IPFSNode } from "../ipfs/node";
 import multer from "multer";
 import { FILESIZE_LIMIT } from "../config/config";
+import cors from "cors";
 
 export class IPFSAPIServer {
 	private server: Server | null = null;
@@ -19,6 +20,7 @@ export class IPFSAPIServer {
 		const app = express();
 		app.use(bodyParser.urlencoded({ extended: true }));
 		app.use(bodyParser.json());
+		app.use(cors());
 
 		this.setupRoutes(app);
 
