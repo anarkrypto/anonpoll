@@ -7,10 +7,11 @@ import { PollManagerController } from "../controllers/poll-manager-controller";
 import { WalletController } from "../controllers/wallet-controller";
 import { Wallet } from "../signers/wallet";
 import { PrivateKey } from "o1js";
-import { InMemoryPollStore } from "../stores/poll-store";
+import { InMemoryContentStore } from "../stores/content-store";
 import { ChainTestController } from "./test-utils/chain-test-controller";
 import { PollController } from "../controllers/poll-controller";
 import { CID } from "multiformats/cid";
+import { PollData } from "@/types/poll";
 
 const PRIVATE_KEY = "EKDii5d1dA7DDw6NZwN7jF7qcdYR5MVjZ9TfESv1gc2TvmvV2WAE";
 
@@ -36,8 +37,8 @@ describe("Poll Manager", () => {
     client: appChain,
   });
 
-  let store: InMemoryPollStore;
-  let pollCid: string
+  let store: InMemoryContentStore<PollData>;
+  let pollId: string
 
   beforeAll(async () => {
     await appChain.start();
@@ -53,7 +54,7 @@ describe("Poll Manager", () => {
   it("should create a poll", async () => {
     await chain.start();
 
-    store = new InMemoryPollStore(wallet.account as string);
+    store = new InMemoryContentStore<PollData>();
 
     const pollManager = new PollManagerController({
       client: appChain,
@@ -71,11 +72,11 @@ describe("Poll Manager", () => {
 
     expect(pollResult).toBeDefined();
 
-    const cid = CID.parse(pollResult.cid);
+    const cid = CID.parse(pollResult.id);
 
     expect(cid.version).toBe(1);
 
-    pollCid = pollResult.cid;
+    pollId = pollResult.id;
   });
 
   it("should load and vote in the poll", async () => {
@@ -87,7 +88,7 @@ describe("Poll Manager", () => {
       store,
     });
 
-    await poll.loadPoll(pollCid);
+    await poll.loadPoll(pollId);
 
     expect(poll.options.length).toBe(2);
 

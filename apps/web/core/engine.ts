@@ -8,7 +8,8 @@ import {
 import { WalletController, WalletState } from "./controllers/wallet-controller";
 import { AuthStoreCookie } from "./stores/auth-store/auth-store-cookie";
 import { AuthController, AuthState } from "./controllers/auth-controller";
-import { IpfsPollStore } from "./stores/poll-store";
+import { IpfsContentStore } from "./stores/content-store";
+import { PollData } from "@/types/poll";
 
 interface Controllers {
   wallet: WalletController;
@@ -62,7 +63,7 @@ export class Engine {
     );
 
     const authStore = new AuthStoreCookie();
-    const pollStore = new IpfsPollStore(config.ipfsApiUrl, authStore);
+    const pollStore = new IpfsContentStore<PollData>(config.ipfsApiUrl, authStore);
 
     const auth = new AuthController(
       {

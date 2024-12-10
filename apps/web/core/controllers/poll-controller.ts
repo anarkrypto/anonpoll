@@ -18,20 +18,20 @@ import { BaseConfig, BaseController, BaseState } from "./base-controller";
 import { ChainController } from "./chain-controller";
 import { WalletController } from "./wallet-controller";
 import { isPendingTransaction } from "../utils";
-import { AbstractPollStore } from "../stores/poll-store";
+import { AbstractContentStore } from "../stores/content-store";
 import { PollData } from "@/types/poll";
 
 export interface PollConfig extends BaseConfig {
   wallet: WalletController;
   chain: ChainController;
   client: Pick<typeof client, "query" | "runtime" | "transaction">;
-  store: AbstractPollStore;
+  store: AbstractContentStore<PollData>;
 }
 
 export interface PollState extends BaseState {
   loading: boolean;
   commitment: string | null;
-  metadata: (PollData & { cid: string }) | null;
+  metadata: (PollData & { id: string }) | null;
   options: {
     text: string;
     hash: string;
@@ -50,7 +50,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
   private chain: ChainController;
   private client: Pick<typeof client, "query" | "runtime" | "transaction">;
   private voters = new Map<string, PublicKey>();
-  private store: AbstractPollStore;
+  private store: AbstractContentStore<PollData>;
 
   readonly defaultState: PollState = {
     commitment: null,
@@ -68,9 +68,9 @@ export class PollController extends BaseController<PollConfig, PollState> {
     this.initialize();
   }
 
-  public async loadPoll(cid: string) {
+  public async loadPoll(id: string) {
     try {
-      if (this.metadata?.cid === cid) {
+      if (this.metadata?.id === id) {
         // Do not load the same poll twice
         return;
       }
@@ -83,9 +83,9 @@ export class PollController extends BaseController<PollConfig, PollState> {
       });
 
       const [metadata, votingResults, commitment] = await Promise.all([
-        this.getMetadata(cid),
-        this.getVoteResults(cid),
-        this.getCommitment(cid),
+        this.getMetadata(id),
+        this.getVoteResults(id),
+        this.getCommitment(id),
       ]);
 
       // Check if the options hashes match the ones on-chain
@@ -101,7 +101,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
         commitment,
         metadata: {
           ...metadata,
-          cid,
+          id,
         },
         options,
       });
@@ -118,12 +118,12 @@ export class PollController extends BaseController<PollConfig, PollState> {
     }
   }
 
-  private async getMetadata(pollCid: string) {
-    if (this.state.metadata?.cid === pollCid) {
+  private async getMetadata(pollId: string) {
+    if (this.state.metadata?.id === pollId) {
       return this.state.metadata;
     }
 
-    const metadata = await this.store.get(pollCid);
+    const metadata = await this.store.get(pollId);
 
     if (metadata.options.length < 2) {
       throw new Error("Poll must have at least 2 options");
@@ -132,10 +132,10 @@ export class PollController extends BaseController<PollConfig, PollState> {
     return metadata;
   }
 
-  private async getVoteResults(pollCid: string) {
+  private async getVoteResults(pollId: string) {
     const votesOptions = (
       await this.client.query.runtime.Poll.votes.get(
-        CircuitString.fromString(pollCid),
+        CircuitString.fromString(pollId),
       )
     )?.options.map((option) => {
       return {
@@ -151,9 +151,9 @@ export class PollController extends BaseController<PollConfig, PollState> {
     return votesOptions;
   }
 
-  private async getCommitment(pollCid: string) {
+  private async getCommitment(pollId: string) {
     const commitment = await this.client.query.runtime.Poll.commitments.get(
-      CircuitString.fromString(pollCid),
+      CircuitString.fromString(pollId),
     );
     if (!commitment) {
       throw new Error("Poll not found");
@@ -207,7 +207,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
       throw new Error("Poll not loaded");
     }
 
-    const votingResults = await this.getVoteResults(this.metadata.cid);
+    const votingResults = await this.getVoteResults(this.metadata.id);
 
     const options = this.buildOptions(this.metadata, votingResults);
 
@@ -219,12 +219,12 @@ export class PollController extends BaseController<PollConfig, PollState> {
   public async vote(optionHash: string): Promise<{ hash: string }> {
     this.validateVotePrerequisites();
 
-    const pollCid = CircuitString.fromString(this.state.metadata!.cid);
+    const pollId = CircuitString.fromString(this.state.metadata!.id);
 
     const witness = this.createVotersWitness();
-    const proof = await this.createVoteProof(witness, pollCid);
+    const proof = await this.createVoteProof(witness, pollId);
 
-    const hash = await this.submitVoteTransaction(pollCid, optionHash, proof);
+    const hash = await this.submitVoteTransaction(pollId, optionHash, proof);
 
     return { hash };
   }
@@ -271,17 +271,17 @@ export class PollController extends BaseController<PollConfig, PollState> {
 
   private async createVoteProof(
     witness: MerkleMapWitness,
-    pollCid: CircuitString,
+    pollId: CircuitString,
   ) {
     const nullifier = await this.wallet.createNullifier(
-      CircuitString.toFields(pollCid).map((field) => Number(field.toBigInt())),
+      CircuitString.toFields(pollId).map((field) => Number(field.toBigInt())),
     );
-    const publicOutput = await canVote(witness, nullifier, pollCid);
+    const publicOutput = await canVote(witness, nullifier, pollId);
     return await this.mockProof(publicOutput);
   }
 
   private async submitVoteTransaction(
-    pollCid: CircuitString,
+    pollId: CircuitString,
     optionHash: string,
     proof: any,
   ) {
@@ -289,7 +289,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
     const tx = await this.client.transaction(
       PublicKey.fromBase58(this.wallet.account!),
       async () => {
-        await poll.vote(pollCid, Field(optionHash), proof);
+        await poll.vote(pollId, Field(optionHash), proof);
       },
     );
 

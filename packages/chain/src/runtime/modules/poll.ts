@@ -108,7 +108,7 @@ export class PollPublicOutput extends Struct({
 export async function canVote(
 	witness: MerkleMapWitness,
 	nullifier: Nullifier,
-	pollCid: CircuitString
+	pollId: CircuitString
 ): Promise<PollPublicOutput> {
 	const key = Poseidon.hash(nullifier.getPublicKey().toFields());
 	const [computedRoot, computedKey] = witness.computeRootAndKeyV2(
@@ -116,7 +116,7 @@ export async function canVote(
 	);
 	computedKey.assertEquals(key);
 
-	const message = CircuitString.toFields(pollCid);
+	const message = CircuitString.toFields(pollId);
 	nullifier.verify(message);
 
 	return new PollPublicOutput({
@@ -146,18 +146,18 @@ export class Poll extends RuntimeModule {
 
 	@runtimeMethod()
 	public async createPoll(
-		cid: CircuitString,
+		id: CircuitString,
 		commitment: Field,
 		optionsHashes: OptionsHashes
 	) {
-		const checkCommitment = await this.commitments.get(cid);
+		const checkCommitment = await this.commitments.get(id);
 		assert(checkCommitment.isSome.not(), "Poll already exists");
-		await this.commitments.set(cid, commitment);
-		await this.votes.set(cid, VoteOptions.fromOptionsHashes(optionsHashes));
+		await this.commitments.set(id, commitment);
+		await this.votes.set(id, VoteOptions.fromOptionsHashes(optionsHashes));
 	}
 
 	@runtimeMethod()
-	async vote(cid: CircuitString, optionHash: Field, poolProof: PollProof) {
+	async vote(id: CircuitString, optionHash: Field, poolProof: PollProof) {
 		/*
 			NOTE: This proof verification was based on private-airdrop-workshop repo, but it has
 			known vulnerabilities while Protokit is in development:
@@ -169,7 +169,7 @@ export class Poll extends RuntimeModule {
 
 		poolProof.verify();
 
-		const commitment = await this.commitments.get(cid);
+		const commitment = await this.commitments.get(id);
 
 		assert(commitment.isSome, "Poll does not exist");
 
@@ -186,10 +186,10 @@ export class Poll extends RuntimeModule {
 
 		await this.nullifiers.set(poolProof.publicOutput.nullifier, Bool(true));
 
-		const currentVotes = await this.votes.get(cid);
+		const currentVotes = await this.votes.get(id);
 
 		await this.votes.set(
-			cid,
+			id,
 			VoteOptions.cast(currentVotes.value, optionHash)
 		);
 	}

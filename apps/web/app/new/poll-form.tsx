@@ -48,8 +48,8 @@ export function PollForm() {
   });
 
   const { createPoll, isPending: creatingPoll } = useCreatePoll({
-    onSuccess: ({ cid }) => {
-      router.push(`/polls/${cid}`);
+    onSuccess: ({ id }) => {
+      router.push(`/polls/${id}`);
     },
     onError: (message) => {
       toast({

@@ -5,7 +5,7 @@ import { Bool, CircuitString, MerkleMap, Poseidon, PublicKey } from "o1js";
 import { isPendingTransaction } from "../utils";
 import { WalletController } from "./wallet-controller";
 import { OptionsHashes } from "chain/dist/runtime/modules/poll";
-import { AbstractPollStore } from "../stores/poll-store";
+import { AbstractContentStore } from "../stores/content-store";
 import type { client } from "chain";
 
 export type CreatePollData = z.infer<typeof pollInsertSchema>;
@@ -13,7 +13,7 @@ export type CreatePollData = z.infer<typeof pollInsertSchema>;
 export interface PollManagerConfig extends BaseConfig {
   client: Pick<typeof client, "query" | "runtime" | "transaction">;
   wallet: WalletController;
-  store: AbstractPollStore;
+  store: AbstractContentStore;
 }
 
 export interface PollManagerState extends BaseState {
@@ -32,7 +32,7 @@ export class PollManagerController extends BaseController<
 > {
   client: Pick<typeof client, "query" | "runtime" | "transaction">;
   wallet: WalletController;
-  store: AbstractPollStore;
+  store: AbstractContentStore;
 
   constructor(
     config: PollManagerConfig,
@@ -47,7 +47,7 @@ export class PollManagerController extends BaseController<
 
   public async create(
     data: CreatePollData,
-  ): Promise<{ cid: string; hash: string }> {
+  ): Promise<{ id: string; hash: string }> {
     if (!this.wallet.account) {
       throw new Error("Client or wallet not initialized");
     }
@@ -64,10 +64,10 @@ export class PollManagerController extends BaseController<
 
     const optionsHashes = OptionsHashes.fromTexts(data.options, data.salt);
 
-    const { cid } = await this.store.put(data);
+    const { key: id } = await this.store.put(data);
 
     const tx = await this.client.transaction(sender, async () => {
-      await poll.createPoll(CircuitString.fromString(cid), map.getRoot(), optionsHashes);
+      await poll.createPoll(CircuitString.fromString(id), map.getRoot(), optionsHashes);
     });
 
     await tx.sign();
@@ -85,7 +85,7 @@ export class PollManagerController extends BaseController<
     }
 
     return {
-      cid,
+      id,
       hash,
     };
   }

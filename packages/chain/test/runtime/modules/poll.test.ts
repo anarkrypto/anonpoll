@@ -41,7 +41,7 @@ describe("Poll", () => {
 
 	let poll: Poll;
 	let commitmentRoot: Field;
-	let pollCid: CircuitString;
+	let pollId: CircuitString;
 
 	const alicePrivateKey = PrivateKey.fromBigInt(BigInt(1));
 	const alicePublicKey = alicePrivateKey.toPublicKey();
@@ -66,8 +66,8 @@ describe("Poll", () => {
 	const yesHash = optionsHashes.hashes[0];
 	const noHash = optionsHashes.hashes[1];
 
-	// Mock CID as a Field
-	pollCid = CircuitString.fromString("poll-cid");
+	// Mock id as a Field
+	pollId = CircuitString.fromString("poll-id");
 
 	async function mockProof(publicOutput: PollPublicOutput): Promise<PollProof> {
 		const [, proof] = Pickles.proofOfBase64(await dummyBase64Proof(), 2);
@@ -90,7 +90,7 @@ describe("Poll", () => {
 		commitmentRoot = map.getRoot();
 
 		const tx = await appChain.transaction(alicePublicKey, async () => {
-			await poll.createPoll(pollCid, commitmentRoot, optionsHashes);
+			await poll.createPoll(pollId, commitmentRoot, optionsHashes);
 		});
 
 		await tx.sign();
@@ -98,13 +98,13 @@ describe("Poll", () => {
 		await appChain.produceBlock();
 
 		const commitment =
-			await appChain.query.runtime.Poll.commitments.get(pollCid);
+			await appChain.query.runtime.Poll.commitments.get(pollId);
 		expect(commitment?.toBigInt()).toBe(commitmentRoot.toBigInt());
 	});
 
-	it("should not allow creating a poll with the same CID", async () => {
+	it("should not allow creating a poll with the same id", async () => {
 		const tx = await appChain.transaction(alicePublicKey, async () => {
-			await poll.createPoll(pollCid, commitmentRoot, optionsHashes);
+			await poll.createPoll(pollId, commitmentRoot, optionsHashes);
 		});
 
 		await tx.sign();
@@ -118,16 +118,16 @@ describe("Poll", () => {
 	it("should allow a valid vote with correct proof", async () => {
 		const nullifier = Nullifier.fromJSON(
 			Nullifier.createTestNullifier(
-				CircuitString.toFields(pollCid),
+				CircuitString.toFields(pollId),
 				alicePrivateKey
 			)
 		);
 
-		const publicOutput = await canVote(aliceWitness, nullifier, pollCid);
+		const publicOutput = await canVote(aliceWitness, nullifier, pollId);
 		const pollProof = await mockProof(publicOutput);
 
 		const tx = await appChain.transaction(alicePublicKey, async () => {
-			await poll.vote(pollCid, yesHash, pollProof);
+			await poll.vote(pollId, yesHash, pollProof);
 		});
 
 		await tx.sign();
@@ -146,16 +146,16 @@ describe("Poll", () => {
 	it("should prevent voting with a reused nullifier", async () => {
 		const nullifier = Nullifier.fromJSON(
 			Nullifier.createTestNullifier(
-				CircuitString.toFields(pollCid),
+				CircuitString.toFields(pollId),
 				alicePrivateKey
 			)
 		);
 
-		const publicOutput = await canVote(aliceWitness, nullifier, pollCid);
+		const publicOutput = await canVote(aliceWitness, nullifier, pollId);
 		const pollProof = await mockProof(publicOutput);
 
 		const tx = await appChain.transaction(alicePublicKey, async () => {
-			await poll.vote(pollCid, yesHash, pollProof);
+			await poll.vote(pollId, yesHash, pollProof);
 		});
 
 		await tx.sign();
@@ -180,16 +180,16 @@ describe("Poll", () => {
 
 		const nullifier = Nullifier.fromJSON(
 			Nullifier.createTestNullifier(
-				CircuitString.toFields(pollCid),
+				CircuitString.toFields(pollId),
 				bobPrivateKey
 			)
 		);
 
-		const publicOutput = await canVote(bobWitness, nullifier, pollCid);
+		const publicOutput = await canVote(bobWitness, nullifier, pollId);
 		const pollProof = await mockProof(publicOutput);
 
 		const tx = await appChain.transaction(bobPublicKey, async () => {
-			await poll.vote(pollCid, noHash, pollProof);
+			await poll.vote(pollId, noHash, pollProof);
 		});
 
 		await tx.sign();
@@ -220,16 +220,16 @@ describe("Poll", () => {
 
 		const nullifier = Nullifier.fromJSON(
 			Nullifier.createTestNullifier(
-				CircuitString.toFields(pollCid),
+				CircuitString.toFields(pollId),
 				charliePrivateKey
 			)
 		);
 
-		const publicOutput = await canVote(charlieWitness, nullifier, pollCid);
+		const publicOutput = await canVote(charlieWitness, nullifier, pollId);
 		const pollProof = await mockProof(publicOutput);
 
 		const tx = await appChain.transaction(charliePublicKey, async () => {
-			await poll.vote(pollCid, yesHash, pollProof);
+			await poll.vote(pollId, yesHash, pollProof);
 		});
 
 		await tx.sign();
@@ -244,7 +244,7 @@ describe("Poll", () => {
 	});
 
 	it("should correctly count votes", async () => {
-		const votes = await appChain.query.runtime.Poll.votes.get(pollCid);
+		const votes = await appChain.query.runtime.Poll.votes.get(pollId);
 		const yesVotes = votes?.options
 			.find((v) => v.hash === yesHash)
 			?.votesCount.toBigInt();

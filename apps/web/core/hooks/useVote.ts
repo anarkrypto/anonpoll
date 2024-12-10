@@ -17,7 +17,7 @@ export interface UseVoteReturn {
 }
 
 export const useVote = (
-  pollCid: string,
+  pollId: string,
   options?: UseVoteOptions,
 ): UseVoteReturn => {
   const [isPending, setIsPending] = useState(false);
@@ -29,9 +29,9 @@ export const useVote = (
   useEffect(() => {
     // Preload the poll
     if (initialized) {
-      pollController.loadPoll(pollCid);
+      pollController.loadPoll(pollId);
     }
-  }, [pollCid, pollController, initialized]);
+  }, [pollId, pollController, initialized]);
 
   const vote = useCallback(
     async (optionHash: string) => {
