@@ -60,12 +60,7 @@ export class IpfsContentStore<Data = Record<string, any>>
       throw new Error("not authenticated");
     }
 
-    // Create form data with the JSON content (IPFS API expects a file)
-    const formData = new FormData();
-    const jsonBlob = new Blob([JSON.stringify(data, null, 2)], {
-      type: "application/json",
-    });
-    formData.append("file", jsonBlob);
+    const formData = this.createFormData(data);
 
     const response = await fetch(url.toString(), {
       method: "POST",
@@ -93,5 +88,16 @@ export class IpfsContentStore<Data = Record<string, any>>
       throw new Error("Invalid CID received from IPFS");
     }
     return { key: result.Key };
+  }
+
+  private createFormData(data: Data): FormData {
+    // Create form data with the JSON content (IPFS API expects a file)
+    const formData = new FormData();
+    const content = JSON.stringify(data, null, 2);
+    const blob = new Blob([content], {
+      type: "application/json",
+    });
+    formData.append("file", blob);
+    return formData;
   }
 }
