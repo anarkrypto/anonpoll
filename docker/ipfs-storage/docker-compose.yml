@@ -1,0 +1,13 @@
+services:
+  ipfs-storage:
+    build:
+      context: ../..
+      dockerfile: ./docker/ipfs-storage/Dockerfile
+    ports:
+      - "${PORT:-5001}:${PORT:-5001}"
+    environment:
+      - PORT=${PORT:-5001}
+      - NODE_ENV=production
+    restart: unless-stopped
+    volumes:
+      - ../data/ipfs-storage:/app/.datastore
