@@ -1,8 +1,10 @@
 services:
   ipfs-storage:
+    image: zeropoll-ipfs-storage
     build:
       context: ../..
       dockerfile: ./docker/ipfs-storage/Dockerfile
+    container_name: zeropoll-ipfs-storage
     ports:
       - "${PORT:-5001}:${PORT:-5001}"
     environment:
