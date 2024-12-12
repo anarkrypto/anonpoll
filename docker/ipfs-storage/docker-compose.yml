@@ -11,3 +11,5 @@ services:
     restart: unless-stopped
     volumes:
       - ../data/ipfs-storage:/app/.datastore
+    networks:
+      - routing-net
