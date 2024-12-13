@@ -5,7 +5,7 @@ import {
 	runtimeMethod,
 	RuntimeModule
 } from "@proto-kit/module";
-import { State, StateMap, assert } from "@proto-kit/protocol";
+import { StateMap, assert } from "@proto-kit/protocol";
 import {
 	Field,
 	Bool,
