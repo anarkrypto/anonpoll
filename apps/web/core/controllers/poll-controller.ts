@@ -84,10 +84,9 @@ export class PollController extends BaseController<PollConfig, PollState> {
         options: [],
       });
 
-      const [metadata, votingResults, commitment] = await Promise.all([
+      const [metadata, { votingResults, commitment }] = await Promise.all([
         this.getMetadata(id, encryptionKey),
-        this.getVoteResults(id),
-        this.getCommitment(id),
+        this.getPoll(id),
       ]);
 
       // Check if the options hashes match the ones on-chain
@@ -149,33 +148,25 @@ export class PollController extends BaseController<PollConfig, PollState> {
     return decryptedMetadata;
   }
 
-  private async getVoteResults(pollId: string) {
-    const votesOptions = (
-      await this.client.query.runtime.Poll.votes.get(
-        CircuitString.fromString(pollId),
-      )
-    )?.options.map((option) => {
+  private async getPoll(pollId: string) {
+    const poll = await this.client.query.runtime.Poll.polls.get(
+      CircuitString.fromString(pollId),
+    );
+
+    if (!poll) {
+      throw new Error("Poll not found");
+    }
+
+    const votingResults = poll.votes.options.map((option) => {
       return {
         hash: option.hash.toString() as string,
         votesCount: Number(option.votesCount.toBigInt()),
       };
     });
 
-    if (!votesOptions) {
-      throw new Error("Votes not found");
-    }
+    const commitment = Field(poll.commitment).toString();
 
-    return votesOptions;
-  }
-
-  private async getCommitment(pollId: string) {
-    const commitment = await this.client.query.runtime.Poll.commitments.get(
-      CircuitString.fromString(pollId),
-    );
-    if (!commitment) {
-      throw new Error("Poll not found");
-    }
-    return Field(commitment).toString();
+    return { votingResults, commitment };
   }
 
   private compareHashes(hashes: string[], optionsText: string[], salt: string) {
@@ -224,7 +215,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
       throw new Error("Poll not loaded");
     }
 
-    const votingResults = await this.getVoteResults(this.metadata.id);
+    const { votingResults } = await this.getPoll(this.metadata.id);
 
     const options = this.buildOptions(this.metadata, votingResults);
 
