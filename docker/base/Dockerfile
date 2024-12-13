@@ -15,6 +15,9 @@ COPY turbo.json .
 COPY ./packages/chain/package.json ./packages/chain/package.json
 COPY ./apps/web/package.json ./apps/web/package.json
 
+# TODO: Remove this when the protokit framework is stable
+COPY ./patches ./patches
+
 RUN corepack enable pnpm
 
 COPY ./tsconfig.json .
