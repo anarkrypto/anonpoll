@@ -63,6 +63,25 @@ export function PollForm() {
   const handleSubmit = useCallback(
     async (data: PollFormData) => {
       if (step === 1) {
+        // Prevent duplicated options and add error to the input that is duplicated
+        const options = new Set<string>();
+        let hasError = false;
+        data.options.forEach((option, index) => {
+          if (options.has(option)) {
+            hasError = true;
+            form.setError("options", {
+              type: "duplicate",
+              message: "Error: Remove duplicated options",
+              types: {},
+            });
+          }
+          options.add(option);
+        });
+
+        if (hasError) {
+          return;
+        }
+
         setStep(2);
         return;
       }
@@ -230,7 +249,10 @@ function OptionsInputsGroup({
               placeholder={`Option ${index + 1}`}
               required
               className="mr-2"
-              invalid={showError && option.length === 0}
+              invalid={
+                (showError && option.length === 0) ||
+                (option !== "" && options.slice(0, index).includes(option)) // duplicated
+              }
             />
             {options.length > 2 && (
               <Button
