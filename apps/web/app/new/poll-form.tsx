@@ -333,7 +333,7 @@ function VotersWalletsInputsGroup({
             <Input
               value={wallet}
               onChange={(e) => handleWalletChange(index, e.target.value)}
-              placeholder={`Option ${index + 1}`}
+              placeholder={`Wallet ${index + 1}`}
               required
               className="mr-2"
               invalid={
