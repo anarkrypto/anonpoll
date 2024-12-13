@@ -39,7 +39,7 @@ describe("Poll", () => {
 		}
 	});
 
-	let poll: Poll;
+	let pollModule: Poll;
 	let commitmentRoot: Field;
 	let pollId: CircuitString;
 
@@ -83,28 +83,29 @@ describe("Poll", () => {
 		await appChain.start();
 	});
 
-	it("should create a poll with the commitment root", async () => {
+	it("should create a poll with the commitment and optionsHashes", async () => {
 		appChain.setSigner(alicePrivateKey);
-		poll = appChain.runtime.resolve("Poll");
+		pollModule = appChain.runtime.resolve("Poll");
 
 		commitmentRoot = map.getRoot();
 
 		const tx = await appChain.transaction(alicePublicKey, async () => {
-			await poll.createPoll(pollId, commitmentRoot, optionsHashes);
+			await pollModule.createPoll(pollId, commitmentRoot, optionsHashes);
 		});
 
 		await tx.sign();
 		await tx.send();
 		await appChain.produceBlock();
 
-		const commitment =
-			await appChain.query.runtime.Poll.commitments.get(pollId);
-		expect(commitment?.toBigInt()).toBe(commitmentRoot.toBigInt());
+		const poll =
+			await appChain.query.runtime.Poll.polls.get(pollId);
+		expect(poll).toBeDefined();
+		expect(poll!.commitment?.toBigInt()).toBe(commitmentRoot.toBigInt());
 	});
 
 	it("should not allow creating a poll with the same id", async () => {
 		const tx = await appChain.transaction(alicePublicKey, async () => {
-			await poll.createPoll(pollId, commitmentRoot, optionsHashes);
+			await pollModule.createPoll(pollId, commitmentRoot, optionsHashes);
 		});
 
 		await tx.sign();
@@ -127,7 +128,7 @@ describe("Poll", () => {
 		const pollProof = await mockProof(publicOutput);
 
 		const tx = await appChain.transaction(alicePublicKey, async () => {
-			await poll.vote(pollId, yesHash, pollProof);
+			await pollModule.vote(pollId, yesHash, pollProof);
 		});
 
 		await tx.sign();
@@ -155,7 +156,7 @@ describe("Poll", () => {
 		const pollProof = await mockProof(publicOutput);
 
 		const tx = await appChain.transaction(alicePublicKey, async () => {
-			await poll.vote(pollId, yesHash, pollProof);
+			await pollModule.vote(pollId, yesHash, pollProof);
 		});
 
 		await tx.sign();
@@ -176,7 +177,7 @@ describe("Poll", () => {
 
 	it("should allow another valid vote from a different participant", async () => {
 		appChain.setSigner(bobPrivateKey);
-		poll = appChain.runtime.resolve("Poll");
+		pollModule = appChain.runtime.resolve("Poll");
 
 		const nullifier = Nullifier.fromJSON(
 			Nullifier.createTestNullifier(
@@ -189,7 +190,7 @@ describe("Poll", () => {
 		const pollProof = await mockProof(publicOutput);
 
 		const tx = await appChain.transaction(bobPublicKey, async () => {
-			await poll.vote(pollId, noHash, pollProof);
+			await pollModule.vote(pollId, noHash, pollProof);
 		});
 
 		await tx.sign();
@@ -210,7 +211,7 @@ describe("Poll", () => {
 		const charliePublicKey = charliePrivateKey.toPublicKey();
 
 		appChain.setSigner(charliePrivateKey);
-		poll = appChain.runtime.resolve("Poll");
+		pollModule = appChain.runtime.resolve("Poll");
 
 		const map = new MerkleMap();
 		const charlieHashKey = Poseidon.hash(charliePublicKey.toFields());
@@ -229,7 +230,7 @@ describe("Poll", () => {
 		const pollProof = await mockProof(publicOutput);
 
 		const tx = await appChain.transaction(charliePublicKey, async () => {
-			await poll.vote(pollId, yesHash, pollProof);
+			await pollModule.vote(pollId, yesHash, pollProof);
 		});
 
 		await tx.sign();
@@ -244,8 +245,10 @@ describe("Poll", () => {
 	});
 
 	it("should correctly count votes", async () => {
-		const votes = await appChain.query.runtime.Poll.votes.get(pollId);
-		const yesVotes = votes?.options
+		const poll = await appChain.query.runtime.Poll.polls.get(pollId);
+		const votes = poll!.votes;
+		expect(votes).toBeDefined();
+		const yesVotes = votes.options
 			.find((v) => v.hash === yesHash)
 			?.votesCount.toBigInt();
 		const noVotes = votes?.options

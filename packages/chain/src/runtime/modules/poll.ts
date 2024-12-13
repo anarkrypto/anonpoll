@@ -100,6 +100,11 @@ export class VoteOptions extends Struct({
 	}
 }
 
+export class PollStruct extends Struct({
+	commitment: Field,
+	votes: VoteOptions
+}) {}
+
 export class PollPublicOutput extends Struct({
 	root: Field,
 	nullifier: Field
@@ -140,9 +145,11 @@ export class PollProof extends ZkProgram.Proof(pollProgram) {}
 
 @runtimeModule()
 export class Poll extends RuntimeModule {
-	@state() public commitments = StateMap.from<CircuitString, Field>(CircuitString, Field);
+	@state() public polls = StateMap.from<CircuitString, PollStruct>(
+		CircuitString,
+		PollStruct
+	);
 	@state() public nullifiers = StateMap.from<Field, Bool>(Field, Bool);
-	@state() public votes = StateMap.from<CircuitString, VoteOptions>(CircuitString, VoteOptions);
 
 	@runtimeMethod()
 	public async createPoll(
@@ -150,10 +157,15 @@ export class Poll extends RuntimeModule {
 		commitment: Field,
 		optionsHashes: OptionsHashes
 	) {
-		const checkCommitment = await this.commitments.get(id);
-		assert(checkCommitment.isSome.not(), "Poll already exists");
-		await this.commitments.set(id, commitment);
-		await this.votes.set(id, VoteOptions.fromOptionsHashes(optionsHashes));
+		const checkPoll = await this.polls.get(id);
+		assert(checkPoll.isSome.not(), "Poll already exists");
+		await this.polls.set(
+			id,
+			new PollStruct({
+				commitment,
+				votes: VoteOptions.fromOptionsHashes(optionsHashes)
+			})
+		);
 	}
 
 	@runtimeMethod()
@@ -169,12 +181,12 @@ export class Poll extends RuntimeModule {
 
 		poolProof.verify();
 
-		const commitment = await this.commitments.get(id);
+		const poll = await this.polls.get(id);
 
-		assert(commitment.isSome, "Poll does not exist");
+		assert(poll.isSome, "Poll does not exist");
 
 		assert(
-			poolProof.publicOutput.root.equals(commitment.value),
+			poolProof.publicOutput.root.equals(poll.value.commitment),
 			"Poll proof does not contain the correct commitment"
 		);
 
@@ -186,11 +198,14 @@ export class Poll extends RuntimeModule {
 
 		await this.nullifiers.set(poolProof.publicOutput.nullifier, Bool(true));
 
-		const currentVotes = await this.votes.get(id);
+		const currentVotes = await poll.value.votes;
 
-		await this.votes.set(
+		await this.polls.set(
 			id,
-			VoteOptions.cast(currentVotes.value, optionHash)
+			new PollStruct({
+				commitment: poll.value.commitment,
+				votes: VoteOptions.cast(currentVotes, optionHash)
+			})
 		);
 	}
 }
