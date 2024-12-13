@@ -1,0 +1,20 @@
+diff --git a/dist/config/ModuleContainer.js b/dist/config/ModuleContainer.js
+index 1bd3758090a15e9e57417639b85ec3931c0a5067..8a5a6ab013a012e7947e7e93be4a940627b04a9b 100644
+--- a/dist/config/ModuleContainer.js
++++ b/dist/config/ModuleContainer.js
+@@ -1,5 +1,5 @@
+ import "reflect-metadata";
+-import { instancePerContainerCachingFactory, isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider, Lifecycle, } from "tsyringe";
++import { instanceCachingFactory, isClassProvider, isFactoryProvider, isTokenProvider, isValueProvider, Lifecycle, } from "tsyringe";
+ import log from "loglevel";
+ import merge from "lodash/merge";
+ import { EventEmitterProxy } from "../events/EventEmitterProxy";
+@@ -212,7 +212,7 @@ export class ModuleContainer extends ConfigurableModule {
+                     // this enables us to have a singletoned factory
+                     // that returns the same instance for each resolve
+                     this.container.register(key, {
+-                        useFactory: instancePerContainerCachingFactory(declaration.useFactory),
++                        useFactory: instanceCachingFactory(declaration.useFactory),
+                     });
+                 }
+                 else if (isClassProvider(declaration)) {

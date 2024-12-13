@@ -30,5 +30,10 @@
   "resolutions": {
     "@prisma/client": "5.7.1",
     "prisma": "5.7.1"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@proto-kit/common": "patches/@proto-kit__common.patch"
+    }
   }
 }
