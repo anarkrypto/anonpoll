@@ -6,8 +6,6 @@ import {
   PollManagerState,
 } from "./controllers/poll-manager-controller";
 import { WalletController, WalletState } from "./controllers/wallet-controller";
-import { AuthStoreCookie } from "./stores/auth-store/auth-store-cookie";
-import { AuthController, AuthState } from "./controllers/auth-controller";
 import { IpfsMetadataStore } from "./stores/metadata-store";
 import { PollData } from "@/types/poll";
 
@@ -16,7 +14,6 @@ interface Controllers {
   chain: ChainController;
   poll: PollController;
   pollManager: PollManagerController;
-  auth: AuthController;
 }
 
 export interface EngineConfig {
@@ -30,7 +27,6 @@ export interface EngineState {
   chain: ChainState;
   poll: PollState;
   pollManager: PollManagerState;
-  auth: AuthState;
 }
 
 export type EngineContext = Controllers;
@@ -62,16 +58,7 @@ export class Engine {
       initialState.wallet,
     );
 
-    const authStore = new AuthStoreCookie();
-    const pollStore = new IpfsMetadataStore<PollData>(config.ipfsApiUrl, authStore);
-
-    const auth = new AuthController(
-      {
-        wallet,
-        store: authStore,
-      },
-      initialState.wallet,
-    );
+    const pollStore = new IpfsMetadataStore<PollData>(config.ipfsApiUrl);
 
     const pollManager = new PollManagerController(
       { store: pollStore, client, wallet },
@@ -88,7 +75,6 @@ export class Engine {
       chain,
       poll,
       pollManager,
-      auth,
     };
   }
 
@@ -96,7 +82,6 @@ export class Engine {
     await Promise.all([
       client.start(),
       this.context.chain.start(),
-      this.context.auth.init(),
     ]);
   }
 }

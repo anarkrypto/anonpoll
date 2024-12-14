@@ -14,18 +14,3 @@ export const publicKeySchema = z.string().refine(
     message: "Must be a valid public key",
   },
 );
-
-export const signatureHexSchema = z
-  .string()
-  .regex(/^[0-9a-fA-F]+$/, "Must be a valid hex string")
-
-export const signatureSchema = z.object({
-  field: signatureHexSchema,
-  scalar: signatureHexSchema,
-});
-
-export const authSchema = z.object({
-  publicKey: publicKeySchema,
-  signature: signatureSchema,
-  issuedAt: z.number(),
-});
