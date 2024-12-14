@@ -16,19 +16,20 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { generateSalt, isValidPublicKey } from "@/lib/utils";
 import { pollInsertSchema } from "@/schemas/poll";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from "@/core/constants";
 import { useCreatePoll } from "@/core/hooks";
+import { cn } from "@/lib/cn";
 
 const pollFormSchema = pollInsertSchema.omit({ salt: true });
 
 type PollFormData = z.infer<typeof pollFormSchema>;
 
-export function PollForm() {
+export function PollFormCard({ ...props }: React.ComponentProps<typeof Card>) {
   const router = useRouter();
   const { toast } = useToast();
 
@@ -101,7 +102,13 @@ export function PollForm() {
   };
 
   return (
-    <Card className="mx-auto max-w-2xl rounded-lg bg-white shadow-md lg:p-6">
+    <Card
+      {...props}
+      className={cn(
+        "mx-auto max-w-2xl rounded-lg bg-white shadow-md lg:p-6",
+        props.className,
+      )}
+    >
       <CardHeader>
         <CardTitle className="text-center text-3xl text-secondary">
           {step === 1 ? "Create a New Poll" : "Add Voters Wallets"}
