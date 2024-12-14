@@ -185,7 +185,7 @@ export function PollCard({
                 loading={isLoading}
                 onClick={connect}
               >
-                Connect your Auro Wallet
+                Connect your Wallet
               </Button>
             )}
           </div>
