@@ -7,7 +7,7 @@ import { Montserrat } from "next/font/google";
 import { cn } from "@/lib/cn";
 import { truncateWalletAddress } from "@/lib/utils";
 import Link from "next/link";
-import { useAuth, useWallet } from "@/core/hooks";
+import { useWallet } from "@/core/hooks";
 import { useToast } from "./ui/use-toast";
 import { useCallback, useState } from "react";
 import InstallAuroWalletModal from "./install-auro-wallet-modal";
@@ -29,26 +29,25 @@ export interface HeaderProps {
 export default function Header() {
   const {
     account,
-    loading: loadingWallet,
+    loading,
     initialized: walletInitialized,
+    connect,
+    connected
   } = useWallet();
   const [openInstallAuroWalletModal, setOpenInstallAuroWalletModal] =
     useState(false);
 
-  const { isAuthenticated, authenticate, loading: loadingAuth } = useAuth();
-
   const { toast } = useToast();
 
-  const loading = loadingWallet || loadingAuth;
-  const showWallet = isAuthenticated && account;
+  const showWallet = connected && account;
 
-  const handleAuthenticate = useCallback(async () => {
+  const handleConnect = useCallback(async () => {
     try {
       if (!walletInitialized) {
         setOpenInstallAuroWalletModal(true);
         return;
       }
-      await authenticate();
+      await connect();
     } catch (error) {
       console.error("Error connecting wallet", error);
       const message =
@@ -59,7 +58,7 @@ export default function Header() {
         variant: "destructive",
       });
     }
-  }, [authenticate, toast, walletInitialized]);
+  }, [connect, toast, walletInitialized]);
 
   return (
     <>
@@ -85,7 +84,7 @@ export default function Header() {
             {/* wallet */}
             <Button
               loading={loading}
-              onClick={handleAuthenticate}
+              onClick={handleConnect}
               variant="secondary"
             >
               {showWallet ? (
