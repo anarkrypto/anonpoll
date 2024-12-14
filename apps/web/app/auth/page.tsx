@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { useAuth, useWallet } from "@/core/hooks";
+import { useWallet } from "@/core/hooks";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
@@ -22,9 +22,7 @@ export default function AuthPage({
   const next = searchParams.next || "/";
   const router = useRouter();
 
-  const { initialized: walletInitialized } = useWallet();
-
-  const { isAuthenticated, authenticate, loading } = useAuth();
+  const { initialized: walletInitialized, connect, connected, loading } = useWallet();
 
   const [openInstallAuroWalletModal, setOpenInstallAuroWalletModal] =
     useState(false);
@@ -32,18 +30,18 @@ export default function AuthPage({
   const { toast } = useToast();
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (connected) {
       router.push(next);
     }
-  }, [isAuthenticated]);
+  }, [connected]);
 
-  const handleAuthenticate = useCallback(async () => {
+  const handleConnect = useCallback(async () => {
     try {
       if (!walletInitialized) {
         setOpenInstallAuroWalletModal(true);
         return;
       }
-      await authenticate();
+      await connect();
     } catch (error) {
       console.error("Error connecting wallet", error);
       const message =
@@ -54,7 +52,7 @@ export default function AuthPage({
         variant: "destructive",
       });
     }
-  }, [authenticate, toast, walletInitialized]);
+  }, [connected, toast, walletInitialized]);
 
   return (
     <>
@@ -71,8 +69,8 @@ export default function AuthPage({
           <Button
             size="lg"
             className="w-full px-8 py-6 text-lg"
-            onClick={handleAuthenticate}
-            loading={loading || isAuthenticated}
+            onClick={handleConnect}
+            loading={loading || connected}
           >
             Connect Wallet
           </Button>
