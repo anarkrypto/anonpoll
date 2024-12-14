@@ -69,7 +69,7 @@ export class AuroWallet implements MinaSignerAbstract {
 
   async getAccount() {
     const accounts = await this.provider.getAccounts();
-    return accounts[0];
+    return accounts[0] || null;
   }
 
   async on(event: "accountsChanged", handler: (event: any) => void) {
