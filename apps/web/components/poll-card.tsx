@@ -127,10 +127,12 @@ export function PollCard({
                       "relative w-full px-12",
                       activeOptionHash === option.hash &&
                         "overflow-hidden rounded-lg border-2 border-primary/40 bg-primary/20 hover:bg-primary/20",
+                      "disabled:opacity-100",
                     )}
                     loading={isLoading}
                     onClick={() => handleSelectOption(option.hash)}
                     variant="outline"
+                    disabled={!account || isVoted}
                   >
                     <div
                       className={cn(
