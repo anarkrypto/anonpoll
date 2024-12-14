@@ -14,7 +14,7 @@ import { useWallet } from "@/core/hooks";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
-export default function AuthPage({
+export default function ConnectPage({
   searchParams,
 }: {
   searchParams: { next?: string };

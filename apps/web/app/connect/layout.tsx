@@ -1,10 +1,10 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Authenticate",
+  title: "Connect your Wallet",
 };
 
-export default function AuthLayout({
+export default function ConnectLayout({
   children,
 }: {
   children: React.ReactNode;
