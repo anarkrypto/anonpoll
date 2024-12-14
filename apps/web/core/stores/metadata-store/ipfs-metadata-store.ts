@@ -1,6 +1,4 @@
 import { AbstractMetadataStore } from "./abstract-metadata-store";
-import { AbstractAuthStore } from "../auth-store/abstract-auth-store";
-import { CID } from "multiformats/cid";
 import { isCID } from "@/core/utils/cid";
 
 /**
@@ -11,7 +9,6 @@ export class IpfsMetadataStore<Data = Record<string, any>>
 {
   constructor(
     private ipfsApiUrl: string,
-    private authStore: AbstractAuthStore,
   ) {}
 
   public async get(cid: string): Promise<Data> {
@@ -23,16 +20,8 @@ export class IpfsMetadataStore<Data = Record<string, any>>
     url.pathname = "/api/v0/block/get";
     url.searchParams.append("arg", cid);
 
-    const authToken = await this.authStore.get();
-    if (!authToken) {
-      throw new Error("not authenticated");
-    }
-
     const response = await fetch(url.toString(), {
       method: "POST", // The IPFS API uses POST for block/get
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
     });
 
     if (!response.ok) {
@@ -55,18 +44,10 @@ export class IpfsMetadataStore<Data = Record<string, any>>
     const url = new URL(this.ipfsApiUrl);
     url.pathname = "/api/v0/block/put";
 
-    const authToken = await this.authStore.get();
-    if (!authToken) {
-      throw new Error("not authenticated");
-    }
-
     const formData = this.createFormData(data);
 
     const response = await fetch(url.toString(), {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
       body: formData,
     });
 
