@@ -1,7 +1,7 @@
 "use client";
 
 import { useWallet } from "@/core/hooks";
-import { PollFormCard } from "./poll-form-card";
+import { PollFormCard } from "@/components/poll-form-card";
 import { ConnectWalletModal } from "@/components/connect-wallet-modal";
 import { cn } from "@/lib/cn";
 
