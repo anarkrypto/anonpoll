@@ -1,48 +1,48 @@
-import "./globals.css";
-import { Inter as FontSans } from "next/font/google";
-import Header from "@/components/header";
-import { Toaster } from "@/components/ui/toaster";
-import { cn } from "@/lib/cn";
-import { EngineProvider } from "@/core/engine-context";
-import { TransactionNotifications } from "@/components/transaction-notifications";
-import { Metadata } from "next";
+import './globals.css'
+import { Inter as FontSans } from 'next/font/google'
+import Header from '@/components/header'
+import { Toaster } from '@/components/ui/toaster'
+import { cn } from '@/lib/cn'
+import { EngineProvider } from '@/core/engine-context'
+import { TransactionNotifications } from '@/components/transaction-notifications'
+import { Metadata } from 'next'
 
 export const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
+	subsets: ['latin'],
+	variable: '--font-sans',
+})
 
 export const metadata: Metadata = {
-  title: {
-    default: "ZeroPoll",
-    template: "%s | ZeroPoll",
-  },
-  description: "A private voting system powered by zero-knowledge proofs",
-};
+	title: {
+		default: 'ZeroPoll',
+		template: '%s | ZeroPoll',
+	},
+	description: 'A private voting system powered by zero-knowledge proofs',
+}
 
 export default function RootLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode
 }) {
-  return (
-    <html lang="en" className="h-full">
-      <body
-        className={cn(
-          "flex min-h-screen flex-col bg-gradient-to-b from-background to-primary/5 font-sans antialiased",
-          fontSans.variable,
-        )}
-      >
-        <EngineProvider
-          protokitGraphqlUrl={process.env.NEXT_PUBLIC_PROTOKIT_GRAPHQL_URL!}
-          ipfsApiUrl={process.env.NEXT_PUBLIC_IPFS_API_URL!}
-        >
-          <Header />
-          {children}
-          <Toaster />
-          <TransactionNotifications />
-        </EngineProvider>
-      </body>
-    </html>
-  );
+	return (
+		<html lang="en" className="h-full">
+			<body
+				className={cn(
+					'flex min-h-screen flex-col bg-gradient-to-b from-background to-primary/5 font-sans antialiased',
+					fontSans.variable
+				)}
+			>
+				<EngineProvider
+					protokitGraphqlUrl={process.env.NEXT_PUBLIC_PROTOKIT_GRAPHQL_URL!}
+					ipfsApiUrl={process.env.NEXT_PUBLIC_IPFS_API_URL!}
+				>
+					<Header />
+					{children}
+					<Toaster />
+					<TransactionNotifications />
+				</EngineProvider>
+			</body>
+		</html>
+	)
 }

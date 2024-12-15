@@ -1,19 +1,19 @@
-import { ChainState } from "../controllers/chain-controller";
-import { useSyncExternalStore } from "react";
-import { useControllers } from "./useControllers";
+import { ChainState } from '../controllers/chain-controller'
+import { useSyncExternalStore } from 'react'
+import { useControllers } from './useControllers'
 
 export interface UseChainReturn extends ChainState {}
 
 export const useChain = (): UseChainReturn => {
-  const { chain: chanController } = useControllers();
+	const { chain: chanController } = useControllers()
 
-  const chainState = useSyncExternalStore(
-    (callback) => chanController.subscribe(callback),
-    () => chanController.state,
-    () => chanController.state,
-  );
+	const chainState = useSyncExternalStore(
+		callback => chanController.subscribe(callback),
+		() => chanController.state,
+		() => chanController.state
+	)
 
-  return {
-    ...chainState,
-  };
-};
+	return {
+		...chainState,
+	}
+}

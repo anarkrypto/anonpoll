@@ -3,13 +3,13 @@
 /* eslint-disable import/no-commonjs */
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 
-const baseConfig = require("chain/jest.config.cjs");
+const baseConfig = require('chain/jest.config.cjs')
 
 module.exports = {
-  ...baseConfig,
-  setupFilesAfterEnv: [],
-  moduleNameMapper: {
-    ...baseConfig.moduleNameMapper,
-    "^@/(.*)$": "<rootDir>/$1",
-  },
-};
+	...baseConfig,
+	setupFilesAfterEnv: [],
+	moduleNameMapper: {
+		...baseConfig.moduleNameMapper,
+		'^@/(.*)$': '<rootDir>/$1',
+	},
+}

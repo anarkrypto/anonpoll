@@ -1,9 +1,9 @@
-"use client"
+'use client'
 
-import { useNotifyTransactions } from "@/hooks/useNotifyTransaction";
-import { Toaster } from "./ui/toaster";
+import { useNotifyTransactions } from '@/hooks/useNotifyTransaction'
+import { Toaster } from './ui/toaster'
 
 export function TransactionNotifications() {
-  useNotifyTransactions();
-  return <Toaster />;
+	useNotifyTransactions()
+	return <Toaster />
 }

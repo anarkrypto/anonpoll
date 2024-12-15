@@ -1,53 +1,53 @@
-import MinaClient from "mina-signer";
-import { MinaSignerAbstract } from "./base-signer";
-import { Nullifier } from "o1js";
+import MinaClient from 'mina-signer'
+import { MinaSignerAbstract } from './base-signer'
+import { Nullifier } from 'o1js'
 
 export class Wallet implements MinaSignerAbstract {
-  #privateKey: string;
-  client: MinaClient;
+	#privateKey: string
+	client: MinaClient
 
-  constructor(privateKey: string) {
-    this.#privateKey = privateKey;
-    this.client = new MinaClient({ network: "mainnet" });
-  }
+	constructor(privateKey: string) {
+		this.#privateKey = privateKey
+		this.client = new MinaClient({ network: 'mainnet' })
+	}
 
-  async requestAccount(): Promise<string> {
-    return this.client.derivePublicKey(this.#privateKey);
-  }
-  
-  async getAccount(): Promise<string> {
-    return this.requestAccount();
-  }
+	async requestAccount(): Promise<string> {
+		return this.client.derivePublicKey(this.#privateKey)
+	}
 
-  public on(event: "accountsChanged", handler: (event: any) => void): void {
-    // Not implemented
-  }
+	async getAccount(): Promise<string> {
+		return this.requestAccount()
+	}
 
-  public async createNullifier({ message }: { message: number[] }) {
-    const jsonNullifier = await this.client.createNullifier(
-      message.map((m) => BigInt(m)),
-      this.#privateKey,
-    );
-    return Nullifier.fromJSON(jsonNullifier);
-  }
+	public on(event: 'accountsChanged', handler: (event: any) => void): void {
+		// Not implemented
+	}
 
-  public async signJsonMessage({
-    message,
-  }: {
-    message: { label: string; value: string }[];
-  }) {
-    const signature = await this.client.signMessage(
-      JSON.stringify(message),
-      this.#privateKey,
-    );
+	public async createNullifier({ message }: { message: number[] }) {
+		const jsonNullifier = await this.client.createNullifier(
+			message.map(m => BigInt(m)),
+			this.#privateKey
+		)
+		return Nullifier.fromJSON(jsonNullifier)
+	}
 
-    return {
-      data: signature.data,
-      publicKey: signature.publicKey,
-      signature: {
-        field: signature.signature.field,
-        scalar: signature.signature.scalar,
-      },
-    };
-  }
+	public async signJsonMessage({
+		message,
+	}: {
+		message: { label: string; value: string }[]
+	}) {
+		const signature = await this.client.signMessage(
+			JSON.stringify(message),
+			this.#privateKey
+		)
+
+		return {
+			data: signature.data,
+			publicKey: signature.publicKey,
+			signature: {
+				field: signature.signature.field,
+				scalar: signature.signature.scalar,
+			},
+		}
+	}
 }
