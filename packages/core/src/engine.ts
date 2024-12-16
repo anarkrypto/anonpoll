@@ -12,7 +12,7 @@ import {
 import { IpfsMetadataStore } from '@/stores/metadata-store'
 import { PollData } from '@/schemas'
 
-interface Controllers {
+export interface Controllers {
 	wallet: WalletController
 	chain: ChainController
 	poll: PollController
