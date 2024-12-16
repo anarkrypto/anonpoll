@@ -11,7 +11,7 @@ import { InMemoryMetadataStore } from '../stores/metadata-store'
 import { ChainTestController } from './test-utils/chain-test-controller'
 import { PollController } from '../controllers/poll-controller'
 import { CID } from 'multiformats/cid'
-import { PollData } from '@/types/poll'
+import { PollData } from '../schemas/poll'
 
 const PRIVATE_KEY = 'EKDii5d1dA7DDw6NZwN7jF7qcdYR5MVjZ9TfESv1gc2TvmvV2WAE'
 

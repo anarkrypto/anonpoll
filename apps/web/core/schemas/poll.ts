@@ -29,3 +29,5 @@ export const pollInsertSchema = z.object({
 		.min(1)
 		.max(MAX_POLL_VOTERS),
 })
+
+export type PollData = z.infer<typeof pollInsertSchema>

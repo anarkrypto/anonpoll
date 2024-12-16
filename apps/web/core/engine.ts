@@ -7,7 +7,7 @@ import {
 } from './controllers/poll-manager-controller'
 import { WalletController, WalletState } from './controllers/wallet-controller'
 import { IpfsMetadataStore } from './stores/metadata-store'
-import { PollData } from '@/types/poll'
+import { PollData } from './schemas/poll'
 
 interface Controllers {
 	wallet: WalletController
