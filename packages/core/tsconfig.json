@@ -1,6 +1,7 @@
 {
 	"extends": "tsconfig/chain.json",
 	"compilerOptions": {
+		"baseUrl": ".",
 		"outDir": "./dist",
 		"strictNullChecks": true,
 		"lib": ["es2020"],
