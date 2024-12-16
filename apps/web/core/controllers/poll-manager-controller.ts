@@ -1,5 +1,6 @@
 import { BaseConfig, BaseController, BaseState } from './base-controller'
-import { EncryptedMetadataV1, pollInsertSchema } from '@/core/schemas/poll'
+import { pollInsertSchema } from '@/core/schemas/poll'
+import { EncryptedMetadataV1 } from '@/core/schemas/encrypted-metadata'
 import { z } from 'zod'
 import { Bool, CircuitString, MerkleMap, Poseidon, PublicKey } from 'o1js'
 import { WalletController } from './wallet-controller'

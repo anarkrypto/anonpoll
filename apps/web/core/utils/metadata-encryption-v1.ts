@@ -2,7 +2,7 @@ import crypto from 'crypto'
 import {
 	encryptedMetadataSchemaV1,
 	EncryptedMetadataV1,
-} from '@/core/schemas/poll'
+} from '@/core/schemas/encrypted-metadata'
 
 export class MetadataEncryptionV1 {
 	private readonly VERSION = 1

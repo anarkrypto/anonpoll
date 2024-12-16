@@ -20,7 +20,7 @@ import { WalletController } from './wallet-controller'
 import { AbstractMetadataStore } from '../stores/metadata-store'
 import { PollData } from '@/types/poll'
 import { MetadataEncryptionV1 } from '../utils/metadata-encryption-v1'
-import { EncryptedMetadataV1 } from '@/core/schemas/poll'
+import { EncryptedMetadataV1 } from '@/core/schemas/encrypted-metadata'
 
 export interface PollConfig extends BaseConfig {
 	wallet: WalletController
