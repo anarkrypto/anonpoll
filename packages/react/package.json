@@ -1,0 +1,23 @@
+{
+	"name": "@zeropoll/react",
+	"version": "1.0.0",
+	"description": "ZeroPoll React",
+	"exports": {
+		".": "./dist/index.js"
+	},
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "tsc -p tsconfig.json"
+	},
+	"keywords": [],
+	"author": "anarkrypto <anarkrypto@gmail.com>",
+	"license": "MIT",
+	"dependencies": {
+		"core": "workspace:*",
+		"react": "^18"
+	},
+	"devDependencies": {
+		"@types/react": "^18",
+		"typescript": "5.4.5"
+	}
+}

@@ -21,6 +21,7 @@
 		"@radix-ui/react-tooltip": "^1.0.7",
 		"@tailwindcss/typography": "^0.5.10",
 		"@uidotdev/usehooks": "^2.4.1",
+		"@zeropoll/react": "workspace:*",
 		"chain": "workspace:*",
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.0.0",
