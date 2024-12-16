@@ -1,6 +1,5 @@
 import { AlertCircle } from 'lucide-react'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/card'
-import { Alert, AlertDescription, AlertTitle } from './ui/alert'
 import { Button } from './ui/button'
 
 interface PollCardErrorProps {
