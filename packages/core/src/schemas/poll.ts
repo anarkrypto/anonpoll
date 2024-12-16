@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from '@/core/constants'
+import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from '@/constants'
 import { PublicKey } from 'o1js'
 
 export const pollInsertSchema = z.object({
