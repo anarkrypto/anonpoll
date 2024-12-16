@@ -145,24 +145,6 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.3.2
         version: 3.9.1(react-hook-form@7.54.0(react@18.3.1))
-      '@proto-kit/common':
-        specifier: '*'
-        version: 0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0)
-      '@proto-kit/library':
-        specifier: '*'
-        version: 0.1.1-develop.1088(4yiay5rbal2tq5qczbpprw4yfa)
-      '@proto-kit/module':
-        specifier: '*'
-        version: 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0)
-      '@proto-kit/protocol':
-        specifier: '*'
-        version: 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0)
-      '@proto-kit/sdk':
-        specifier: '*'
-        version: 0.1.1-develop.1088(i3js62e3bvrb7xwsnw2v5labr4)
-      '@proto-kit/sequencer':
-        specifier: '*'
-        version: 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/module@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0)
       '@radix-ui/react-dialog':
         specifier: ^1.1.1
         version: 1.1.2(@types/react-dom@18.3.5(@types/react@18.3.16))(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -187,36 +169,21 @@ importers:
       '@tailwindcss/typography':
         specifier: ^0.5.10
         version: 0.5.15(tailwindcss@3.4.16(ts-node@10.9.2(@types/node@20.17.10)(typescript@5.7.2)))
-      '@uidotdev/usehooks':
-        specifier: ^2.4.1
-        version: 2.4.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@zeropoll/core':
         specifier: workspace:*
         version: link:../../packages/core
       '@zeropoll/react':
         specifier: workspace:*
         version: link:../../packages/react
-      chain:
-        specifier: workspace:*
-        version: link:../../packages/chain
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.1
       clsx:
         specifier: ^2.0.0
         version: 2.1.1
-      immer:
-        specifier: ^10.0.3
-        version: 10.1.1
       lucide-react:
         specifier: ^0.439.0
         version: 0.439.0(react@18.3.1)
-      mina-signer:
-        specifier: ^3.0.7
-        version: 3.0.7
-      multiformats:
-        specifier: ^13.3.1
-        version: 13.3.1
       next:
         specifier: 14.0.1
         version: 14.0.1(@babel/core@7.26.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -232,21 +199,12 @@ importers:
       react-hook-form:
         specifier: ^7.48.2
         version: 7.54.0(react@18.3.1)
-      reflect-metadata:
-        specifier: ^0.1.13
-        version: 0.1.14
       tailwind-merge:
         specifier: ^2.0.0
         version: 2.5.5
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.16(ts-node@10.9.2(@types/node@20.17.10)(typescript@5.7.2)))
-      ts-jest:
-        specifier: ^29.1.1
-        version: 29.2.5(@babel/core@7.26.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.26.0))(jest@29.7.0(@types/node@20.17.10)(ts-node@10.9.2(@types/node@20.17.10)(typescript@5.7.2)))(typescript@5.7.2)
-      tsyringe:
-        specifier: ^4.7.0
-        version: 4.8.0
       zod:
         specifier: ^3.22.4
         version: 3.24.1
@@ -290,6 +248,9 @@ importers:
       tailwindcss:
         specifier: ^3.3.0
         version: 3.4.16(ts-node@10.9.2(@types/node@20.17.10)(typescript@5.7.2))
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.2.5(@babel/core@7.26.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.26.0))(jest@29.7.0(@types/node@20.17.10)(ts-node@10.9.2(@types/node@20.17.10)(typescript@5.7.2)))(typescript@5.7.2)
       typescript:
         specifier: ^5.4.5
         version: 5.7.2
@@ -2240,13 +2201,6 @@ packages:
     resolution: {integrity: sha512-JJtkDduxLi9bivAB+cYOVMtbkqdPOhZ+ZI5LC47MIRrDV4Yn2o+ZnW10Nkmr28xRpSpdJ6Sm42Hjf2+REYXm0A==}
     engines: {node: ^16.0.0 || >=18.0.0}
 
-  '@uidotdev/usehooks@2.4.1':
-    resolution: {integrity: sha512-1I+RwWyS+kdv3Mv0Vmc+p0dPYH0DTRAo04HLyXReYBL9AeseDWUJyi4THuksBJcu9F0Pih69Ak150VDnqbVnXg==}
-    engines: {node: '>=16'}
-    peerDependencies:
-      react: '>=18.0.0'
-      react-dom: '>=18.0.0'
-
   '@ungap/structured-clone@1.2.1':
     resolution: {integrity: sha512-fEzPV3hSkSMltkw152tJKNARhOupqbH96MZWyRjNaYZOMIzbrTeQDG+MTc6Mr2pgzFQzFxAfmhGDNP5QK++2ZA==}
 
@@ -3577,9 +3531,6 @@ packages:
   ignore@5.3.2:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
     engines: {node: '>= 4'}
-
-  immer@10.1.1:
-    resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
 
   import-fresh@3.3.0:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}
@@ -8074,11 +8025,6 @@ snapshots:
       '@typescript-eslint/types': 6.21.0
       eslint-visitor-keys: 3.4.3
 
-  '@uidotdev/usehooks@2.4.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
-    dependencies:
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
   '@ungap/structured-clone@1.2.1': {}
 
   '@urql/core@4.3.0(graphql@16.9.0)':
@@ -9160,7 +9106,7 @@ snapshots:
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.7.0(eslint-plugin-import@2.31.0(eslint@8.57.1))(eslint@8.57.1)
-      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.7.2))(eslint-import-resolver-typescript@3.7.0(eslint-plugin-import@2.31.0(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
+      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.7.2))(eslint-import-resolver-typescript@3.7.0)(eslint@8.57.1)
       eslint-plugin-jsx-a11y: 6.10.2(eslint@8.57.1)
       eslint-plugin-react: 7.37.2(eslint@8.57.1)
       eslint-plugin-react-hooks: 5.0.0-canary-7118f5dd7-20230705(eslint@8.57.1)
@@ -9204,7 +9150,7 @@ snapshots:
       is-glob: 4.0.3
       stable-hash: 0.0.4
     optionalDependencies:
-      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.7.2))(eslint-import-resolver-typescript@3.7.0(eslint-plugin-import@2.31.0(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
+      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.7.2))(eslint-import-resolver-typescript@3.7.0)(eslint@8.57.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -9281,7 +9227,7 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-plugin-import@2.31.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.7.2))(eslint-import-resolver-typescript@3.7.0(eslint-plugin-import@2.31.0(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1):
+  eslint-plugin-import@2.31.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.7.2))(eslint-import-resolver-typescript@3.7.0)(eslint@8.57.1):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.8
@@ -9887,8 +9833,6 @@ snapshots:
   ignore-by-default@1.0.1: {}
 
   ignore@5.3.2: {}
-
-  immer@10.1.1: {}
 
   import-fresh@3.3.0:
     dependencies:
