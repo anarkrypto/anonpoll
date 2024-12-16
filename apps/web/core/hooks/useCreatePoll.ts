@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo } from 'react'
-import { CreatePollData } from '../controllers/poll-manager-controller'
+import { CreatePollData } from 'core/controllers'
 import { useControllers } from './useControllers'
-import { MetadataEncryptionV1 } from '../utils/metadata-encryption-v1'
+import { MetadataEncryptionV1 } from 'core/utils'
 
 export interface CreatePollResult {
 	id: string

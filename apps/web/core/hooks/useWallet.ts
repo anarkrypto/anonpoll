@@ -1,4 +1,4 @@
-import { WalletState } from '../../../../packages/core/controllers/wallet-controller'
+import { WalletState } from 'core/controllers'
 import { useCallback, useSyncExternalStore } from 'react'
 import { useControllers } from './useControllers'
 

@@ -1,5 +1,5 @@
 import { toast } from '@/components/ui/use-toast'
-import { TransactionJSON } from '@/core/controllers/wallet-controller'
+import { TransactionJSON } from 'core/controllers'
 import { useWallet } from '@/core/hooks'
 import { truncateMiddle } from '@/lib/utils'
 import { useEffect, useRef } from 'react'

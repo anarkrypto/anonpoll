@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useSyncExternalStore } from 'react'
-import { PollState } from '../../../../packages/core/controllers/poll-controller'
+import { PollState } from 'core/controllers'
 import { useEngine } from '../engine-context'
 
 export interface UsePollReturn {
