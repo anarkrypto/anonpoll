@@ -1,5 +1,5 @@
+import { CID } from 'multiformats/cid'
 import { AbstractMetadataStore } from './abstract-metadata-store'
-import { isCID } from '@/core/utils/cid'
 
 /**
  * An IPFS-based metadata store compatible with Kubo's API
@@ -10,7 +10,7 @@ export class IpfsMetadataStore<Data = Record<string, any>>
 	constructor(private ipfsApiUrl: string) {}
 
 	public async get(cid: string): Promise<Data> {
-		if (!isCID(cid)) {
+		if (!IpfsMetadataStore.isCID(cid)) {
 			throw new Error('Invalid CID received from IPFS')
 		}
 
@@ -63,7 +63,7 @@ export class IpfsMetadataStore<Data = Record<string, any>>
 
 		const result = (await response.json()) as { Key: string; Size: number }
 
-		if (!isCID(result.Key)) {
+		if (!IpfsMetadataStore.isCID(result.Key)) {
 			throw new Error('Invalid CID received from IPFS')
 		}
 		return { key: result.Key }
@@ -78,5 +78,14 @@ export class IpfsMetadataStore<Data = Record<string, any>>
 		})
 		formData.append('file', blob)
 		return formData
+	}
+
+	static isCID = (value: string): boolean => {
+		try {
+			CID.parse(value)
+			return true
+		} catch {
+			return false
+		}
 	}
 }
