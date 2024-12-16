@@ -5,7 +5,7 @@
 	"main": "dist/index.js",
 	"scripts": {
 		"test": "node --experimental-vm-modules --experimental-wasm-modules --experimental-wasm-threads ./node_modules/jest/bin/jest.js",
-		"build": " tsc -p tsconfig.json"
+		"build": " tsc -p tsconfig.build.json"
 	},
 	"author": "anarkrypto <anarkrypto@gmail.com>",
 	"license": "MIT",
