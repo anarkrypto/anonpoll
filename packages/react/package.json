@@ -2,16 +2,24 @@
 	"name": "@zeropoll/react",
 	"version": "1.0.0",
 	"description": "ZeroPoll React",
+	"main": "dist/index.js",
+	"private": "false",
+	"author": "anarkrypto <anarkrypto@gmail.com>",
+	"license": "MIT",
+	"files": [
+		"dist"
+	],
 	"exports": {
 		".": "./dist/index.js"
+	},
+	"publishConfig": {
+		"access": "public"
 	},
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"build": "tsc -p tsconfig.json"
 	},
 	"keywords": [],
-	"author": "anarkrypto <anarkrypto@gmail.com>",
-	"license": "MIT",
 	"dependencies": {
 		"@zeropoll/core": "workspace:*",
 		"react": "^18"
