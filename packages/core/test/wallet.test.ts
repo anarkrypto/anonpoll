@@ -1,5 +1,5 @@
 import { Nullifier } from 'o1js'
-import { Wallet } from './wallet'
+import { Wallet } from '@/signers/wallet'
 
 const PRIVATE_KEY = 'EKDii5d1dA7DDw6NZwN7jF7qcdYR5MVjZ9TfESv1gc2TvmvV2WAE'
 const PUBLIC_KEY = 'B62qmRM1veRpkCG2DmWW1EgpKUG9v1rzSJmVk8NFKbWoQNnTn5DSFdT'
