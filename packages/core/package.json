@@ -1,5 +1,5 @@
 {
-	"name": "core",
+	"name": "@zeropoll/core",
 	"version": "1.0.0",
 	"description": "ZeroPoll Core",
 	"main": "dist/index.js",
@@ -7,7 +7,7 @@
 	"license": "MIT",
 	"scripts": {
 		"test": "node --experimental-vm-modules --experimental-wasm-modules --experimental-wasm-threads ./node_modules/jest/bin/jest.js",
-		"build": " tsc -p tsconfig.build.json && tsc-alias"
+		"build": "tsc -p tsconfig.build.json && tsc-alias"
 	},
 	"exports": {
 		".": "./dist/index.js",

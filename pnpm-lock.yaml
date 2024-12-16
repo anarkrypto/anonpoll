@@ -190,6 +190,9 @@ importers:
       '@uidotdev/usehooks':
         specifier: ^2.4.1
         version: 2.4.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@zeropoll/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@zeropoll/react':
         specifier: workspace:*
         version: link:../../packages/react
@@ -202,9 +205,6 @@ importers:
       clsx:
         specifier: ^2.0.0
         version: 2.1.1
-      core:
-        specifier: workspace:*
-        version: link:../../packages/core
       immer:
         specifier: ^10.0.3
         version: 10.1.1
@@ -490,7 +490,7 @@ importers:
 
   packages/react:
     dependencies:
-      core:
+      '@zeropoll/core':
         specifier: workspace:*
         version: link:../core
       react:

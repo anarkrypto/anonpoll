@@ -1,6 +1,6 @@
 'use client'
 
-import { Controllers } from 'core'
+import { Controllers } from '@zeropoll/core'
 import { useEngine } from '../engine-context'
 
 export const useControllers = (): Controllers => {

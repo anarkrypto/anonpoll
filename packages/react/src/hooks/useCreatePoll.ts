@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
-import { CreatePollData } from 'core/controllers'
+import { CreatePollData } from '@zeropoll/core/controllers'
+import { MetadataEncryptionV1 } from '@zeropoll/core/utils'
 import { useControllers } from './useControllers'
-import { MetadataEncryptionV1 } from 'core/utils'
 
 export interface CreatePollResult {
 	id: string

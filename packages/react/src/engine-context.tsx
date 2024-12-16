@@ -7,8 +7,8 @@ import React, {
 	useMemo,
 	useState,
 } from 'react'
-import { Engine, EngineConfig } from 'core'
-import { AuroWallet } from 'core/signers'
+import { Engine, EngineConfig } from '@zeropoll/core'
+import { AuroWallet } from '@zeropoll/core/signers'
 
 type EngineContextValue = {
 	engine: Engine

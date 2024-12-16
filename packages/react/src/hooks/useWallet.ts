@@ -1,6 +1,6 @@
 'use client'
 
-import { WalletState } from 'core/controllers'
+import { WalletState } from '@zeropoll/core/controllers'
 import { useCallback, useSyncExternalStore } from 'react'
 import { useControllers } from './useControllers'
 

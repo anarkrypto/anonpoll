@@ -13,7 +13,7 @@
 	"author": "anarkrypto <anarkrypto@gmail.com>",
 	"license": "MIT",
 	"dependencies": {
-		"core": "workspace:*",
+		"@zeropoll/core": "workspace:*",
 		"react": "^18"
 	},
 	"devDependencies": {
