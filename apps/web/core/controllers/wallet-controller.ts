@@ -1,6 +1,6 @@
 import { BaseConfig, BaseController, BaseState } from './base-controller'
 import { MinaSignerAbstract, MinaSignerError } from '../signers/base-signer'
-import { PendingTransaction } from '@proto-kit/sequencer'
+import { PendingTransaction, UnsignedTransaction } from '@proto-kit/sequencer'
 import { ChainController } from './chain-controller'
 import { Field, PublicKey, Signature, UInt64 } from 'o1js'
 import { MethodIdResolver } from '@proto-kit/module'
@@ -234,5 +234,12 @@ export class WalletController extends BaseController<
 
 	publicKey() {
 		return PublicKey.fromBase58(this.account!)
+	}
+
+	static isPendingTransaction(
+		transaction: PendingTransaction | UnsignedTransaction | undefined
+	): asserts transaction is PendingTransaction {
+		if (!(transaction instanceof PendingTransaction))
+			throw new Error('Transaction is not a PendingTransaction')
 	}
 }

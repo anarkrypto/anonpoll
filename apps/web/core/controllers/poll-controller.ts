@@ -17,7 +17,6 @@ import {
 import { BaseConfig, BaseController, BaseState } from './base-controller'
 import { ChainController } from './chain-controller'
 import { WalletController } from './wallet-controller'
-import { isPendingTransaction } from '../utils'
 import { AbstractMetadataStore } from '../stores/metadata-store'
 import { PollData } from '@/types/poll'
 import { MetadataEncryptionV1 } from '../utils/metadata-encryption-v1'
@@ -304,7 +303,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
 		await tx.sign()
 		await tx.send()
 
-		isPendingTransaction(tx.transaction)
+		WalletController.isPendingTransaction(tx.transaction)
 		this.wallet.addPendingTransaction(tx.transaction)
 
 		const hash = tx.transaction.hash().toString()

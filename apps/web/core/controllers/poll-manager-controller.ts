@@ -2,7 +2,6 @@ import { BaseConfig, BaseController, BaseState } from './base-controller'
 import { EncryptedMetadataV1, pollInsertSchema } from '@/schemas/poll'
 import { z } from 'zod'
 import { Bool, CircuitString, MerkleMap, Poseidon, PublicKey } from 'o1js'
-import { isPendingTransaction } from '../utils'
 import { WalletController } from './wallet-controller'
 import { OptionsHashes } from 'chain/dist/runtime/modules/poll'
 import { AbstractMetadataStore } from '../stores/metadata-store'
@@ -83,7 +82,7 @@ export class PollManagerController extends BaseController<
 		await tx.sign()
 		await tx.send()
 
-		isPendingTransaction(tx.transaction)
+		WalletController.isPendingTransaction(tx.transaction)
 		this.wallet.addPendingTransaction(tx.transaction)
 
 		const hash = tx.transaction.hash().toString()
