@@ -4,7 +4,7 @@
 	"description": "ZeroPoll Core",
 	"main": "dist/index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "node --experimental-vm-modules --experimental-wasm-modules --experimental-wasm-threads ./node_modules/jest/bin/jest.js"
 	},
 	"author": "anarkrypto <anarkrypto@gmail.com>",
 	"license": "MIT",
