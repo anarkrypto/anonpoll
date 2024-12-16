@@ -1,6 +1,8 @@
 import { Nullifier } from 'o1js'
 import { MinaSignerAbstract } from './base-signer'
 
+declare const window: any
+
 type Group = {
 	x: bigint
 	y: bigint
