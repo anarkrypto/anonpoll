@@ -1,4 +1,4 @@
-import { ChainController } from '@/core/controllers/chain-controller'
+import { ChainController } from '@/controllers/chain-controller'
 import { TestingAppChain } from '@proto-kit/sdk'
 
 export class ChainTestController extends ChainController {
