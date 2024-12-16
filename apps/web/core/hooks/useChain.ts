@@ -1,4 +1,4 @@
-import { ChainState } from '../controllers/chain-controller'
+import { ChainState } from '../../../../packages/core/controllers/chain-controller'
 import { useSyncExternalStore } from 'react'
 import { useControllers } from './useControllers'
 
