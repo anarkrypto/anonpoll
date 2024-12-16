@@ -3,12 +3,21 @@
 	"version": "1.0.0",
 	"description": "ZeroPoll Core",
 	"main": "dist/index.js",
+	"author": "anarkrypto <anarkrypto@gmail.com>",
+	"license": "MIT",
 	"scripts": {
 		"test": "node --experimental-vm-modules --experimental-wasm-modules --experimental-wasm-threads ./node_modules/jest/bin/jest.js",
 		"build": " tsc -p tsconfig.build.json"
 	},
-	"author": "anarkrypto <anarkrypto@gmail.com>",
-	"license": "MIT",
+	"exports": {
+		".": "./dist/index.js",
+		"./schemas": "./dist/schemas/index.js",
+		"./controllers": "./dist/controllers/index.js",
+		"./signers": "./dist/signers/index.js",
+		"./stores": "./dist/stores/index.js",
+		"./utils": "./dist/utils/index.js",
+		"./constants": "./dist/constants.js"
+	},
 	"dependencies": {
 		"chain": "workspace:*",
 		"mina-signer": "^3.0.7",
