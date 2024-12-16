@@ -1,4 +1,4 @@
-import { client } from 'chain'
+import { client } from '@zeropoll/chain'
 import {
 	ChainController,
 	ChainState,

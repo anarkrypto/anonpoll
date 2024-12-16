@@ -7,13 +7,13 @@ import {
 	Poseidon,
 	PublicKey,
 } from 'o1js'
-import type { client } from 'chain'
+import type { client } from '@zeropoll/chain'
 import {
 	canVote,
 	OptionsHashes,
 	PollProof,
 	PollPublicOutput,
-} from 'chain/dist/runtime/modules/poll'
+} from '@zeropoll/chain/dist/runtime/modules/poll'
 import { BaseConfig, BaseController, BaseState } from './base-controller'
 import { ChainController } from './chain-controller'
 import { WalletController } from './wallet-controller'

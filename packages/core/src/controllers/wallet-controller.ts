@@ -1,4 +1,4 @@
-import type { client } from 'chain'
+import type { client } from '@zeropoll/chain'
 import { Field, PublicKey, Signature, UInt64 } from 'o1js'
 import { MethodIdResolver } from '@proto-kit/module'
 import { PendingTransaction, UnsignedTransaction } from '@proto-kit/sequencer'

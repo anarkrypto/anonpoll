@@ -1,5 +1,5 @@
 {
-	"name": "chain",
+	"name": "@zeropoll/chain",
 	"version": "1.0.0",
 	"description": "ZeroPoll Chain",
 	"type": "module",

@@ -1,6 +1,6 @@
 import { TestingAppChain } from '@proto-kit/sdk'
-import { Balances } from 'chain/dist/runtime/modules/balances'
-import { Poll } from 'chain/dist/runtime/modules/poll'
+import { Balances } from '@zeropoll/chain/dist/runtime/modules/balances'
+import { Poll } from '@zeropoll/chain/dist/runtime/modules/poll'
 import { UInt64 } from '@proto-kit/library'
 import { PollManagerController } from '@/controllers/poll-manager-controller'
 import { WalletController } from '@/controllers/wallet-controller'

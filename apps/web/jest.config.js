@@ -3,7 +3,7 @@
 /* eslint-disable import/no-commonjs */
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 
-const baseConfig = require('chain/jest.config.cjs')
+const baseConfig = require('@zeropoll/chain/jest.config.cjs')
 
 module.exports = {
 	...baseConfig,
