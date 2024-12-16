@@ -1,3 +1,5 @@
+'use client'
+
 import { ChainState } from 'core/controllers'
 import { useSyncExternalStore } from 'react'
 import { useControllers } from './useControllers'

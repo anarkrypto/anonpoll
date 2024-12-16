@@ -1,3 +1,5 @@
+'use client'
+
 import { WalletState } from 'core/controllers'
 import { useCallback, useSyncExternalStore } from 'react'
 import { useControllers } from './useControllers'

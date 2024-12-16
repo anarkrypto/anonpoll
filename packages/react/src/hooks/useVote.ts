@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useCallback, useEffect } from 'react'
 import { useControllers } from './useControllers'
 import { useEngine } from '../engine-context'

@@ -1,3 +1,5 @@
+'use client'
+
 import { Controllers } from 'core'
 import { useEngine } from '../engine-context'
 

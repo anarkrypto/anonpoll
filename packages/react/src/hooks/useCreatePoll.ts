@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useCallback, useMemo } from 'react'
 import { CreatePollData } from 'core/controllers'
 import { useControllers } from './useControllers'

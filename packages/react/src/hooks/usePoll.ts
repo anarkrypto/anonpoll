@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useCallback, useEffect, useSyncExternalStore } from 'react'
 import { PollState } from 'core/controllers'
 import { useEngine } from '../engine-context'
