@@ -22,7 +22,7 @@ import { generateCommitmentRoot } from '@/lib/utils'
 import { cn } from '@/lib/cn'
 import { Badge } from './ui/badge'
 import { useToast } from './ui/use-toast'
-import { usePoll, useVote, useWallet } from '@/core/hooks'
+import { usePoll, useVote, useWallet } from '@zeropoll/react'
 import { PollCardSkeleton } from './poll-card-skeleton'
 import { PollCardError } from './poll-card-error'
 

@@ -3,7 +3,7 @@
 import InstallAuroWalletModal from '@/components/install-auro-wallet-modal'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
-import { useWallet } from '@/core/hooks'
+import { useWallet } from '@zeropoll/react'
 import { DialogProps } from '@radix-ui/react-dialog'
 import { useCallback, useEffect } from 'react'
 import {

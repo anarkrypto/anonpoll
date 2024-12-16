@@ -1,6 +1,6 @@
 'use client'
 
-import { useChain } from '@/core/hooks'
+import { useChain } from '@zeropoll/react'
 import { cn } from '@/lib/cn'
 
 export function ChainStatus() {

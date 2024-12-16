@@ -1,6 +1,6 @@
 import { toast } from '@/components/ui/use-toast'
 import { TransactionJSON } from 'core/controllers'
-import { useWallet } from '@/core/hooks'
+import { useWallet } from '@zeropoll/react'
 import { truncateMiddle } from '@/lib/utils'
 import { useEffect, useRef } from 'react'
 

@@ -22,7 +22,7 @@ import { pollInsertSchema } from 'core/schemas'
 import { useToast } from '@/components/ui/use-toast'
 import { useRouter } from 'next/navigation'
 import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from 'core/constants'
-import { useCreatePoll } from '@/core/hooks'
+import { useCreatePoll } from '@zeropoll/react'
 import { cn } from '@/lib/cn'
 
 const pollFormSchema = pollInsertSchema.omit({ salt: true })

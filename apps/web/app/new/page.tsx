@@ -1,6 +1,6 @@
 'use client'
 
-import { useWallet } from '@/core/hooks'
+import { useWallet } from '@zeropoll/react'
 import { PollFormCard } from '@/components/poll-form-card'
 import { ConnectWalletModal } from '@/components/connect-wallet-modal'
 import { cn } from '@/lib/cn'

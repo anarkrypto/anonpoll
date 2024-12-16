@@ -3,7 +3,7 @@ import { Inter as FontSans } from 'next/font/google'
 import Header from '@/components/header'
 import { Toaster } from '@/components/ui/toaster'
 import { cn } from '@/lib/cn'
-import { EngineProvider } from '@/core/engine-context'
+import { EngineProvider } from '@zeropoll/react'
 import { TransactionNotifications } from '@/components/transaction-notifications'
 import { Metadata } from 'next'
 
