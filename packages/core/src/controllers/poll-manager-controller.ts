@@ -1,13 +1,12 @@
 import { BaseConfig, BaseController, BaseState } from './base-controller'
-import { pollInsertSchema } from '@/schemas/poll'
-import { EncryptedMetadataV1 } from '@/schemas/encrypted-metadata'
+import { EncryptedMetadataV1, pollInsertSchema } from '@/schemas'
 import { z } from 'zod'
 import { Bool, CircuitString, MerkleMap, Poseidon, PublicKey } from 'o1js'
 import { WalletController } from './wallet-controller'
 import { OptionsHashes } from 'chain/dist/runtime/modules/poll'
-import { AbstractMetadataStore } from '../stores/metadata-store'
+import { AbstractMetadataStore } from '@/stores/metadata-store'
 import type { client } from 'chain'
-import { MetadataEncryptionV1 } from '../utils/metadata-encryption-v1'
+import { MetadataEncryptionV1 } from '@/utils'
 
 export type CreatePollData = z.infer<typeof pollInsertSchema>
 

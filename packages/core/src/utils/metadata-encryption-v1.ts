@@ -1,8 +1,5 @@
 import crypto from 'crypto'
-import {
-	encryptedMetadataSchemaV1,
-	EncryptedMetadataV1,
-} from '@/schemas/encrypted-metadata'
+import { encryptedMetadataSchemaV1, EncryptedMetadataV1 } from '@/schemas'
 
 export class MetadataEncryptionV1 {
 	private readonly VERSION = 1

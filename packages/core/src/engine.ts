@@ -1,13 +1,16 @@
 import { client } from 'chain'
-import { ChainController, ChainState } from './controllers/chain-controller'
-import { PollController, PollState } from './controllers/poll-controller'
 import {
+	ChainController,
+	ChainState,
+	PollController,
+	PollState,
 	PollManagerController,
 	PollManagerState,
-} from './controllers/poll-manager-controller'
-import { WalletController, WalletState } from './controllers/wallet-controller'
-import { IpfsMetadataStore } from './stores/metadata-store'
-import { PollData } from './schemas/poll'
+	WalletController,
+	WalletState,
+} from '@/controllers'
+import { IpfsMetadataStore } from '@/stores/metadata-store'
+import { PollData } from '@/schemas'
 
 interface Controllers {
 	wallet: WalletController

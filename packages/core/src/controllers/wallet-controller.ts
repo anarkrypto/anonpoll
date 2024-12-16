@@ -1,10 +1,10 @@
-import { BaseConfig, BaseController, BaseState } from './base-controller'
-import { MinaSignerAbstract, MinaSignerError } from '../signers/base-signer'
-import { PendingTransaction, UnsignedTransaction } from '@proto-kit/sequencer'
-import { ChainController } from './chain-controller'
+import type { client } from 'chain'
 import { Field, PublicKey, Signature, UInt64 } from 'o1js'
 import { MethodIdResolver } from '@proto-kit/module'
-import type { client } from 'chain'
+import { PendingTransaction, UnsignedTransaction } from '@proto-kit/sequencer'
+import { MinaSignerAbstract, MinaSignerError } from '@/signers'
+import { BaseConfig, BaseController, BaseState } from './base-controller'
+import { ChainController } from './chain-controller'
 
 export type TransactionStatus = 'PENDING' | 'SUCCESS' | 'FAILURE'
 

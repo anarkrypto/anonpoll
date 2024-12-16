@@ -17,10 +17,9 @@ import {
 import { BaseConfig, BaseController, BaseState } from './base-controller'
 import { ChainController } from './chain-controller'
 import { WalletController } from './wallet-controller'
-import { AbstractMetadataStore } from '../stores/metadata-store'
-import { MetadataEncryptionV1 } from '../utils/metadata-encryption-v1'
-import { EncryptedMetadataV1 } from '@/schemas/encrypted-metadata'
-import { PollData } from '../schemas/poll'
+import { AbstractMetadataStore } from '@/stores/metadata-store'
+import { MetadataEncryptionV1 } from '@/utils'
+import { EncryptedMetadataV1, PollData } from '@/schemas'
 
 export interface PollConfig extends BaseConfig {
 	wallet: WalletController
