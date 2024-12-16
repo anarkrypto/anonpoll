@@ -24,6 +24,7 @@
 		"chain": "workspace:*",
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.0.0",
+		"core": "workspace:*",
 		"immer": "^10.0.3",
 		"lucide-react": "^0.439.0",
 		"mina-signer": "^3.0.7",
