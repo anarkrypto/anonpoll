@@ -1,5 +1,5 @@
 {
-	"name": "prettier-config",
+	"name": "@zeropoll/prettier-config",
 	"version": "0.0.0",
 	"description": "ZeroPoll Prettier config",
 	"type": "module",
