@@ -9,6 +9,15 @@
 	"files": [
 		"dist"
 	],
+	"exports": {
+		".": "./dist/index.js",
+		"./app-chain": "./dist/app-chain/index.js",
+		"./environments/*": "./dist/environments/*",
+		"./protocol": "./dist/protocol/index.js",
+		"./runtime": "./dist/runtime/index.js",
+		"./runtime/modules/*": "./dist/runtime/modules/*.js",
+		"./sequencer": "./dist/sequencer/index.js"
+	},
 	"publishConfig": {
 		"access": "public"
 	},
