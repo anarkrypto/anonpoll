@@ -8,6 +8,7 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
+		"format": "prettier --write .",
 		"test": "node --experimental-vm-modules --experimental-wasm-modules --experimental-wasm-threads ./node_modules/jest/bin/jest.js"
 	},
 	"dependencies": {

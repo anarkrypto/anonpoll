@@ -14,6 +14,7 @@
 	],
 	"scripts": {
 		"test": "node --experimental-vm-modules --experimental-wasm-modules --experimental-wasm-threads ./node_modules/jest/bin/jest.js",
+		"format": "prettier --write .",
 		"build": "tsc -p tsconfig.build.json && tsc-alias"
 	},
 	"exports": {
