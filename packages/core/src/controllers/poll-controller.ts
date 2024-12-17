@@ -13,7 +13,7 @@ import {
 	OptionsHashes,
 	PollProof,
 	PollPublicOutput,
-} from '@zeropoll/chain/dist/runtime/modules/poll'
+} from '@zeropoll/chain/runtime/modules/poll'
 import { BaseConfig, BaseController, BaseState } from './base-controller'
 import { ChainController } from './chain-controller'
 import { WalletController } from './wallet-controller'
