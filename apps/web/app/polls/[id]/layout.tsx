@@ -1,15 +1,15 @@
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { AlertTriangleIcon } from 'lucide-react'
-import { Metadata } from 'next'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertTriangleIcon } from 'lucide-react';
+import { Metadata } from 'next';
 
 export const metadata: Metadata = {
 	title: 'Poll',
-}
+};
 
 export default function PollLayout({
 	children,
 }: {
-	children: React.ReactNode
+	children: React.ReactNode;
 }) {
 	return (
 		<div>
@@ -25,5 +25,5 @@ export default function PollLayout({
 				{children}
 			</div>
 		</div>
-	)
+	);
 }

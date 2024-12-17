@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const webpack = require('webpack')
+const webpack = require('webpack');
 
 const nextConfig = {
 	reactStrictMode: false,
@@ -12,10 +12,10 @@ const nextConfig = {
 					{ key: 'Cross-Origin-Embedder-Policy', value: 'require-corp' },
 				],
 			},
-		]
+		];
 	},
 	webpack(config, { isServer }) {
-		config.experiments = { ...config.experiments, topLevelAwait: true }
+		config.experiments = { ...config.experiments, topLevelAwait: true };
 		config.resolve.fallback = {
 			fs: false,
 			tls: false,
@@ -29,22 +29,22 @@ const nextConfig = {
 			worker_threads: false,
 			dns: false,
 			child_process: false,
-		}
+		};
 
 		config.plugins.push(
 			new webpack.NormalModuleReplacementPlugin(/^node:/, resource => {
-				resource.request = resource.request.replace(/^node:/, '')
+				resource.request = resource.request.replace(/^node:/, '');
 			})
-		)
+		);
 
 		if (isServer) {
-			config.externals.push('o1js')
+			config.externals.push('o1js');
 		}
 
-		return config
+		return config;
 	},
 	compress: false,
 	output: 'standalone',
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

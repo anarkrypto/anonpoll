@@ -1,7 +1,7 @@
-import { Logger } from '@/utils/logger'
+import { Logger } from '@/utils/logger';
 
 export interface BaseConfig {
-	isDevelopment?: boolean
+	isDevelopment?: boolean;
 }
 
 /**
@@ -19,7 +19,7 @@ export interface BaseState {}
 export type Listener<State extends BaseState> = (
 	fullState: State,
 	changedState: Partial<State>
-) => void
+) => void;
 
 export class BaseController<
 	Config extends BaseConfig,
@@ -27,24 +27,24 @@ export class BaseController<
 > {
 	readonly defaultConfig: Config = {
 		isDevelopment: false,
-	} as Config
-	readonly defaultState: State = {} as State
+	} as Config;
+	readonly defaultState: State = {} as State;
 
-	private readonly initialConfig: Config
-	private readonly initialState: State
+	private readonly initialConfig: Config;
+	private readonly initialState: State;
 
-	private internalConfig: Config = this.defaultConfig
-	private internalState: State = this.defaultState
+	private internalConfig: Config = this.defaultConfig;
+	private internalState: State = this.defaultState;
 
-	private internalListeners = new Set<Listener<State>>()
-	protected logger: Logger
+	private internalListeners = new Set<Listener<State>>();
+	protected logger: Logger;
 
 	constructor(config: Partial<Config>, state: Partial<State> = {} as State) {
 		this.logger = new Logger({
 			isLocalDev: this.internalConfig.isDevelopment,
-		})
-		this.initialState = state as State
-		this.initialConfig = config as Config
+		});
+		this.initialState = state as State;
+		this.initialConfig = config as Config;
 	}
 
 	/**
@@ -55,11 +55,11 @@ export class BaseController<
 	 * @returns This controller instance.
 	 */
 	protected initialize() {
-		this.internalState = this.defaultState
-		this.internalConfig = this.defaultConfig
-		this.configure(this.initialConfig)
-		this.update(this.initialState)
-		return this
+		this.internalState = this.defaultState;
+		this.internalConfig = this.defaultConfig;
+		this.configure(this.initialConfig);
+		this.update(this.initialState);
+		return this;
 	}
 
 	/**
@@ -68,7 +68,7 @@ export class BaseController<
 	 * @returns The current configuration.
 	 */
 	get config() {
-		return this.internalConfig
+		return this.internalConfig;
 	}
 
 	/**
@@ -77,7 +77,7 @@ export class BaseController<
 	 * @returns The current state.
 	 */
 	get state() {
-		return this.internalState
+		return this.internalState;
 	}
 
 	/**
@@ -89,7 +89,7 @@ export class BaseController<
 	protected configure(config: Partial<Config>, overwrite = false) {
 		this.internalConfig = overwrite
 			? (config as Config)
-			: Object.assign(this.internalConfig, config)
+			: Object.assign(this.internalConfig, config);
 	}
 
 	/**
@@ -99,8 +99,8 @@ export class BaseController<
 	 * @param overwrite - Overwrite state instead of merging.
 	 */
 	update(state: Partial<State>) {
-		this.internalState = Object.assign({}, this.internalState, state)
-		this.notify(this.internalState, state)
+		this.internalState = Object.assign({}, this.internalState, state);
+		this.notify(this.internalState, state);
 	}
 
 	/**
@@ -108,8 +108,8 @@ export class BaseController<
 	 */
 	private notify(fullState: State, changedState: Partial<State>) {
 		this.internalListeners.forEach(listener => {
-			listener(fullState, changedState)
-		})
+			listener(fullState, changedState);
+		});
 	}
 
 	/**
@@ -119,8 +119,8 @@ export class BaseController<
 	 * @returns A function to unsubscribe the listener.
 	 */
 	subscribe(listener: Listener<State>) {
-		this.internalListeners.add(listener)
-		return () => this.unsubscribe(listener)
+		this.internalListeners.add(listener);
+		return () => this.unsubscribe(listener);
 	}
 
 	/**
@@ -130,6 +130,6 @@ export class BaseController<
 	 * @returns `true` if a listener is found and unsubscribed.
 	 */
 	unsubscribe(listener: Listener<State>) {
-		return this.internalListeners.delete(listener)
+		return this.internalListeners.delete(listener);
 	}
 }

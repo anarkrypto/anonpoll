@@ -1,6 +1,6 @@
-import { z } from 'zod'
-import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from '@/constants'
-import { PublicKey } from 'o1js'
+import { z } from 'zod';
+import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from '@/constants';
+import { PublicKey } from 'o1js';
 
 export const pollInsertSchema = z.object({
 	title: z.string().min(3).trim().max(128),
@@ -15,10 +15,10 @@ export const pollInsertSchema = z.object({
 			z.string().refine(
 				value => {
 					try {
-						PublicKey.fromBase58(value)
-						return true
+						PublicKey.fromBase58(value);
+						return true;
 					} catch (error) {
-						return false
+						return false;
 					}
 				},
 				{
@@ -28,6 +28,6 @@ export const pollInsertSchema = z.object({
 		)
 		.min(1)
 		.max(MAX_POLL_VOTERS),
-})
+});
 
-export type PollData = z.infer<typeof pollInsertSchema>
+export type PollData = z.infer<typeof pollInsertSchema>;

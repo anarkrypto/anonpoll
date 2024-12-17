@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import { useChain } from '@zeropoll/react'
-import { cn } from '@/lib/cn'
+import { useChain } from '@zeropoll/react';
+import { cn } from '@/lib/cn';
 
 export function ChainStatus() {
-	const { block, loading, online } = useChain()
+	const { block, loading, online } = useChain();
 
 	return (
 		<div className="flex items-center">
@@ -18,5 +18,5 @@ export function ChainStatus() {
 				{block.height ?? '-'}
 			</div>
 		</div>
-	)
+	);
 }

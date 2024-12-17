@@ -1,29 +1,29 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
-import { ChainStatus } from './chain-status'
-import { Separator } from './ui/separator'
-import { Montserrat } from 'next/font/google'
-import { cn } from '@/lib/cn'
-import { truncateWalletAddress } from '@/lib/utils'
-import Link from 'next/link'
-import { useWallet } from '@zeropoll/react'
-import { useToast } from './ui/use-toast'
-import { useCallback, useState } from 'react'
-import InstallAuroWalletModal from './install-auro-wallet-modal'
+import { Button } from '@/components/ui/button';
+import { ChainStatus } from './chain-status';
+import { Separator } from './ui/separator';
+import { Montserrat } from 'next/font/google';
+import { cn } from '@/lib/cn';
+import { truncateWalletAddress } from '@/lib/utils';
+import Link from 'next/link';
+import { useWallet } from '@zeropoll/react';
+import { useToast } from './ui/use-toast';
+import { useCallback, useState } from 'react';
+import InstallAuroWalletModal from './install-auro-wallet-modal';
 
 const montserrat = Montserrat({
 	subsets: ['latin'],
 	weight: ['600', '700'],
-})
+});
 
 export interface HeaderProps {
-	loading: boolean
-	wallet?: string
-	onConnectWallet: () => void
-	balance?: string
-	balanceLoading: boolean
-	blockHeight?: string
+	loading: boolean;
+	wallet?: string;
+	onConnectWallet: () => void;
+	balance?: string;
+	balanceLoading: boolean;
+	blockHeight?: string;
 }
 
 export default function Header() {
@@ -33,32 +33,32 @@ export default function Header() {
 		initialized: walletInitialized,
 		connect,
 		connected,
-	} = useWallet()
+	} = useWallet();
 	const [openInstallAuroWalletModal, setOpenInstallAuroWalletModal] =
-		useState(false)
+		useState(false);
 
-	const { toast } = useToast()
+	const { toast } = useToast();
 
-	const showWallet = connected && account
+	const showWallet = connected && account;
 
 	const handleConnect = useCallback(async () => {
 		try {
 			if (!walletInitialized) {
-				setOpenInstallAuroWalletModal(true)
-				return
+				setOpenInstallAuroWalletModal(true);
+				return;
 			}
-			await connect()
+			await connect();
 		} catch (error) {
-			console.error('Error connecting wallet', error)
+			console.error('Error connecting wallet', error);
 			const message =
-				error instanceof Error ? error.message : 'Check logs for more details'
+				error instanceof Error ? error.message : 'Check logs for more details';
 			toast({
 				title: 'Error connecting wallet',
 				description: message,
 				variant: 'destructive',
-			})
+			});
 		}
-	}, [connect, toast, walletInitialized])
+	}, [connect, toast, walletInitialized]);
 
 	return (
 		<>
@@ -108,5 +108,5 @@ export default function Header() {
 				onOpenChange={setOpenInstallAuroWalletModal}
 			/>
 		</>
-	)
+	);
 }

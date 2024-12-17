@@ -1,4 +1,4 @@
-import { client } from '@zeropoll/chain'
+import { client } from '@zeropoll/chain';
 import {
 	ChainController,
 	ChainState,
@@ -8,31 +8,31 @@ import {
 	PollManagerState,
 	WalletController,
 	WalletState,
-} from '@/controllers'
-import { IpfsMetadataStore } from '@/stores/metadata-store'
-import { PollData } from '@/schemas'
+} from '@/controllers';
+import { IpfsMetadataStore } from '@/stores/metadata-store';
+import { PollData } from '@/schemas';
 
 export interface Controllers {
-	wallet: WalletController
-	chain: ChainController
-	poll: PollController
-	pollManager: PollManagerController
+	wallet: WalletController;
+	chain: ChainController;
+	poll: PollController;
+	pollManager: PollManagerController;
 }
 
 export interface EngineConfig {
-	tickInterval?: number
-	protokitGraphqlUrl: string
-	ipfsApiUrl: string
+	tickInterval?: number;
+	protokitGraphqlUrl: string;
+	ipfsApiUrl: string;
 }
 
 export interface EngineState {
-	wallet: WalletState
-	chain: ChainState
-	poll: PollState
-	pollManager: PollManagerState
+	wallet: WalletState;
+	chain: ChainState;
+	poll: PollState;
+	pollManager: PollManagerState;
 }
 
-export type EngineContext = Controllers
+export type EngineContext = Controllers;
 
 /**
  * Core controller responsible for composing other controllers together
@@ -42,7 +42,7 @@ export class Engine {
 	/**
 	 * A collection of all controller instances
 	 */
-	context: EngineContext
+	context: EngineContext;
 
 	constructor(config: EngineConfig, initialState: Partial<EngineState> = {}) {
 		const chain = new ChainController(
@@ -51,7 +51,7 @@ export class Engine {
 				graphqlUrl: config.protokitGraphqlUrl,
 			},
 			initialState.chain
-		)
+		);
 
 		const wallet = new WalletController(
 			{
@@ -59,29 +59,29 @@ export class Engine {
 				client,
 			},
 			initialState.wallet
-		)
+		);
 
-		const pollStore = new IpfsMetadataStore<PollData>(config.ipfsApiUrl)
+		const pollStore = new IpfsMetadataStore<PollData>(config.ipfsApiUrl);
 
 		const pollManager = new PollManagerController(
 			{ store: pollStore, client, wallet },
 			initialState.pollManager
-		)
+		);
 
 		const poll = new PollController(
 			{ wallet, chain, client, store: pollStore },
 			initialState.poll
-		)
+		);
 
 		this.context = {
 			wallet,
 			chain,
 			poll,
 			pollManager,
-		}
+		};
 	}
 
 	async init() {
-		await Promise.all([client.start(), this.context.chain.start()])
+		await Promise.all([client.start(), this.context.chain.start()]);
 	}
 }

@@ -1,5 +1,5 @@
-import { Card, CardContent, CardFooter, CardHeader } from './ui/card'
-import { Skeleton } from './ui/skeleton'
+import { Card, CardContent, CardFooter, CardHeader } from './ui/card';
+import { Skeleton } from './ui/skeleton';
 
 export function PollCardSkeleton() {
 	return (
@@ -17,5 +17,5 @@ export function PollCardSkeleton() {
 				<Skeleton className="h-8 w-48" />
 			</CardFooter>
 		</Card>
-	)
+	);
 }

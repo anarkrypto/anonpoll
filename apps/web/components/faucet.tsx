@@ -1,15 +1,15 @@
-'use client'
-import { Card } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form'
-import { useForm } from 'react-hook-form'
-import { Button } from './ui/button'
+'use client';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form';
+import { useForm } from 'react-hook-form';
+import { Button } from './ui/button';
 
 export interface FaucetProps {
-	wallet?: string
-	loading: boolean
-	onConnectWallet: () => void
-	onDrip: () => void
+	wallet?: string;
+	loading: boolean;
+	onConnectWallet: () => void;
+	onDrip: () => void;
 }
 
 export function Faucet({
@@ -18,7 +18,7 @@ export function Faucet({
 	onDrip,
 	loading,
 }: FaucetProps) {
-	const form = useForm()
+	const form = useForm();
 	return (
 		<Card className="w-full p-4">
 			<div className="mb-2">
@@ -54,13 +54,13 @@ export function Faucet({
 					className="mt-6 w-full"
 					loading={loading}
 					onClick={() => {
-						wallet ?? onConnectWallet()
-						wallet && onDrip()
+						wallet ?? onConnectWallet();
+						wallet && onDrip();
 					}}
 				>
 					{wallet ? 'Drip 💦' : 'Connect wallet'}
 				</Button>
 			</Form>
 		</Card>
-	)
+	);
 }

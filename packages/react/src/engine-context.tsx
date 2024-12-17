@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React, {
 	createContext,
@@ -6,16 +6,16 @@ import React, {
 	useEffect,
 	useMemo,
 	useState,
-} from 'react'
-import { Engine, EngineConfig } from '@zeropoll/core'
-import { AuroWallet } from '@zeropoll/core/signers'
+} from 'react';
+import { Engine, EngineConfig } from '@zeropoll/core';
+import { AuroWallet } from '@zeropoll/core/signers';
 
 type EngineContextValue = {
-	engine: Engine
-	initialized: boolean
-}
+	engine: Engine;
+	initialized: boolean;
+};
 
-const EngineContext = createContext({} as EngineContextValue)
+const EngineContext = createContext({} as EngineContextValue);
 
 export function EngineProvider({
 	children,
@@ -23,33 +23,33 @@ export function EngineProvider({
 	protokitGraphqlUrl,
 	ipfsApiUrl,
 }: { children: React.ReactNode } & EngineConfig) {
-	const [initialized, setInitialized] = useState(false)
+	const [initialized, setInitialized] = useState(false);
 
 	const engine = useMemo(
 		() => new Engine({ tickInterval, protokitGraphqlUrl, ipfsApiUrl }),
 		[tickInterval, protokitGraphqlUrl, ipfsApiUrl]
-	)
+	);
 
 	const init = async () => {
-		await engine.init()
+		await engine.init();
 		if (AuroWallet.isInstalled()) {
-			const walletProvider = new AuroWallet()
-			await engine.context.wallet.init(walletProvider)
+			const walletProvider = new AuroWallet();
+			await engine.context.wallet.init(walletProvider);
 		}
-		setInitialized(true)
-	}
+		setInitialized(true);
+	};
 
 	useEffect(() => {
-		init()
-	}, [])
+		init();
+	}, []);
 
 	return (
 		<EngineContext.Provider value={{ engine, initialized }}>
 			{children}
 		</EngineContext.Provider>
-	)
+	);
 }
 
 export const useEngine = () => {
-	return useContext(EngineContext)
-}
+	return useContext(EngineContext);
+};

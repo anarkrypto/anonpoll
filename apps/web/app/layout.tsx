@@ -1,16 +1,16 @@
-import './globals.css'
-import { Inter as FontSans } from 'next/font/google'
-import Header from '@/components/header'
-import { Toaster } from '@/components/ui/toaster'
-import { cn } from '@/lib/cn'
-import { EngineProvider } from '@zeropoll/react'
-import { TransactionNotifications } from '@/components/transaction-notifications'
-import { Metadata } from 'next'
+import './globals.css';
+import { Inter as FontSans } from 'next/font/google';
+import Header from '@/components/header';
+import { Toaster } from '@/components/ui/toaster';
+import { cn } from '@/lib/cn';
+import { EngineProvider } from '@zeropoll/react';
+import { TransactionNotifications } from '@/components/transaction-notifications';
+import { Metadata } from 'next';
 
 export const fontSans = FontSans({
 	subsets: ['latin'],
 	variable: '--font-sans',
-})
+});
 
 export const metadata: Metadata = {
 	title: {
@@ -18,12 +18,12 @@ export const metadata: Metadata = {
 		template: '%s | ZeroPoll',
 	},
 	description: 'A private voting system powered by zero-knowledge proofs',
-}
+};
 
 export default function RootLayout({
 	children,
 }: {
-	children: React.ReactNode
+	children: React.ReactNode;
 }) {
 	return (
 		<html lang="en" className="h-full">
@@ -44,5 +44,5 @@ export default function RootLayout({
 				</EngineProvider>
 			</body>
 		</html>
-	)
+	);
 }

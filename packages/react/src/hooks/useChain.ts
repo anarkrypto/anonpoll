@@ -1,21 +1,21 @@
-'use client'
+'use client';
 
-import { ChainState } from '@zeropoll/core/controllers'
-import { useSyncExternalStore } from 'react'
-import { useControllers } from './useControllers'
+import { ChainState } from '@zeropoll/core/controllers';
+import { useSyncExternalStore } from 'react';
+import { useControllers } from './useControllers';
 
 export interface UseChainReturn extends ChainState {}
 
 export const useChain = (): UseChainReturn => {
-	const { chain: chanController } = useControllers()
+	const { chain: chanController } = useControllers();
 
 	const chainState = useSyncExternalStore(
 		callback => chanController.subscribe(callback),
 		() => chanController.state,
 		() => chanController.state
-	)
+	);
 
 	return {
 		...chainState,
-	}
-}
+	};
+};

@@ -1,22 +1,22 @@
-import MinaClient from 'mina-signer'
-import { MinaSignerAbstract } from './base-signer'
-import { Nullifier } from 'o1js'
+import MinaClient from 'mina-signer';
+import { MinaSignerAbstract } from './base-signer';
+import { Nullifier } from 'o1js';
 
 export class Wallet implements MinaSignerAbstract {
-	#privateKey: string
-	client: MinaClient
+	#privateKey: string;
+	client: MinaClient;
 
 	constructor(privateKey: string) {
-		this.#privateKey = privateKey
-		this.client = new MinaClient({ network: 'mainnet' })
+		this.#privateKey = privateKey;
+		this.client = new MinaClient({ network: 'mainnet' });
 	}
 
 	async requestAccount(): Promise<string> {
-		return this.client.derivePublicKey(this.#privateKey)
+		return this.client.derivePublicKey(this.#privateKey);
 	}
 
 	async getAccount(): Promise<string> {
-		return this.requestAccount()
+		return this.requestAccount();
 	}
 
 	public on(event: 'accountsChanged', handler: (event: any) => void): void {
@@ -27,19 +27,19 @@ export class Wallet implements MinaSignerAbstract {
 		const jsonNullifier = await this.client.createNullifier(
 			message.map(m => BigInt(m)),
 			this.#privateKey
-		)
-		return Nullifier.fromJSON(jsonNullifier)
+		);
+		return Nullifier.fromJSON(jsonNullifier);
 	}
 
 	public async signJsonMessage({
 		message,
 	}: {
-		message: { label: string; value: string }[]
+		message: { label: string; value: string }[];
 	}) {
 		const signature = await this.client.signMessage(
 			JSON.stringify(message),
 			this.#privateKey
-		)
+		);
 
 		return {
 			data: signature.data,
@@ -48,6 +48,6 @@ export class Wallet implements MinaSignerAbstract {
 				field: signature.signature.field,
 				scalar: signature.signature.scalar,
 			},
-		}
+		};
 	}
 }

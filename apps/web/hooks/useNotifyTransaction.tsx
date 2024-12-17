@@ -1,20 +1,20 @@
-import { toast } from '@/components/ui/use-toast'
-import { TransactionJSON } from '@zeropoll/core/controllers'
-import { useWallet } from '@zeropoll/react'
-import { truncateMiddle } from '@/lib/utils'
-import { useEffect, useRef } from 'react'
+import { toast } from '@/components/ui/use-toast';
+import { TransactionJSON } from '@zeropoll/core/controllers';
+import { useWallet } from '@zeropoll/react';
+import { truncateMiddle } from '@/lib/utils';
+import { useEffect, useRef } from 'react';
 
 export const notifyTransaction = (transaction: TransactionJSON) => {
-	const hash = truncateMiddle(transaction.hash.toString(), 15, 15, '...')
+	const hash = truncateMiddle(transaction.hash.toString(), 15, 15, '...');
 
 	function title() {
 		switch (transaction.status) {
 			case 'PENDING':
-				return `⏳ Transaction sent: ${transaction.methodModule}.${transaction.methodName}`
+				return `⏳ Transaction sent: ${transaction.methodModule}.${transaction.methodName}`;
 			case 'SUCCESS':
-				return `✅ Transaction successful: ${transaction.methodModule}.${transaction.methodName}`
+				return `✅ Transaction successful: ${transaction.methodModule}.${transaction.methodName}`;
 			case 'FAILURE':
-				return `❌ Transaction failed: ${transaction.methodModule}.${transaction.methodName}`
+				return `❌ Transaction failed: ${transaction.methodModule}.${transaction.methodName}`;
 		}
 	}
 
@@ -32,18 +32,18 @@ export const notifyTransaction = (transaction: TransactionJSON) => {
 				</p>
 			</div>
 		),
-	})
-}
+	});
+};
 
 export const useNotifyTransactions = () => {
-	const notifiedTransactions = useRef(new Set<string>())
-	const { transactions } = useWallet()
+	const notifiedTransactions = useRef(new Set<string>());
+	const { transactions } = useWallet();
 	useEffect(() => {
 		transactions.forEach(transaction => {
-			const key = `${transaction.hash}-${transaction.status}`
-			if (notifiedTransactions.current.has(key)) return
-			notifyTransaction(transaction)
-			notifiedTransactions.current.add(key)
-		})
-	}, [transactions])
-}
+			const key = `${transaction.hash}-${transaction.status}`;
+			if (notifiedTransactions.current.has(key)) return;
+			notifyTransaction(transaction);
+			notifiedTransactions.current.add(key);
+		});
+	}, [transactions]);
+};

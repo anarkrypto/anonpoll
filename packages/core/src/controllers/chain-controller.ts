@@ -1,23 +1,23 @@
-import { BaseConfig, BaseController, BaseState } from './base-controller'
+import { BaseConfig, BaseController, BaseState } from './base-controller';
 
 export interface ComputedTransactionJSON {
-	argsFields: string[]
-	argsJSON: string[]
-	methodId: string
-	nonce: string
-	sender: string
+	argsFields: string[];
+	argsJSON: string[];
+	methodId: string;
+	nonce: string;
+	sender: string;
 	signature: {
-		r: string
-		s: string
-	}
+		r: string;
+		s: string;
+	};
 }
 
 export interface ComputedBlockJSON {
 	txs: {
-		status: boolean
-		statusMessage?: string
-		tx: ComputedTransactionJSON
-	}[]
+		status: boolean;
+		statusMessage?: string;
+		tx: ComputedTransactionJSON;
+	}[];
 }
 
 export interface BlockQueryResponse {
@@ -25,29 +25,29 @@ export interface BlockQueryResponse {
 		network: {
 			unproven?: {
 				block: {
-					height: string
-				}
-			}
-		}
-		block: ComputedBlockJSON
-	}
+					height: string;
+				};
+			};
+		};
+		block: ComputedBlockJSON;
+	};
 }
 
 export interface ChainConfig extends BaseConfig {
-	tickInterval: number
-	graphqlUrl: string
+	tickInterval: number;
+	graphqlUrl: string;
 }
 
 export interface ChainState extends BaseState {
-	loading: boolean
-	online: boolean
+	loading: boolean;
+	online: boolean;
 	block: {
-		height: string
-	} & ComputedBlockJSON
+		height: string;
+	} & ComputedBlockJSON;
 }
 
 export class ChainController extends BaseController<ChainConfig, ChainState> {
-	private interval: NodeJS.Timeout | undefined
+	private interval: NodeJS.Timeout | undefined;
 
 	readonly defaultState: ChainState = {
 		loading: true,
@@ -56,11 +56,11 @@ export class ChainController extends BaseController<ChainConfig, ChainState> {
 			height: '0',
 			txs: [],
 		},
-	}
+	};
 
 	constructor(config: ChainConfig, state: Partial<ChainState> = {}) {
-		super(config, state)
-		this.initialize()
+		super(config, state);
+		this.initialize();
 	}
 
 	async loadBlock() {
@@ -100,9 +100,9 @@ export class ChainController extends BaseController<ChainConfig, ChainState> {
           }
         `,
 				}),
-			})
+			});
 
-			const { data } = (await response.json()) as BlockQueryResponse
+			const { data } = (await response.json()) as BlockQueryResponse;
 
 			if (data.network.unproven) {
 				this.update({
@@ -111,32 +111,32 @@ export class ChainController extends BaseController<ChainConfig, ChainState> {
 						txs: data.block.txs || [],
 					},
 					online: true,
-				})
+				});
 			}
 		} catch (error) {
-			this.update({ online: false })
-			throw error
+			this.update({ online: false });
+			throw error;
 		}
 	}
 
 	async start() {
-		this.update({ loading: true })
+		this.update({ loading: true });
 		try {
-			await this.loadBlock()
+			await this.loadBlock();
 			this.interval = setInterval(
 				() => this.loadBlock(),
 				this.config.tickInterval
-			)
+			);
 		} catch (error) {
-			throw error
+			throw error;
 		} finally {
-			this.update({ loading: false })
+			this.update({ loading: false });
 		}
 	}
 
 	stop() {
 		if (this.interval) {
-			clearInterval(this.interval)
+			clearInterval(this.interval);
 		}
 	}
 }

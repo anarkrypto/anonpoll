@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { ArrowRight, PlusIcon, TrashIcon } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { ArrowRight, PlusIcon, TrashIcon } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
 	Form,
 	FormControl,
@@ -12,28 +12,28 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
-} from '@/components/ui/form'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import React, { useCallback, useState } from 'react'
-import { generateSalt, isValidPublicKey } from '@/lib/utils'
-import { pollInsertSchema } from '@zeropoll/core/schemas'
-import { useToast } from '@/components/ui/use-toast'
-import { useRouter } from 'next/navigation'
-import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from '@zeropoll/core/constants'
-import { useCreatePoll } from '@zeropoll/react'
-import { cn } from '@/lib/cn'
+} from '@/components/ui/form';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import React, { useCallback, useState } from 'react';
+import { generateSalt, isValidPublicKey } from '@/lib/utils';
+import { pollInsertSchema } from '@zeropoll/core/schemas';
+import { useToast } from '@/components/ui/use-toast';
+import { useRouter } from 'next/navigation';
+import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from '@zeropoll/core/constants';
+import { useCreatePoll } from '@zeropoll/react';
+import { cn } from '@/lib/cn';
 
-const pollFormSchema = pollInsertSchema.omit({ salt: true })
+const pollFormSchema = pollInsertSchema.omit({ salt: true });
 
-type PollFormData = z.infer<typeof pollFormSchema>
+type PollFormData = z.infer<typeof pollFormSchema>;
 
 export function PollFormCard({ ...props }: React.ComponentProps<typeof Card>) {
-	const router = useRouter()
-	const { toast } = useToast()
+	const router = useRouter();
+	const { toast } = useToast();
 
-	const [step, setStep] = useState(1)
+	const [step, setStep] = useState(1);
 
 	const form = useForm<PollFormData>({
 		defaultValues: {
@@ -46,60 +46,60 @@ export function PollFormCard({ ...props }: React.ComponentProps<typeof Card>) {
 			step === 1
 				? zodResolver(pollFormSchema.omit({ votersWallets: true }))
 				: zodResolver(pollFormSchema),
-	})
+	});
 
 	const { createPoll, isPending: creatingPoll } = useCreatePoll({
 		onSuccess: ({ id, encryptionKey }) => {
-			router.push(`/polls/${id}?key=${encryptionKey}`)
+			router.push(`/polls/${id}?key=${encryptionKey}`);
 		},
 		onError: message => {
 			toast({
 				title: 'Error',
 				description: message,
 				variant: 'destructive',
-			})
+			});
 		},
-	})
+	});
 
 	const handleSubmit = useCallback(
 		async (data: PollFormData) => {
 			if (step === 1) {
 				// Prevent duplicated options and add error to the input that is duplicated
-				const options = new Set<string>()
-				let hasError = false
+				const options = new Set<string>();
+				let hasError = false;
 				data.options.forEach((option, index) => {
 					if (options.has(option)) {
-						hasError = true
+						hasError = true;
 						form.setError('options', {
 							type: 'duplicate',
 							message: 'Error: Remove duplicated options',
 							types: {},
-						})
+						});
 					}
-					options.add(option)
-				})
+					options.add(option);
+				});
 
 				if (hasError) {
-					return
+					return;
 				}
 
-				setStep(2)
-				return
+				setStep(2);
+				return;
 			}
-			await createPoll({ ...data, salt: generateSalt() })
+			await createPoll({ ...data, salt: generateSalt() });
 		},
 		[step]
-	)
+	);
 
 	const handleError = (error: any) => {
 		// It should never happen, it means that something is wrong with the form.
-		console.error({ error })
+		console.error({ error });
 		toast({
 			title: 'Error',
 			description: 'Please check the console for log details.',
 			variant: 'destructive',
-		})
-	}
+		});
+	};
 
 	return (
 		<Card
@@ -212,7 +212,7 @@ export function PollFormCard({ ...props }: React.ComponentProps<typeof Card>) {
 				</Form>
 			</CardContent>
 		</Card>
-	)
+	);
 }
 
 function OptionsInputsGroup({
@@ -221,29 +221,29 @@ function OptionsInputsGroup({
 	max = Infinity,
 	showError = false,
 }: {
-	value: string[]
-	onChange: (value: string[]) => void
-	max?: number
-	showError?: boolean
+	value: string[];
+	onChange: (value: string[]) => void;
+	max?: number;
+	showError?: boolean;
 }) {
 	// Fill the array with 2 empty values
-	const options = [value[0] ?? '', value[1] ?? '', ...value.slice(2)]
+	const options = [value[0] ?? '', value[1] ?? '', ...value.slice(2)];
 
 	const addOption = () => {
-		onChange([...options, ''])
-	}
+		onChange([...options, '']);
+	};
 
 	const removeOption = (index: number) => {
-		const newOptions = [...options]
-		newOptions.splice(index, 1)
-		onChange(newOptions)
-	}
+		const newOptions = [...options];
+		newOptions.splice(index, 1);
+		onChange(newOptions);
+	};
 
 	const handleOptionChange = (index: number, value: string) => {
-		const newOptions = [...options]
-		newOptions[index] = value
-		onChange(newOptions)
-	}
+		const newOptions = [...options];
+		newOptions[index] = value;
+		onChange(newOptions);
+	};
 
 	return (
 		<div>
@@ -299,7 +299,7 @@ function OptionsInputsGroup({
 				</p>
 			)}
 		</div>
-	)
+	);
 }
 
 function VotersWalletsInputsGroup({
@@ -308,29 +308,29 @@ function VotersWalletsInputsGroup({
 	max = Infinity,
 	showError = false,
 }: {
-	value: string[]
-	onChange: (value: string[]) => void
-	max?: number
-	showError?: boolean
+	value: string[];
+	onChange: (value: string[]) => void;
+	max?: number;
+	showError?: boolean;
 }) {
 	// Fill the array with 1 empty value
-	const wallets = [value[0] ?? '', ...value.slice(1)]
+	const wallets = [value[0] ?? '', ...value.slice(1)];
 
 	const addWallet = () => {
-		onChange([...wallets, ''])
-	}
+		onChange([...wallets, '']);
+	};
 
 	const removeWallet = (index: number) => {
-		const newOptions = [...wallets]
-		newOptions.splice(index, 1)
-		onChange(newOptions)
-	}
+		const newOptions = [...wallets];
+		newOptions.splice(index, 1);
+		onChange(newOptions);
+	};
 
 	const handleWalletChange = (index: number, wallet: string) => {
-		const newOptions = [...wallets]
-		newOptions[index] = wallet
-		onChange(newOptions)
-	}
+		const newOptions = [...wallets];
+		newOptions[index] = wallet;
+		onChange(newOptions);
+	};
 
 	return (
 		<div>
@@ -384,5 +384,5 @@ function VotersWalletsInputsGroup({
 				</p>
 			)}
 		</div>
-	)
+	);
 }

@@ -1,57 +1,57 @@
-'use client'
+'use client';
 
-import InstallAuroWalletModal from '@/components/install-auro-wallet-modal'
-import { Button } from '@/components/ui/button'
-import { useToast } from '@/components/ui/use-toast'
-import { useWallet } from '@zeropoll/react'
-import { DialogProps } from '@radix-ui/react-dialog'
-import { useCallback, useEffect } from 'react'
+import InstallAuroWalletModal from '@/components/install-auro-wallet-modal';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
+import { useWallet } from '@zeropoll/react';
+import { DialogProps } from '@radix-ui/react-dialog';
+import { useCallback, useEffect } from 'react';
 import {
 	Dialog,
 	DialogHeader,
 	DialogTitle,
 	DialogDescription,
 	DialogContent,
-} from './ui/dialog'
+} from './ui/dialog';
 
 export function ConnectWalletModal({
 	onConnected,
 	...props
 }: {
-	onConnected?: () => void
+	onConnected?: () => void;
 } & DialogProps) {
 	const {
 		initialized: walletInitialized,
 		connect,
 		connected,
 		loading,
-	} = useWallet()
+	} = useWallet();
 
-	const { toast } = useToast()
+	const { toast } = useToast();
 
 	useEffect(() => {
 		if (connected) {
-			onConnected?.()
+			onConnected?.();
 		}
-	}, [connected])
+	}, [connected]);
 
 	const handleConnect = useCallback(async () => {
 		try {
-			await connect()
+			await connect();
 		} catch (error) {
-			console.error('Error connecting wallet', error)
+			console.error('Error connecting wallet', error);
 			const message =
-				error instanceof Error ? error.message : 'Check logs for more details'
+				error instanceof Error ? error.message : 'Check logs for more details';
 			toast({
 				title: 'Error connecting wallet',
 				description: message,
 				variant: 'destructive',
-			})
+			});
 		}
-	}, [connected, toast, walletInitialized])
+	}, [connected, toast, walletInitialized]);
 
 	if (!walletInitialized) {
-		return <InstallAuroWalletModal {...props} />
+		return <InstallAuroWalletModal {...props} />;
 	}
 
 	return (
@@ -75,5 +75,5 @@ export function ConnectWalletModal({
 				</Button>
 			</DialogContent>
 		</Dialog>
-	)
+	);
 }

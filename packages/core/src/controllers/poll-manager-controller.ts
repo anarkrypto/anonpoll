@@ -1,48 +1,48 @@
-import { BaseConfig, BaseController, BaseState } from './base-controller'
-import { EncryptedMetadataV1, pollInsertSchema } from '@/schemas'
-import { z } from 'zod'
-import { Bool, CircuitString, MerkleMap, Poseidon, PublicKey } from 'o1js'
-import { WalletController } from './wallet-controller'
-import { OptionsHashes } from '@zeropoll/chain/runtime/modules/poll'
-import { AbstractMetadataStore } from '@/stores/metadata-store'
-import type { client } from '@zeropoll/chain'
-import { MetadataEncryptionV1 } from '@/utils'
+import { BaseConfig, BaseController, BaseState } from './base-controller';
+import { EncryptedMetadataV1, pollInsertSchema } from '@/schemas';
+import { z } from 'zod';
+import { Bool, CircuitString, MerkleMap, Poseidon, PublicKey } from 'o1js';
+import { WalletController } from './wallet-controller';
+import { OptionsHashes } from '@zeropoll/chain/runtime/modules/poll';
+import { AbstractMetadataStore } from '@/stores/metadata-store';
+import type { client } from '@zeropoll/chain';
+import { MetadataEncryptionV1 } from '@/utils';
 
-export type CreatePollData = z.infer<typeof pollInsertSchema>
+export type CreatePollData = z.infer<typeof pollInsertSchema>;
 
 export interface PollManagerConfig extends BaseConfig {
-	client: Pick<typeof client, 'query' | 'runtime' | 'transaction'>
-	wallet: WalletController
-	store: AbstractMetadataStore
+	client: Pick<typeof client, 'query' | 'runtime' | 'transaction'>;
+	wallet: WalletController;
+	store: AbstractMetadataStore;
 }
 
 export interface PollManagerState extends BaseState {
 	polls: {
-		id: number
-		title: string
-		description: string
-		options: string[]
-		votersWallets: string[]
-	}[]
+		id: number;
+		title: string;
+		description: string;
+		options: string[];
+		votersWallets: string[];
+	}[];
 }
 
 export class PollManagerController extends BaseController<
 	PollManagerConfig,
 	PollManagerState
 > {
-	client: Pick<typeof client, 'query' | 'runtime' | 'transaction'>
-	wallet: WalletController
-	store: AbstractMetadataStore
+	client: Pick<typeof client, 'query' | 'runtime' | 'transaction'>;
+	wallet: WalletController;
+	store: AbstractMetadataStore;
 
 	constructor(
 		config: PollManagerConfig,
 		state: Partial<PollManagerState> = {}
 	) {
-		super(config, state)
-		this.client = config.client
-		this.wallet = config.wallet
-		this.store = config.store
-		this.initialize()
+		super(config, state);
+		this.client = config.client;
+		this.wallet = config.wallet;
+		this.store = config.store;
+		this.initialize();
 	}
 
 	public async create(
@@ -50,60 +50,60 @@ export class PollManagerController extends BaseController<
 		encryptionKey?: string
 	): Promise<{ id: string; hash: string }> {
 		if (!this.wallet.account) {
-			throw new Error('Client or wallet not initialized')
+			throw new Error('Client or wallet not initialized');
 		}
 
-		const poll = this.client.runtime.resolve('Poll')
-		const sender = PublicKey.fromBase58(this.wallet.account)
-		const map = new MerkleMap()
+		const poll = this.client.runtime.resolve('Poll');
+		const sender = PublicKey.fromBase58(this.wallet.account);
+		const map = new MerkleMap();
 
 		data.votersWallets.forEach(address => {
-			const publicKey = PublicKey.fromBase58(address)
-			const hashKey = Poseidon.hash(publicKey.toFields())
-			map.set(hashKey, Bool(true).toField())
-		})
+			const publicKey = PublicKey.fromBase58(address);
+			const hashKey = Poseidon.hash(publicKey.toFields());
+			map.set(hashKey, Bool(true).toField());
+		});
 
-		const optionsHashes = OptionsHashes.fromTexts(data.options, data.salt)
+		const optionsHashes = OptionsHashes.fromTexts(data.options, data.salt);
 
 		const storeData = encryptionKey
 			? await this.encrypt(data, encryptionKey)
-			: data
+			: data;
 
-		const { key: id } = await this.store.put(storeData)
+		const { key: id } = await this.store.put(storeData);
 
 		const tx = await this.client.transaction(sender, async () => {
 			await poll.createPoll(
 				CircuitString.fromString(id),
 				map.getRoot(),
 				optionsHashes
-			)
-		})
+			);
+		});
 
-		await tx.sign()
-		await tx.send()
+		await tx.sign();
+		await tx.send();
 
-		WalletController.isPendingTransaction(tx.transaction)
-		this.wallet.addPendingTransaction(tx.transaction)
+		WalletController.isPendingTransaction(tx.transaction);
+		this.wallet.addPendingTransaction(tx.transaction);
 
-		const hash = tx.transaction.hash().toString()
+		const hash = tx.transaction.hash().toString();
 
-		const receipt = await this.wallet.waitForTransactionReceipt(hash)
+		const receipt = await this.wallet.waitForTransactionReceipt(hash);
 
 		if (receipt.status === 'FAILURE') {
-			throw new Error(receipt.statusMessage as string)
+			throw new Error(receipt.statusMessage as string);
 		}
 
 		return {
 			id,
 			hash,
-		}
+		};
 	}
 
 	private async encrypt(
 		data: CreatePollData,
 		key: string
 	): Promise<EncryptedMetadataV1> {
-		const metadataEncryptionV1 = new MetadataEncryptionV1(key)
-		return await metadataEncryptionV1.encrypt(JSON.stringify(data))
+		const metadataEncryptionV1 = new MetadataEncryptionV1(key);
+		return await metadataEncryptionV1.encrypt(JSON.stringify(data));
 	}
 }

@@ -1,6 +1,6 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
-const hexPattern = /^[0-9a-fA-F]+$/
+const hexPattern = /^[0-9a-fA-F]+$/;
 
 export const encryptedMetadataSchemaV1 = z.object({
 	version: z.literal(1),
@@ -19,6 +19,6 @@ export const encryptedMetadataSchemaV1 = z.object({
 
 		cipher: z.literal('aes-256-ctr'),
 	}),
-})
+});
 
-export type EncryptedMetadataV1 = z.infer<typeof encryptedMetadataSchemaV1>
+export type EncryptedMetadataV1 = z.infer<typeof encryptedMetadataSchemaV1>;

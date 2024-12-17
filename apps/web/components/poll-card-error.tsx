@@ -1,11 +1,17 @@
-import { AlertCircle } from 'lucide-react'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/card'
-import { Button } from './ui/button'
+import { AlertCircle } from 'lucide-react';
+import {
+	Card,
+	CardContent,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from './ui/card';
+import { Button } from './ui/button';
 
 interface PollCardErrorProps {
-	title: string
-	description?: string
-	onRetry?: () => void
+	title: string;
+	description?: string;
+	onRetry?: () => void;
 }
 
 export function PollCardError({
@@ -32,5 +38,5 @@ export function PollCardError({
 				)}
 			</CardFooter>
 		</Card>
-	)
+	);
 }

@@ -1,15 +1,15 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { ArrowRight, Shield, Lock, Vote } from 'lucide-react'
-import { cn } from '@/lib/cn'
-import { Montserrat } from 'next/font/google'
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { ArrowRight, Shield, Lock, Vote } from 'lucide-react';
+import { cn } from '@/lib/cn';
+import { Montserrat } from 'next/font/google';
 
 const montserrat = Montserrat({
 	subsets: ['latin'],
 	weight: ['600', '700'],
-})
+});
 
 export default function LandingPage() {
 	return (
@@ -94,7 +94,7 @@ export default function LandingPage() {
 				</a>
 			</footer>
 		</div>
-	)
+	);
 }
 
 function FeatureCard({
@@ -102,9 +102,9 @@ function FeatureCard({
 	title,
 	description,
 }: {
-	icon: React.ReactNode
-	title: string
-	description: string
+	icon: React.ReactNode;
+	title: string;
+	description: string;
 }) {
 	return (
 		<div className="flex max-w-xl flex-col items-center space-y-2 rounded-lg border border-zinc-200 bg-white p-4 text-center">
@@ -112,5 +112,5 @@ function FeatureCard({
 			<h3 className="text-lg font-semibold">{title}</h3>
 			<p className="text-sm text-gray-600">{description}</p>
 		</div>
-	)
+	);
 }

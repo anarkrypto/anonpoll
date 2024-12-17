@@ -6,6 +6,6 @@
  */
 
 export abstract class AbstractMetadataStore<Data = Record<string, any>> {
-	abstract get(key: string): Promise<Data>
-	abstract put(data: Data): Promise<{ key: string }>
+	abstract get(key: string): Promise<Data>;
+	abstract put(data: Data): Promise<{ key: string }>;
 }

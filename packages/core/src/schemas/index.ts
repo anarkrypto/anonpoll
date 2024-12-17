@@ -1,2 +1,2 @@
-export * from './encrypted-metadata'
-export * from './poll'
+export * from './encrypted-metadata';
+export * from './poll';

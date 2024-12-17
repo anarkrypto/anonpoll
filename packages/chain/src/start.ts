@@ -38,8 +38,7 @@ yargs(hideBin(process.argv))
       // For windows support, we need to parse out environment variables used in the path
       let path = replaceEnvTemplates(args.appChain);
 
-      const appChainFactory: AppChainFactory = (await import(path))
-        .default;
+      const appChainFactory: AppChainFactory = (await import(path)).default;
       const appChain = await appChainFactory(args);
 
       await appChain.start();
@@ -63,8 +62,10 @@ function replaceEnvTemplates(str: string) {
     m.forEach((match, groupIndex) => {
       const envVarName = match.slice(1);
       const envVarValue = process.env[envVarName];
-      if(envVarValue === undefined) {
-        throw new Error(`Substituted environment variable ${envVarName} not found`)
+      if (envVarValue === undefined) {
+        throw new Error(
+          `Substituted environment variable ${envVarName} not found`,
+        );
       }
       temp = temp.replace(match, envVarValue);
     });

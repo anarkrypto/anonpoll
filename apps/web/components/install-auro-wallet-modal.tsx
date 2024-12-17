@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import {
 	Dialog,
 	DialogContent,
@@ -6,10 +6,10 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from '@/components/ui/dialog'
-import { ExternalLinkIcon } from 'lucide-react'
-import { DialogProps } from '@radix-ui/react-dialog'
-import Link from 'next/link'
+} from '@/components/ui/dialog';
+import { ExternalLinkIcon } from 'lucide-react';
+import { DialogProps } from '@radix-ui/react-dialog';
+import Link from 'next/link';
 
 export default function InstallAuroWalletModal(props: DialogProps) {
 	return (
@@ -52,5 +52,5 @@ export default function InstallAuroWalletModal(props: DialogProps) {
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>
-	)
+	);
 }

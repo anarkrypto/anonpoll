@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-import { fontFamily } from 'tailwindcss/defaultTheme'
+import { fontFamily } from 'tailwindcss/defaultTheme';
 
 module.exports = {
 	darkMode: ['class'],
@@ -72,4 +72,4 @@ module.exports = {
 		},
 	},
 	plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography')],
-}
+};

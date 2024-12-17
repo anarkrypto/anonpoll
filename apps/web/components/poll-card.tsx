@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import {
 	Card,
@@ -7,102 +7,102 @@ import {
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from '@/components/ui/card'
-import { Button } from './ui/button'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
-import { DialogDescription, DialogProps } from '@radix-ui/react-dialog'
-import { useEffect, useMemo, useState } from 'react'
+} from '@/components/ui/card';
+import { Button } from './ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
+import { DialogDescription, DialogProps } from '@radix-ui/react-dialog';
+import { useEffect, useMemo, useState } from 'react';
 import {
 	CircleCheckBigIcon,
 	CircleIcon,
 	Share2Icon,
 	ShieldCheckIcon,
-} from 'lucide-react'
-import { generateCommitmentRoot } from '@/lib/utils'
-import { cn } from '@/lib/cn'
-import { Badge } from './ui/badge'
-import { useToast } from './ui/use-toast'
-import { usePoll, useVote, useWallet } from '@zeropoll/react'
-import { PollCardSkeleton } from './poll-card-skeleton'
-import { PollCardError } from './poll-card-error'
+} from 'lucide-react';
+import { generateCommitmentRoot } from '@/lib/utils';
+import { cn } from '@/lib/cn';
+import { Badge } from './ui/badge';
+import { useToast } from './ui/use-toast';
+import { usePoll, useVote, useWallet } from '@zeropoll/react';
+import { PollCardSkeleton } from './poll-card-skeleton';
+import { PollCardError } from './poll-card-error';
 
 export function PollCard({
 	id,
 	encryptionKey,
 }: {
-	id: string
-	encryptionKey?: string
+	id: string;
+	encryptionKey?: string;
 }) {
-	const { account, connect } = useWallet()
+	const { account, connect } = useWallet();
 	const {
 		data: { metadata, options, commitment },
 		isLoading,
 		error,
-	} = usePoll(id, encryptionKey)
+	} = usePoll(id, encryptionKey);
 
 	const {
 		vote,
 		isPending: isVoting,
 		isSuccess: isVoted,
-	} = useVote(id, { encryptionKey })
+	} = useVote(id, { encryptionKey });
 
-	const [openVotersModal, setOpenVotersModal] = useState(false)
-	const [activeOptionHash, setActiveOptionHash] = useState<string | null>(null)
-	const [loadProgressBar, setLoadProgressBar] = useState(false)
-	const { toast } = useToast()
+	const [openVotersModal, setOpenVotersModal] = useState(false);
+	const [activeOptionHash, setActiveOptionHash] = useState<string | null>(null);
+	const [loadProgressBar, setLoadProgressBar] = useState(false);
+	const { toast } = useToast();
 
 	const validProof = useMemo(() => {
-		if (!commitment || !metadata?.votersWallets) return false
+		if (!commitment || !metadata?.votersWallets) return false;
 		return (
 			commitment === generateCommitmentRoot(metadata.votersWallets).toString()
-		)
-	}, [metadata?.votersWallets, commitment])
+		);
+	}, [metadata?.votersWallets, commitment]);
 
 	const winnerOption = useMemo(() => {
 		// Return winner option hash.
 		// If there is no vote, return null.
 		// If there is a tie, return null.
 		if (options.every(option => option.votesCount === 0)) {
-			return null
+			return null;
 		}
-		const maxVotesCount = Math.max(...options.map(option => option.votesCount))
+		const maxVotesCount = Math.max(...options.map(option => option.votesCount));
 		const topOptions = options.filter(
 			option => option.votesCount === maxVotesCount
-		)
+		);
 		if (topOptions.length > 1) {
-			return null
+			return null;
 		}
-		return topOptions[0] || null
-	}, [options])
+		return topOptions[0] || null;
+	}, [options]);
 
 	const handleVote = () => {
-		if (!activeOptionHash) return
-		vote(activeOptionHash)
-	}
+		if (!activeOptionHash) return;
+		vote(activeOptionHash);
+	};
 
 	const handleSelectOption = (hash: string) => {
-		if (isVoted) return
-		setActiveOptionHash(prev => (prev === hash ? null : hash))
-	}
+		if (isVoted) return;
+		setActiveOptionHash(prev => (prev === hash ? null : hash));
+	};
 
-	const canVote = !!activeOptionHash && validProof
+	const canVote = !!activeOptionHash && validProof;
 
 	useEffect(() => {
-		if (isLoading || loadProgressBar) return
+		if (isLoading || loadProgressBar) return;
 		const timeout = setTimeout(() => {
-			setLoadProgressBar(true)
-		}, 1000)
+			setLoadProgressBar(true);
+		}, 1000);
 		return () => {
-			clearTimeout(timeout)
-		}
-	}, [isLoading, loadProgressBar])
+			clearTimeout(timeout);
+		};
+	}, [isLoading, loadProgressBar]);
 
 	if (error) {
-		return <PollCardError title={'Error fetching Poll'} description={error} />
+		return <PollCardError title={'Error fetching Poll'} description={error} />;
 	}
 
 	if (isLoading || !metadata) {
-		return <PollCardSkeleton />
+		return <PollCardSkeleton />;
 	}
 
 	return (
@@ -212,10 +212,10 @@ export function PollCard({
 					<Button
 						className="w-full"
 						onClick={() => {
-							navigator.clipboard.writeText(window.location.href)
+							navigator.clipboard.writeText(window.location.href);
 							toast({
 								title: 'Link copied to clipboard',
-							})
+							});
 						}}
 						variant="outline"
 					>
@@ -231,7 +231,7 @@ export function PollCard({
 				validProof={validProof}
 			/>
 		</>
-	)
+	);
 }
 
 function VotersModal({
@@ -274,5 +274,5 @@ function VotersModal({
 				</ul>
 			</DialogContent>
 		</Dialog>
-	)
+	);
 }
