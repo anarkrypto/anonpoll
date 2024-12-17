@@ -1,5 +1,5 @@
 {
-	"extends": "tsconfig/chain.json",
+	"extends": "@zeropoll/tsconfig/chain.json",
 	"compilerOptions": {
 		"baseUrl": ".",
 		"outDir": "./dist",

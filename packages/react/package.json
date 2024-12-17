@@ -26,6 +26,7 @@
 	},
 	"devDependencies": {
 		"@types/react": "^18",
+		"@zeropoll/prettier-config": "workspace:*",
 		"typescript": "5.4.5"
 	},
 	"repository": {

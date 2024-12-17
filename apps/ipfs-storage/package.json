@@ -52,6 +52,7 @@
 		"@types/jest": "^29.5.7",
 		"@types/multer": "^1.4.12",
 		"@types/node": "^22.9.1",
+		"@zeropoll/prettier-config": "workspace:*",
 		"esbuild": "^0.24.0",
 		"jest": "^29.6.1",
 		"keys": "link:@type/@libp2p/crypto/keys",

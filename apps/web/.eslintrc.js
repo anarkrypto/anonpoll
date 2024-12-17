@@ -1,3 +1,3 @@
 module.exports = {
-	extends: ['custom/next'],
+	extends: ['@zeropoll/eslint-config-custom/next'],
 }

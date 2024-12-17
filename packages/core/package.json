@@ -34,6 +34,7 @@
 	},
 	"devDependencies": {
 		"@types/jest": "^29.5.7",
+		"@zeropoll/prettier-config": "workspace:*",
 		"jest": "^29.6.1",
 		"ts-jest": "^29.1.1",
 		"tsc-alias": "^1.8.10",

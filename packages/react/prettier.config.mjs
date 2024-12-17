@@ -1,2 +1,2 @@
-import commonConfig from 'prettier-config'
+import commonConfig from '@zeropoll/prettier-config'
 export default commonConfig
