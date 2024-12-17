@@ -10,7 +10,7 @@
 		"declaration": true,
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
-		"moduleResolution": "node",
+		"moduleResolution": "bundler",
 		"noImplicitAny": true,
 		"allowJs": true,
 		"esModuleInterop": true,
