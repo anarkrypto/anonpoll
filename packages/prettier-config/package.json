@@ -1,9 +1,12 @@
 {
 	"name": "prettier-config",
-	"version": "1.0.0",
+	"version": "0.0.0",
 	"description": "ZeroPoll Prettier config",
 	"type": "module",
-	"exports": "./index.js",
+	"exports": {
+		".": "./index.js"
+	},
+	"private": "false",
 	"license": "MIT",
 	"publishConfig": {
 		"access": "public"
