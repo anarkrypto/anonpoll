@@ -41,7 +41,7 @@
 		"@types/node": "^20",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
-		"@zeropoll/eslint-config-custom": "workspace:*",
+		"@zeropoll/eslint-config": "workspace:*",
 		"@zeropoll/prettier-config": "workspace:*",
 		"autoprefixer": "^10.0.1",
 		"eslint": "^9",

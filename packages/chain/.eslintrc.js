@@ -1,3 +1,3 @@
 module.exports = {
-	extends: ["@zeropoll/eslint-config-custom"]
+	extends: ["@zeropoll/eslint-config"]
 };
