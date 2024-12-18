@@ -33,7 +33,7 @@ export function ConnectWalletModal({
 		if (connected) {
 			onConnected?.();
 		}
-	}, [connected]);
+	}, [connected, onConnected]);
 
 	const handleConnect = useCallback(async () => {
 		try {
@@ -48,7 +48,7 @@ export function ConnectWalletModal({
 				variant: 'destructive',
 			});
 		}
-	}, [connected, toast, walletInitialized]);
+	}, [toast, connect]);
 
 	if (!walletInitialized) {
 		return <InstallAuroWalletModal {...props} />;

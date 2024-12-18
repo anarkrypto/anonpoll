@@ -67,7 +67,7 @@ export function PollFormCard({ ...props }: React.ComponentProps<typeof Card>) {
 				// Prevent duplicated options and add error to the input that is duplicated
 				const options = new Set<string>();
 				let hasError = false;
-				data.options.forEach((option, index) => {
+				data.options.forEach(option => {
 					if (options.has(option)) {
 						hasError = true;
 						form.setError('options', {
@@ -88,10 +88,10 @@ export function PollFormCard({ ...props }: React.ComponentProps<typeof Card>) {
 			}
 			await createPoll({ ...data, salt: generateSalt() });
 		},
-		[step]
+		[step, createPoll, form]
 	);
 
-	const handleError = (error: any) => {
+	const handleError = (error: unknown) => {
 		// It should never happen, it means that something is wrong with the form.
 		console.error({ error });
 		toast({

@@ -18,8 +18,8 @@ export default function PollLayout({
 					<AlertTriangleIcon className="h-4 w-4 !text-yellow-700" />
 					<AlertTitle>Experimental Poll</AlertTitle>
 					<AlertDescription>
-						This app is in alpha and may be insecure. It's not ready for real
-						use cases.
+						This app is in alpha and may be insecure. It&apos;s not ready for
+						real use cases.
 					</AlertDescription>
 				</Alert>
 				{children}

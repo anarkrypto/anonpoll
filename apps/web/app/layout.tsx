@@ -38,7 +38,7 @@ export default function RootLayout({
 					ipfsApiUrl={process.env.NEXT_PUBLIC_IPFS_API_URL!}
 				>
 					<Header />
-					{children}
+					<>{children}</>
 					<Toaster />
 					<TransactionNotifications />
 				</EngineProvider>

@@ -31,7 +31,7 @@ export function Faucet({
 				<div className="pt-3">
 					<FormField
 						name="to"
-						render={({ field }) => (
+						render={() => (
 							<FormItem>
 								<FormLabel>
 									To{' '}
