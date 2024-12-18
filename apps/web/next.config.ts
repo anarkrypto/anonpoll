@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
-const webpack = require('webpack');
+import { NextConfig } from 'next';
+import webpack from 'webpack';
 
-const nextConfig = {
+const nextConfig: NextConfig = {
 	reactStrictMode: false,
 	async headers() {
 		return [
@@ -47,4 +48,4 @@ const nextConfig = {
 	output: 'standalone',
 };
 
-module.exports = nextConfig;
+export default nextConfig;
