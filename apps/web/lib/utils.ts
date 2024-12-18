@@ -20,7 +20,7 @@ export const isValidPublicKey = (publicKey: string) => {
 	try {
 		PublicKey.fromBase58(publicKey);
 		return true;
-	} catch (error) {
+	} catch {
 		return false;
 	}
 };
