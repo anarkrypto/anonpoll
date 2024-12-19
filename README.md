@@ -3,12 +3,14 @@
 A private voting system powered by zero-knowledge proofs
 
 https://zeropoll.xyz
-___
+
+---
 
 - This project is funded by Mina Protocol: [Check the proposal](https://forums.minaprotocol.com/t/zeropoll-voting-polls/6482) 🎉
 - This project is based on [Protokit framework](https://protokit.dev) and was set up with [`proto-kit/starter-kit`](https://github.com/proto-kit/starter-kit).
 
 ### Key Features
+
 - **Private Voting**: Vote counts are public while keeping individual votes confidential
 - **Double-Vote Prevention**: Uses nullifier system to prevent multiple votes from same user
 - **Verifiable Results**: All votes include zero-knowledge proofs for eligibility verification
@@ -16,12 +18,14 @@ ___
 - **Decentralized**: Fully on-chain implementation with no central authority
 
 ### Technical Stack
+
 - Built with O1js for zero-knowledge proofs
 - Proto-kit for blockchain runtime implementation
 - Merkle trees for efficient voter verification
 - React with TypeScript for frontend implementation
 
 ### Security Features
+
 - Zero-knowledge proofs for voter eligibility
 - Poseidon hash function for option privacy
 - Nullifier-based double-vote prevention
@@ -31,8 +35,11 @@ ___
 
 The monorepo contains 1 package and 1 app:
 
-- `packages/chain` contains everything related to your app-chain
-- `apps/web` contains a web UI that connects to your app-chain sequencer
+- `packages/chain` contains everything related to our app-chain
+- `packages/core` contains the core logic of ZeroPoll
+- `packages/react` contains hooks and a contex provider to implement ZeroPoll in a React app
+- `apps/ipfs-storage` contains a simple IPFS storage node service
+- `apps/web` contains the web interface for ZeroPoll
 
 **Prerequisites:**
 
@@ -41,6 +48,7 @@ The monorepo contains 1 package and 1 app:
 - nvm
 
 For running with persistance / deploying on a server
+
 - docker `>= 24.0`
 - docker-compose `>= 2.22.0`
 
@@ -68,8 +76,9 @@ The starter-kit offers different environments to run you appchain.
 You can use those environments to configure the mode of operation for your appchain depending on which stage of development you are in.
 
 The starter kit comes with a set of pre-configured environments:
+
 - `inmemory`: Runs everything in-memory without persisting the data. Useful for early stages of runtime development.
-- `development`: Runs the sequencer locally and persists all state in databases running in docker. 
+- `development`: Runs the sequencer locally and persists all state in databases running in docker.
 - `sovereign`: Runs your appchain fully in docker (except the UI) for testnet deployments without settlement.
 
 Every command you execute should follow this pattern:
@@ -85,20 +94,21 @@ This makes sure that everything is set correctly and our tooling knows which env
 pnpm env:inmemory dev
 
 # starts UI only
-pnpm env:inmemory dev --filter web
+pnpm env:inmemory dev --filter @zeropoll/web
 # starts sequencer only
-pnpm env:inmemory dev --filter chain
+pnpm env:inmemory dev --filter @zeropoll/chain
 ```
 
-> Be aware, the dev command will automatically restart your application when your sources change. 
+> Be aware, the dev command will automatically restart your application when your sources change.
 > If you don't want that, you can alternatively use `pnpm run build` and `pnpm run start`
 
 Navigate to `localhost:3000` to see the example UI, or to `localhost:8080/graphql` to see the GQL interface of the locally running sequencer.
 
 ### Running tests
+
 ```zsh
 # run and watch tests for the `chain` package
-pnpm run test --filter=chain -- --watchAll
+pnpm run test --filter=@zeropoll/chain -- --watchAll
 ```
 
 ### Running with persistence
@@ -112,20 +122,20 @@ pnpm env:development prisma:generate
 pnpm env:development prisma:migrate
 
 # build & start sequencer, make sure to prisma:generate & migrate before
-pnpm build --filter=chain
-pnpm env:development start --filter=chain
+pnpm build --filter=@zeropoll/chain
+pnpm env:development start --filter=@zeropoll/chain
 
 # Watch sequencer for local filesystem changes
 # Be aware: Flags like --prune won't work with 'dev'
-pnpm env:development dev --filter=chain
+pnpm env:development dev --filter=@zeropoll/chain
 
 # Start the UI
-pnpm env:development dev --filter web
+pnpm env:development dev --filter @zeropoll/web
 ```
 
 ### Deploying to a server
 
-When deploying to a server, you should push your code along with your forked starter-kit to some repository, 
+When deploying to a server, you should push your code along with your forked starter-kit to some repository,
 then clone it on your remote server and execute it.
 
 ```zsh
@@ -140,6 +150,7 @@ UI will be accessible at `https://localhost` and GQL inspector will be available
 For security reasons, modify the `POSTGRES_PASSWORD` and `REDIS_PASSWORD` envs found in the `packages/chain/src/environments/sovereign/.env` file.
 
 Go to `docker/proxy/Caddyfile` and replace the `*` matcher with your domain.
+
 ```
 yourdomain.com {
     ...
@@ -164,7 +175,7 @@ The caddy reverse-proxy automatically uses https for all connections, use this g
 
 In order to pass in those CLI option, add it at the end of your command like this
 
-`pnpm env:inmemory dev --filter chain -- --logLevel DEBUG --pruneOnStartup`
+`pnpm env:inmemory dev --filter @zeropoll/chain -- --logLevel DEBUG --pruneOnStartup`
 
 ### Building the framework from source
 
