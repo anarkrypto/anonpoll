@@ -16,16 +16,18 @@ export default [
 				sourceType: "module"
 			},
 			globals: {
-				browser: true,
-				node: true,
-				es2021: true,
-				process: true
+				...globals.node,
+				...globals.browser,
+				TextEncoder: true,
+				TextDecoder: true,
+				Buffer: true // Specific Node.js additions
 			}
 		},
 		plugins: {
 			"@typescript-eslint": tseslint
 		},
 		rules: {
+			"no-undef": "off",
 			"no-unused-vars": "off",
 			"@typescript-eslint/no-unused-vars": "warn",
 			"@typescript-eslint/no-explicit-any": "warn",
