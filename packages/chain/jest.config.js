@@ -1,6 +1,6 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 
-module.exports = {
+export default {
 	// because we run tests from within ./packages/<package_name>/
 	rootDir: "./",
 	moduleDirectories: ["node_modules", "src", "test"],
