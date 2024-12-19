@@ -2,6 +2,7 @@ import eslint from "@eslint/js";
 import tseslint from "@typescript-eslint/eslint-plugin";
 import tsparser from "@typescript-eslint/parser";
 import prettier from "eslint-config-prettier";
+import globals from "globals";
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
@@ -15,7 +16,6 @@ export default [
 				sourceType: "module"
 			},
 			globals: {
-				// Equivalent to previous env settings
 				browser: true,
 				node: true,
 				es2021: true
@@ -38,6 +38,10 @@ export default [
 			]
 		},
 		ignores: ["**/node_modules/**", "**/dist/**", "**/coverage/**"]
+	},
+	{
+		files: ["**/*.spec.{js,ts}", "**/*.test.{js,ts}"],
+		languageOptions: { globals: globals.jest }
 	},
 	prettier
 ];
