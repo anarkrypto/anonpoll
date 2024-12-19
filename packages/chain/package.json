@@ -7,7 +7,8 @@
 	"license": "MIT",
 	"private": false,
 	"files": [
-		"dist"
+		"dist",
+		"jest.config.js"
 	],
 	"exports": {
 		".": "./dist/index.js",
@@ -16,7 +17,8 @@
 		"./protocol": "./dist/protocol/index.js",
 		"./runtime": "./dist/runtime/index.js",
 		"./runtime/modules/*": "./dist/runtime/modules/*.js",
-		"./sequencer": "./dist/sequencer/index.js"
+		"./sequencer": "./dist/sequencer/index.js",
+		"./jest.config.js": "./jest.config.js"
 	},
 	"publishConfig": {
 		"access": "public"
