@@ -430,9 +430,15 @@ importers:
       '@types/jest':
         specifier: ^29.5.7
         version: 29.5.14
+      '@zeropoll/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
       '@zeropoll/prettier-config':
         specifier: workspace:*
         version: link:../prettier-config
+      eslint:
+        specifier: ^9
+        version: 9.17.0(jiti@1.21.6)
       jest:
         specifier: ^29.6.1
         version: 29.7.0(@types/node@22.10.2)(ts-node@10.9.2(@types/node@22.10.2)(typescript@5.4.5))
