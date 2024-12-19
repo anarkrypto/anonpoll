@@ -1,15 +1,8 @@
-/* eslint-disable no-undef */
-/* eslint-disable import/unambiguous */
-/* eslint-disable import/no-commonjs */
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 
-const baseConfig = require('@zeropoll/chain/jest.config.cjs');
-
-module.exports = {
-	...baseConfig,
+export default {
 	setupFilesAfterEnv: [],
 	moduleNameMapper: {
-		...baseConfig.moduleNameMapper,
 		'^@/(.*)$': '<rootDir>/$1',
 	},
 };
