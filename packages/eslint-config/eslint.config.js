@@ -37,12 +37,14 @@ export default [
 					allowTaggedTemplates: true
 				}
 			]
-		},
-		ignores: ["**/node_modules/**", "**/dist/**", "**/coverage/**"]
+		}
 	},
 	{
 		files: ["**/*.spec.{js,ts}", "**/*.test.{js,ts}"],
 		languageOptions: { globals: globals.jest }
+	},
+	{
+		ignores: ["**/node_modules/**", "**/dist/**", "**/coverage/**"]
 	},
 	prettier
 ];
