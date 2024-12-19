@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"description": "ZeroPoll React",
 	"main": "dist/index.js",
-	"private": "false",
+	"private": false,
 	"author": "anarkrypto <anarkrypto@gmail.com>",
 	"license": "MIT",
 	"files": [

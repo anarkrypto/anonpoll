@@ -5,7 +5,7 @@
 	"main": "dist/index.js",
 	"author": "anarkrypto <anarkrypto@gmail.com>",
 	"license": "MIT",
-	"private": "false",
+	"private": false,
 	"type": "module",
 	"publishConfig": {
 		"access": "public"

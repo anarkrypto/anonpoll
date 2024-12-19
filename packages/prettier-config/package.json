@@ -6,7 +6,7 @@
 	"exports": {
 		".": "./index.js"
 	},
-	"private": "false",
+	"private": false,
 	"license": "MIT",
 	"publishConfig": {
 		"access": "public"
