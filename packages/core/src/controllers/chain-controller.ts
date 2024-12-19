@@ -127,8 +127,6 @@ export class ChainController extends BaseController<ChainConfig, ChainState> {
 				() => this.loadBlock(),
 				this.config.tickInterval
 			);
-		} catch (error) {
-			throw error;
 		} finally {
 			this.update({ loading: false });
 		}

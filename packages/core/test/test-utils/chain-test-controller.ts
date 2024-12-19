@@ -32,7 +32,9 @@ export class ChainTestController extends ChainController {
 					}),
 				},
 			});
-		} catch {}
+		} catch {
+			this.logger.error('Failed to load block');
+		}
 	}
 
 	override async start() {

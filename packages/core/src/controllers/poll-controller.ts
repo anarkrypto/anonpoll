@@ -112,8 +112,6 @@ export class PollController extends BaseController<PollConfig, PollState> {
 			);
 
 			this.observePoll();
-		} catch (error) {
-			throw error;
 		} finally {
 			this.update({ loading: false });
 		}

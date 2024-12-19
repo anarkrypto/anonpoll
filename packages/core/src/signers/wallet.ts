@@ -19,6 +19,7 @@ export class Wallet implements MinaSignerAbstract {
 		return this.requestAccount();
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public on(event: 'accountsChanged', handler: (event: any) => void): void {
 		// Not implemented
 	}

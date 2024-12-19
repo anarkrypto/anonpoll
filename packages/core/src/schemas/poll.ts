@@ -17,7 +17,7 @@ export const pollInsertSchema = z.object({
 					try {
 						PublicKey.fromBase58(value);
 						return true;
-					} catch (error) {
+					} catch {
 						return false;
 					}
 				},
