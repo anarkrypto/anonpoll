@@ -17,6 +17,7 @@
 		"test": "node --experimental-vm-modules --experimental-wasm-modules --experimental-wasm-threads ./node_modules/jest/bin/jest.js",
 		"lint": "eslint .",
 		"format": "prettier --write .",
+		"predev": "cd ../../packages/chain && pnpm build",
 		"build": "tsc -p tsconfig.build.json && tsc-alias"
 	},
 	"exports": {
