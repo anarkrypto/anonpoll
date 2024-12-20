@@ -9,6 +9,7 @@
 	"files": [
 		"dist"
 	],
+	"type": "module",
 	"exports": {
 		".": "./dist/index.js"
 	},
@@ -19,7 +20,8 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"format": "prettier --write .",
 		"predev": "cd ../../packages/core && pnpm predev && pnpm build",
-		"build": "tsc -p tsconfig.json"
+		"build": "tsc -p tsconfig.json",
+		"lint": "eslint ."
 	},
 	"keywords": [],
 	"dependencies": {
@@ -28,6 +30,7 @@
 	},
 	"devDependencies": {
 		"@types/react": "^18",
+		"@zeropoll/eslint-config": "workspace:*",
 		"@zeropoll/prettier-config": "workspace:*",
 		"typescript": "5.4.5"
 	},
