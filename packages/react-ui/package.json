@@ -1,0 +1,52 @@
+{
+	"name": "@zeropoll/react-ui",
+	"version": "1.0.0",
+	"description": "ZeroPoll React UI",
+	"main": "dist/index.js",
+	"private": false,
+	"author": "anarkrypto <anarkrypto@gmail.com>",
+	"license": "MIT",
+	"files": [
+		"dist"
+	],
+	"exports": {
+		".": "./dist/index.js"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"format": "prettier --write .",
+		"predev": "cd ../../packages/react && pnpm predev && pnpm build",
+		"build": "tsc -p tsconfig.json"
+	},
+	"keywords": [],
+	"dependencies": {
+		"@hookform/resolvers": "^3.3.2",
+		"@radix-ui/react-dialog": "^1.1.1",
+		"@radix-ui/react-label": "^2.0.2",
+		"@radix-ui/react-slot": "^1.0.2",
+		"@zeropoll/core": "workspace:*",
+		"@zeropoll/react": "workspace:*",
+		"add": "^2.0.6",
+		"class-variance-authority": "^0.7.0",
+		"clsx": "^2.0.0",
+		"lucide-react": "^0.439.0",
+		"react": "^18",
+		"react-hook-form": "^7.48.2",
+		"tailwind-merge": "^2.0.0"
+	},
+	"devDependencies": {
+		"@tailwindcss/typography": "^0.5.10",
+		"@types/react": "^18",
+		"@zeropoll/prettier-config": "workspace:*",
+		"tailwindcss": "^3.3.0",
+		"tailwindcss-animate": "^1.0.7",
+		"typescript": "5.4.5"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/anarkrypto/zeropoll.git"
+	}
+}

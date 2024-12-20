@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	:root {
+		--zeropoll-background: 0 0% 100%;
+		--zeropoll-foreground: 240 10% 3.9%;
+		--zeropoll-card: 0 0% 100%;
+		--zeropoll-card-foreground: 240 10% 3.9%;
+		--zeropoll-popover: 0 0% 100%;
+		--zeropoll-popover-foreground: 240 10% 3.9%;
+		--zeropoll-primary: 263 70% 50%;
+		--zeropoll-primary-foreground: 0 0% 98%;
+		--zeropoll-secondary: 240 4% 16%;
+		--zeropoll-secondary-foreground: 0 0% 98%;
+		--zeropoll-muted: 240 4.8% 95.9%;
+		--zeropoll-muted-foreground: 240 3.8% 46.1%;
+		--zeropoll-accent: 240 4.8% 95.9%;
+		--zeropoll-accent-foreground: 240 5.9% 10%;
+		--zeropoll-destructive: 0 84.2% 60.2%;
+		--zeropoll-destructive-foreground: 0 0% 98%;
+		--zeropoll-border: 240 5.9% 90%;
+		--zeropoll-input: 240 5.9% 90%;
+		--zeropoll-ring: 240 5.9% 10%;
+		--zeropoll-radius: 0.5rem;
+	}
+
+	.dark {
+		--zeropoll-background: 240 10% 3.9%;
+		--zeropoll-foreground: 0 0% 98%;
+		--zeropoll-card: 240 10% 3.9%;
+		--zeropoll-card-foreground: 0 0% 98%;
+		--zeropoll-popover: 240 10% 3.9%;
+		--zeropoll-popover-foreground: 0 0% 98%;
+		--zeropoll-primary: 0 0% 98%;
+		--zeropoll-primary-foreground: 240 5.9% 10%;
+		--zeropoll-secondary: 240 3.7% 15.9%;
+		--zeropoll-secondary-foreground: 0 0% 98%;
+		--zeropoll-muted: 240 3.7% 15.9%;
+		--zeropoll-muted-foreground: 240 5% 64.9%;
+		--zeropoll-accent: 240 3.7% 15.9%;
+		--zeropoll-accent-foreground: 0 0% 98%;
+		--zeropoll-destructive: 0 62.8% 30.6%;
+		--zeropoll-destructive-foreground: 0 0% 98%;
+		--zeropoll-border: 240 3.7% 15.9%;
+		--zeropoll-input: 240 3.7% 15.9%;
+		--zeropoll-ring: 240 4.9% 83.9%;
+	}
+}
