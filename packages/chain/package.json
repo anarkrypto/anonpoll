@@ -64,7 +64,6 @@
 		"@prisma/client": "^5.7.1",
 		"@types/jest": "^29.5.7",
 		"@types/node": "^20.8.10",
-		"@types/react-dom": "^18.2.7",
 		"@types/yargs": "^17.0.32",
 		"@zeropoll/eslint-config": "workspace:*",
 		"@zeropoll/prettier-config": "workspace:*",
