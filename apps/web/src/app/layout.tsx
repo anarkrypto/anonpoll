@@ -1,4 +1,5 @@
 import './globals.css';
+import '@zeropoll/react-ui/styles.css';
 import { Inter as FontSans } from 'next/font/google';
 import Header from '@/components/header';
 import { Toaster } from '@/components/ui/toaster';
