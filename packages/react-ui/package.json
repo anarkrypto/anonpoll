@@ -19,7 +19,8 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"format": "prettier --write .",
 		"predev": "cd ../../packages/react && pnpm predev && pnpm build",
-		"build": "tsc -p tsconfig.json && tsc-alias"
+		"build": "pnpm run build:css && tsc -p tsconfig.json && tsc-alias",
+		"build:css": "tailwindcss -i ./src/styles.css -o ./dist/styles.css"
 	},
 	"keywords": [],
 	"dependencies": {
