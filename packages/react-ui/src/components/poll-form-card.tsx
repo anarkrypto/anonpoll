@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { generateSalt, isValidPublicKey } from '@/lib/utils';
 import { pollInsertSchema } from '@zeropoll/core/schemas';
 import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from '@zeropoll/core/constants';

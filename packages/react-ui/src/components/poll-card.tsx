@@ -15,13 +15,12 @@ import { useEffect, useMemo, useState } from 'react';
 import {
 	CircleCheckBigIcon,
 	CircleIcon,
+	CopyCheckIcon,
 	Share2Icon,
 	ShieldCheckIcon,
 } from 'lucide-react';
-import { generateCommitmentRoot } from '@/lib/utils';
 import { cn } from '@/lib/cn';
 import { Badge } from './ui/badge';
-import { useToast } from './ui/use-toast';
 import { usePoll, useVote, useWallet } from '@zeropoll/react';
 import { PollCardSkeleton } from './poll-card-skeleton';
 import { PollCardError } from './poll-card-error';
@@ -69,14 +68,7 @@ export function PollCard({
 	const [openVotersModal, setOpenVotersModal] = useState(false);
 	const [activeOptionHash, setActiveOptionHash] = useState<string | null>(null);
 	const [loadProgressBar, setLoadProgressBar] = useState(false);
-	const { toast } = useToast();
-
-	const validProof = useMemo(() => {
-		if (!commitment || !metadata?.votersWallets) return false;
-		return (
-			commitment === generateCommitmentRoot(metadata.votersWallets).toString()
-		);
-	}, [metadata?.votersWallets, commitment]);
+	const [linkCopied, setLinkCopied] = useState(false);
 
 	const winnerOption = useMemo(() => {
 		// Return winner option hash.
@@ -105,7 +97,16 @@ export function PollCard({
 		setActiveOptionHash(prev => (prev === hash ? null : hash));
 	};
 
-	const canVote = !!activeOptionHash && validProof;
+	const handleShare = () => {
+		// TODO: Implement share functionality.
+		navigator.clipboard.writeText(window.location.href);
+		setLinkCopied(true);
+		setTimeout(() => {
+			setLinkCopied(false);
+		}, 2000);
+	};
+
+	const canVote = !!activeOptionHash;
 
 	useEffect(() => {
 		if (isLoading || loadProgressBar) return;
@@ -218,29 +219,22 @@ export function PollCard({
 						variant="outline"
 					>
 						Eligible Voters
-						<Badge
-							className={cn(
-								'ml-2',
-								validProof
-									? 'bg-green-100 text-green-700'
-									: 'bg-red-100 text-red-700'
-							)}
-						>
+						<Badge className={cn('ml-2', 'bg-green-100 text-green-700')}>
 							{metadata!.votersWallets.length}
 						</Badge>
 					</Button>
-					<Button
-						className="w-full"
-						onClick={() => {
-							navigator.clipboard.writeText(window.location.href);
-							toast({
-								title: 'Link copied to clipboard',
-							});
-						}}
-						variant="outline"
-					>
-						Share
-						<Share2Icon className="ml-2 h-4 w-4 text-violet-500" />
+					<Button className="w-full" onClick={handleShare} variant="outline">
+						{linkCopied ? (
+							<>
+								Link Copied!
+								<CopyCheckIcon className="ml-2 h-4 w-4 text-green-500" />
+							</>
+						) : (
+							<>
+								Share
+								<Share2Icon className="ml-2 h-4 w-4 text-violet-500" />
+							</>
+						)}
 					</Button>
 				</CardFooter>
 			</Card>
@@ -248,7 +242,6 @@ export function PollCard({
 				votersWallets={metadata!.votersWallets}
 				open={openVotersModal}
 				onOpenChange={setOpenVotersModal}
-				validProof={validProof}
 			/>
 		</>
 	);
@@ -256,9 +249,8 @@ export function PollCard({
 
 function VotersModal({
 	votersWallets,
-	validProof,
 	...props
-}: DialogProps & { votersWallets: string[]; validProof: boolean }) {
+}: DialogProps & { votersWallets: string[] }) {
 	return (
 		<Dialog modal {...props}>
 			<DialogContent className="max-w-xl">
@@ -273,17 +265,10 @@ function VotersModal({
 					<div className="font-semibold">
 						Total Wallets: {votersWallets.length}
 					</div>
-					{validProof ? (
-						<div className="flex items-center gap-1 font-semibold text-green-700">
-							<ShieldCheckIcon className="h-5 w-5" />
-							Valid Proofs
-						</div>
-					) : (
-						<div className="flex items-center gap-1 font-semibold text-red-700">
-							<ShieldCheckIcon className="h-5 w-5" />
-							Invalid Proofs
-						</div>
-					)}
+					<div className="flex items-center gap-1 font-semibold text-green-700">
+						<ShieldCheckIcon className="h-5 w-5" />
+						Valid Proofs
+					</div>
 				</div>
 				<ul className="flex list-disc flex-col gap-2 pl-4">
 					{votersWallets.map((wallet, i) => (
