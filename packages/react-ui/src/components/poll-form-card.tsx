@@ -40,10 +40,13 @@ export function PollFormCard({
 			description: '',
 			options: [],
 			votersWallets: [],
+			salt: generateSalt(),
 		},
 		resolver:
 			step === 1
-				? zodResolver(pollInsertSchema.omit({ votersWallets: true }))
+				? zodResolver(
+						pollInsertSchema.omit({ votersWallets: true, salt: true })
+					)
 				: zodResolver(pollInsertSchema),
 	});
 
@@ -73,7 +76,6 @@ export function PollFormCard({
 				if (hasError) {
 					return;
 				}
-
 				setStep(2);
 				return;
 			}
