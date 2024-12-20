@@ -31,11 +31,9 @@
 		"@radix-ui/react-slot": "^1.0.2",
 		"@zeropoll/core": "workspace:*",
 		"@zeropoll/react": "workspace:*",
-		"add": "^2.0.6",
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.0.0",
 		"lucide-react": "^0.439.0",
-		"react": "^18",
 		"react-hook-form": "^7.48.2",
 		"tailwind-merge": "^2.0.0"
 	},
@@ -50,6 +48,10 @@
 		"tailwindcss-animate": "^1.0.7",
 		"tsc-alias": "^1.8.10",
 		"typescript": "5.4.5"
+	},
+	"peerDependencies": {
+		"react": "^18",
+		"react-dom": "^18"
 	},
 	"repository": {
 		"type": "git",
