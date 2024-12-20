@@ -25,10 +25,6 @@ export const isValidPublicKey = (publicKey: string) => {
 	}
 };
 
-export const generateSalt = () => {
-	return PrivateKey.random().toBase58();
-};
-
 /**
  * Ensures that the URL starts with http:// or https://.
  * @param url
