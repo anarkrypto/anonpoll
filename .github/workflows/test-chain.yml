@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - develop
-      - 'feature/*'
+      - "feature/*"
   pull_request:
 
 jobs:
@@ -13,19 +13,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
 
-    - name: Install pnpm
-      run: npm install -g pnpm@9.8.0
+      - name: Install pnpm
+        run: npm install -g pnpm@9.8.0
 
-    - name: Install dependencies
-      run: pnpm install
+      - name: Install dependencies
+        run: pnpm install
 
-    - name: Run tests for chain module
-      run: pnpm run test --filter chain
+      - name: Run tests for chain module
+        run: pnpm run test --filter @zeropoll/chain
