@@ -14,7 +14,6 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useCallback, useState } from 'react';
 import { generateSalt, isValidPublicKey } from '@/lib/utils';
@@ -24,10 +23,7 @@ import { useRouter } from 'next/navigation';
 import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from '@zeropoll/core/constants';
 import { useCreatePoll } from '@zeropoll/react';
 import { cn } from '@/lib/cn';
-
-const pollFormSchema = pollInsertSchema.omit({ salt: true });
-
-type PollFormData = z.infer<typeof pollFormSchema>;
+import { CreatePollData } from '@zeropoll/core/controllers';
 
 export function PollFormCard({ ...props }: React.ComponentProps<typeof Card>) {
 	const router = useRouter();
@@ -35,7 +31,7 @@ export function PollFormCard({ ...props }: React.ComponentProps<typeof Card>) {
 
 	const [step, setStep] = useState(1);
 
-	const form = useForm<PollFormData>({
+	const form = useForm<CreatePollData>({
 		defaultValues: {
 			title: '',
 			description: '',
@@ -44,8 +40,8 @@ export function PollFormCard({ ...props }: React.ComponentProps<typeof Card>) {
 		},
 		resolver:
 			step === 1
-				? zodResolver(pollFormSchema.omit({ votersWallets: true }))
-				: zodResolver(pollFormSchema),
+				? zodResolver(pollInsertSchema.omit({ votersWallets: true }))
+				: zodResolver(pollInsertSchema),
 	});
 
 	const { createPoll, isPending: creatingPoll } = useCreatePoll({
@@ -62,7 +58,7 @@ export function PollFormCard({ ...props }: React.ComponentProps<typeof Card>) {
 	});
 
 	const handleSubmit = useCallback(
-		async (data: PollFormData) => {
+		async (data: CreatePollData) => {
 			if (step === 1) {
 				// Prevent duplicated options and add error to the input that is duplicated
 				const options = new Set<string>();
