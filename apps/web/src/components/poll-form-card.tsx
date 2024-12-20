@@ -18,17 +18,20 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useCallback, useState } from 'react';
 import { generateSalt, isValidPublicKey } from '@/lib/utils';
 import { pollInsertSchema } from '@zeropoll/core/schemas';
-import { useToast } from '@/components/ui/use-toast';
-import { useRouter } from 'next/navigation';
 import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from '@zeropoll/core/constants';
-import { useCreatePoll } from '@zeropoll/react';
+import { useCreatePoll, UseCreatePollOptions } from '@zeropoll/react';
 import { cn } from '@/lib/cn';
 import { CreatePollData } from '@zeropoll/core/controllers';
 
-export function PollFormCard({ ...props }: React.ComponentProps<typeof Card>) {
-	const router = useRouter();
-	const { toast } = useToast();
+export type PollFormCardProps = {
+	className?: string | undefined;
+} & UseCreatePollOptions;
 
+export function PollFormCard({
+	className,
+	onSuccess,
+	onError,
+}: PollFormCardProps) {
 	const [step, setStep] = useState(1);
 
 	const form = useForm<CreatePollData>({
@@ -45,16 +48,8 @@ export function PollFormCard({ ...props }: React.ComponentProps<typeof Card>) {
 	});
 
 	const { createPoll, isPending: creatingPoll } = useCreatePoll({
-		onSuccess: ({ id, encryptionKey }) => {
-			router.push(`/polls/${id}?key=${encryptionKey}`);
-		},
-		onError: message => {
-			toast({
-				title: 'Error',
-				description: message,
-				variant: 'destructive',
-			});
-		},
+		onSuccess,
+		onError,
 	});
 
 	const handleSubmit = useCallback(
@@ -90,19 +85,13 @@ export function PollFormCard({ ...props }: React.ComponentProps<typeof Card>) {
 	const handleError = (error: unknown) => {
 		// It should never happen, it means that something is wrong with the form.
 		console.error({ error });
-		toast({
-			title: 'Error',
-			description: 'Please check the console for log details.',
-			variant: 'destructive',
-		});
 	};
 
 	return (
 		<Card
-			{...props}
 			className={cn(
 				'mx-auto max-w-2xl rounded-lg bg-white shadow-md lg:p-6',
-				props.className
+				className
 			)}
 		>
 			<CardHeader>
