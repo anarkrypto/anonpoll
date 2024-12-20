@@ -16,12 +16,12 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useState } from 'react';
-import { generateSalt, isValidPublicKey } from '@/lib/utils';
 import { pollInsertSchema } from '@zeropoll/core/schemas';
 import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from '@zeropoll/core/constants';
 import { useCreatePoll, UseCreatePollOptions } from '@zeropoll/react';
 import { cn } from '@/lib/cn';
 import { CreatePollData } from '@zeropoll/core/controllers';
+import { generateSalt, isValidPublicKey } from '@zeropoll/core/utils';
 
 export type PollFormCardProps = {
 	className?: string | undefined;
