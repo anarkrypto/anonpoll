@@ -1,4 +1,4 @@
-import { PollCard } from '@/components/poll-card';
+import { PollCard } from '@zeropoll/react-ui';
 
 export default async function PollPage(props: {
 	params: Promise<{ id: string }>;

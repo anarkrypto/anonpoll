@@ -1,7 +1,7 @@
 'use client';
 
 import { CreatePollResult, useWallet } from '@zeropoll/react';
-import { PollFormCard } from '@/components/poll-form-card';
+import { PollFormCard } from '@zeropoll/react-ui';
 import { ConnectWalletModal } from '@/components/connect-wallet-modal';
 import { cn } from '@/lib/cn';
 import { useRouter } from 'next/router';
