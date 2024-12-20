@@ -28,16 +28,24 @@ export interface PollConfig extends BaseConfig {
 	store: AbstractMetadataStore<PollData>;
 }
 
+export interface PollOption {
+	text: string;
+	hash: string;
+	votesCount: number;
+	votesPercentage: number;
+}
+
 export interface PollState extends BaseState {
 	loading: boolean;
 	commitment: string | null;
 	metadata: (PollData & { id: string }) | null;
-	options: {
-		text: string;
-		hash: string;
-		votesCount: number;
-		votesPercentage: number;
-	}[];
+	options: PollOption[];
+}
+
+export interface PollResult {
+	commitment: string;
+	metadata: PollData & { id: string };
+	options: PollOption[];
 }
 
 interface VotingResult {
@@ -68,11 +76,18 @@ export class PollController extends BaseController<PollConfig, PollState> {
 		this.initialize();
 	}
 
-	public async loadPoll(id: string, encryptionKey?: string) {
+	public async loadPoll(
+		id: string,
+		encryptionKey?: string
+	): Promise<PollResult> {
 		try {
 			if (this.metadata?.id === id) {
 				// Do not load the same poll twice
-				return;
+				return {
+					metadata: this.metadata,
+					commitment: this.state.commitment as string,
+					options: this.options,
+				};
 			}
 
 			this.update({
@@ -98,20 +113,24 @@ export class PollController extends BaseController<PollConfig, PollState> {
 
 			let decryptedMetadata = metadata;
 
-			this.update({
+			const data = {
 				commitment,
 				metadata: {
 					...decryptedMetadata,
 					id,
 				},
 				options,
-			});
+			};
+
+			this.update(data);
 
 			metadata.votersWallets.forEach(wallet =>
 				this.voters.set(wallet, PublicKey.fromBase58(wallet))
 			);
 
 			this.observePoll();
+
+			return data;
 		} finally {
 			this.update({ loading: false });
 		}
