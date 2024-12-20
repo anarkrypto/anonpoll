@@ -13,15 +13,12 @@
 		"test": "node --experimental-vm-modules --experimental-wasm-modules --experimental-wasm-threads ./node_modules/jest/bin/jest.js"
 	},
 	"dependencies": {
-		"@hookform/resolvers": "^3.3.2",
 		"@radix-ui/react-dialog": "^1.1.1",
-		"@radix-ui/react-label": "^2.0.2",
 		"@radix-ui/react-separator": "^1.0.3",
 		"@radix-ui/react-slot": "^1.0.2",
 		"@radix-ui/react-tabs": "^1.0.4",
 		"@radix-ui/react-toast": "^1.1.5",
 		"@radix-ui/react-tooltip": "^1.0.7",
-		"@tailwindcss/typography": "^0.5.10",
 		"@zeropoll/core": "workspace:*",
 		"@zeropoll/react": "workspace:*",
 		"@zeropoll/react-ui": "workspace:*",
@@ -29,16 +26,14 @@
 		"clsx": "^2.0.0",
 		"lucide-react": "^0.439.0",
 		"next": "15.1.1",
-		"o1js": "1.6.0",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
-		"react-hook-form": "^7.48.2",
 		"tailwind-merge": "^2.0.0",
-		"tailwindcss-animate": "^1.0.7",
 		"zod": "^3.22.4"
 	},
 	"devDependencies": {
 		"@eslint/eslintrc": "^3",
+		"@tailwindcss/typography": "^0.5.10",
 		"@types/jest": "^29.5.7",
 		"@types/node": "^20",
 		"@types/react": "^19",
@@ -52,6 +47,7 @@
 		"postcss": "^8",
 		"prettier-plugin-tailwindcss": "^0.5.6",
 		"tailwindcss": "^3.3.0",
+		"tailwindcss-animate": "^1.0.7",
 		"ts-jest": "^29.1.1",
 		"typescript": "^5.4.5",
 		"webpack": "^5.97.1"
