@@ -1,5 +1,3 @@
-import { PrivateKey, PublicKey } from 'o1js';
-
 export const truncateMiddle = (
 	str: string,
 	start: number,
@@ -14,15 +12,6 @@ export const truncateMiddle = (
 
 export const truncateWalletAddress = (address: string, length = 7) => {
 	return truncateMiddle(address, length, length);
-};
-
-export const isValidPublicKey = (publicKey: string) => {
-	try {
-		PublicKey.fromBase58(publicKey);
-		return true;
-	} catch {
-		return false;
-	}
 };
 
 /**
