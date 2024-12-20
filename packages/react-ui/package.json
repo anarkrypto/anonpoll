@@ -19,7 +19,7 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"format": "prettier --write .",
 		"predev": "cd ../../packages/react && pnpm predev && pnpm build",
-		"build": "tsc -p tsconfig.json"
+		"build": "tsc -p tsconfig.json && tsc-alias"
 	},
 	"keywords": [],
 	"dependencies": {
@@ -43,6 +43,7 @@
 		"@zeropoll/prettier-config": "workspace:*",
 		"tailwindcss": "^3.3.0",
 		"tailwindcss-animate": "^1.0.7",
+		"tsc-alias": "^1.8.10",
 		"typescript": "5.4.5"
 	},
 	"repository": {
