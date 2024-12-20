@@ -552,6 +552,9 @@ importers:
       '@types/react-dom':
         specifier: ^18
         version: 18.3.5(@types/react@18.3.18)
+      '@zeropoll/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
       '@zeropoll/prettier-config':
         specifier: workspace:*
         version: link:../prettier-config

@@ -9,6 +9,7 @@
 	"files": [
 		"dist"
 	],
+	"type": "module",
 	"exports": {
 		".": "./dist/index.js",
 		"./styles.css": "./dist/styles.css"
@@ -19,6 +20,7 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"format": "prettier --write .",
+		"lint": "eslint .",
 		"predev": "cd ../../packages/react && pnpm predev && pnpm build",
 		"build": "pnpm run build:css && tsc -p tsconfig.json && tsc-alias",
 		"build:css": "tailwindcss -i ./src/styles.css -o ./dist/styles.css"
@@ -41,6 +43,7 @@
 		"@tailwindcss/typography": "^0.5.10",
 		"@types/react": "^18",
 		"@types/react-dom": "^18",
+		"@zeropoll/eslint-config": "workspace:*",
 		"@zeropoll/prettier-config": "workspace:*",
 		"autoprefixer": "^10.0.1",
 		"postcss": "^8",
