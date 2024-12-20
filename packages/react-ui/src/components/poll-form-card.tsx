@@ -187,7 +187,6 @@ export function PollFormCard({
 						<Button
 							type="submit"
 							className="w-full"
-							color="secondary"
 							loading={creatingPoll || form.formState.isSubmitting}
 						>
 							{step === 1 ? 'Next' : 'Create Poll'}
