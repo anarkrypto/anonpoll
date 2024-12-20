@@ -13,7 +13,16 @@ export interface UsePollReturn {
 	refetch: () => Promise<void>;
 }
 
-export const usePoll = (id: string, encryptionKey?: string): UsePollReturn => {
+export interface UsePollOptions {
+	encryptionKey?: string;
+	onError?: (message: string) => void;
+	onSuccess?: (result: { hash: string }) => void;
+}
+
+export const usePoll = (
+	id: string,
+	options?: UsePollOptions
+): UsePollReturn => {
 	const { engine, initialized } = useEngine();
 	const pollController = engine.context.poll;
 
@@ -28,11 +37,13 @@ export const usePoll = (id: string, encryptionKey?: string): UsePollReturn => {
 	const loadPoll = useCallback(async () => {
 		setError(null);
 		try {
-			await pollController.loadPoll(id, encryptionKey);
+			await pollController.loadPoll(id, options?.encryptionKey);
+			options?.onSuccess?.({ hash: id });
 		} catch (err) {
 			const message =
 				err instanceof Error ? err.message : 'Failed to load poll';
 			setError(message);
+			options?.onError?.(message);
 		}
 	}, [id, pollController]);
 
