@@ -46,7 +46,7 @@ export function PollCard({
 }: PollCardProps) {
 	const { account, connect } = useWallet();
 	const {
-		data: { metadata, options, commitment },
+		data: { metadata, options },
 		isLoading,
 		error,
 	} = usePoll(id, {
