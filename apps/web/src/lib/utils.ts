@@ -1,4 +1,4 @@
-import { Bool, MerkleMap, Poseidon, PrivateKey, PublicKey } from 'o1js';
+import { PrivateKey, PublicKey } from 'o1js';
 
 export const truncateMiddle = (
 	str: string,
@@ -23,15 +23,6 @@ export const isValidPublicKey = (publicKey: string) => {
 	} catch {
 		return false;
 	}
-};
-
-export const generateCommitmentRoot = (publicKeys: string[]) => {
-	const map = new MerkleMap();
-	publicKeys.forEach(publicKey => {
-		const hashKey = Poseidon.hash(PublicKey.fromBase58(publicKey).toFields());
-		map.set(hashKey, Bool(true).toField());
-	});
-	return map.getRoot();
 };
 
 export const generateSalt = () => {

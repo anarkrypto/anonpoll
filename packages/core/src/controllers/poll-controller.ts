@@ -102,12 +102,15 @@ export class PollController extends BaseController<PollConfig, PollState> {
 				this.getPoll(id),
 			]);
 
-			// Check if the options hashes match the ones on-chain
+			// Check if the metadata options hashes match the ones on-chain
 			this.compareHashes(
 				votingResults.map(({ hash }) => hash),
 				metadata.options,
 				metadata.salt
 			);
+
+			// Check if the votersWallets from metadata matches the onchain commitment
+			this.compareCommitment(metadata.votersWallets, commitment);
 
 			const options = this.buildOptions(metadata, votingResults);
 
@@ -195,6 +198,17 @@ export class PollController extends BaseController<PollConfig, PollState> {
 			throw new Error('Options hashes do not match');
 		}
 	}
+
+	private compareCommitment = (publicKeys: string[], commitment: string) => {
+		const map = new MerkleMap();
+		publicKeys.forEach(publicKey => {
+			const hashKey = Poseidon.hash(PublicKey.fromBase58(publicKey).toFields());
+			map.set(hashKey, Bool(true).toField());
+		});
+		if (commitment !== map.getRoot().toString()) {
+			throw new Error('Commitment does not match');
+		}
+	};
 
 	private buildOptions(metadata: PollData, votingResults: VotingResult[]) {
 		const totalVotesCast = votingResults.reduce(
