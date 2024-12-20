@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "next dev",
-		"predev": "cd ../../packages/react && pnpm predev && pnpm build",
+		"predev": "cd ../../packages/react-ui && pnpm predev && pnpm build",
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
