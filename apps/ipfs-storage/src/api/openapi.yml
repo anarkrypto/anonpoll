@@ -28,7 +28,7 @@ paths:
                   format: binary
                   description: The file to store as a block
       responses:
-        "200":
+        '200':
           description: Block successfully stored and pinned
           content:
             application/json:
@@ -38,23 +38,23 @@ paths:
                   Key:
                     type: string
                     description: The CID of the stored block
-                    example: "bafybeieai5buqqz4mn32n3fwdduyh4wufmd5utokh3il4jdf4y4zzemqg4"
+                    example: 'bafybeieai5buqqz4mn32n3fwdduyh4wufmd5utokh3il4jdf4y4zzemqg4'
                   Size:
                     type: number
                     description: Size of the stored data in bytes
                     example: 12
-        "400":
+        '400':
           description: Invalid request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-        "500":
+                $ref: '#/components/schemas/Error'
+        '500':
           description: Server error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
 
   /api/v0/block/get:
     post:
@@ -69,9 +69,9 @@ paths:
           required: true
           schema:
             type: string
-          example: "bafybeieai5buqqz4mn32n3fwdduyh4wufmd5utokh3il4jdf4y4zzemqg4"
+          example: 'bafybeieai5buqqz4mn32n3fwdduyh4wufmd5utokh3il4jdf4y4zzemqg4'
       responses:
-        "200":
+        '200':
           description: Block successfully retrieved
           content:
             application/octet-stream:
@@ -79,18 +79,18 @@ paths:
                 type: string
                 format: binary
                 description: The raw block data
-        "400":
+        '400':
           description: Invalid request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-        "500":
+                $ref: '#/components/schemas/Error'
+        '500':
           description: Server error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
 
 components:
   schemas:
@@ -100,7 +100,7 @@ components:
         Message:
           type: string
           description: Error message
-          example: "file is required"
+          example: 'file is required'
         Code:
           type: integer
           description: Error code
@@ -108,4 +108,4 @@ components:
         Type:
           type: string
           description: Error type
-          example: "error"
+          example: 'error'
