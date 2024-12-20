@@ -38,6 +38,7 @@ The monorepo contains 1 package and 1 app:
 - `packages/chain` contains everything related to our app-chain
 - `packages/core` contains the core logic of ZeroPoll
 - `packages/react` contains hooks and a contex provider to implement ZeroPoll in a React app
+- `packages/react-ui` contains React components to implement the ZeroPoll UI
 - `apps/ipfs-storage` contains a simple IPFS storage node service
 - `apps/web` contains the web interface for ZeroPoll
 
