@@ -19,7 +19,7 @@ https://zeropoll.xyz
 
 ### Technical Stack
 
-- Built with O1js for zero-knowledge proofs
+- Built with o1js for zero-knowledge proofs
 - Proto-kit for blockchain runtime implementation
 - Merkle trees for efficient voter verification
 - React with TypeScript for frontend implementation
