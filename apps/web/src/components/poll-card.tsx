@@ -26,25 +26,45 @@ import { usePoll, useVote, useWallet } from '@zeropoll/react';
 import { PollCardSkeleton } from './poll-card-skeleton';
 import { PollCardError } from './poll-card-error';
 
+export type PollCardProps = {
+	id: string;
+	encryptionKey?: string;
+	className?: string;
+	onLoadSuccess?: () => void;
+	onLoadError?: (message: string) => void;
+	onVoteSuccess?: () => void;
+	onVoteError?: (message: string) => void;
+};
+
 export function PollCard({
 	id,
 	encryptionKey,
-}: {
-	id: string;
-	encryptionKey?: string;
-}) {
+	className,
+	onLoadSuccess,
+	onLoadError,
+	onVoteSuccess,
+	onVoteError,
+}: PollCardProps) {
 	const { account, connect } = useWallet();
 	const {
 		data: { metadata, options, commitment },
 		isLoading,
 		error,
-	} = usePoll(id, encryptionKey);
+	} = usePoll(id, {
+		encryptionKey,
+		onSuccess: onLoadSuccess,
+		onError: onLoadError,
+	});
 
 	const {
 		vote,
 		isPending: isVoting,
 		isSuccess: isVoted,
-	} = useVote(id, { encryptionKey });
+	} = useVote(id, {
+		encryptionKey,
+		onSuccess: onVoteSuccess,
+		onError: onVoteError,
+	});
 
 	const [openVotersModal, setOpenVotersModal] = useState(false);
 	const [activeOptionHash, setActiveOptionHash] = useState<string | null>(null);
@@ -107,7 +127,7 @@ export function PollCard({
 
 	return (
 		<>
-			<Card className="w-full max-w-xl sm:p-4">
+			<Card className={cn('w-full max-w-xl sm:p-4', className)}>
 				<CardHeader>
 					<CardTitle>{metadata.title}</CardTitle>
 					{metadata.description?.trim() && (
