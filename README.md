@@ -194,3 +194,22 @@ In order to pass in those CLI option, add it at the end of your command like thi
 3. Go into the framework folder, and build a docker image containing the sources with `docker build -f ./packages/deployment/docker/development-base/Dockerfile -t protokit-base .`
 
 4. Comment out the first line of docker/base/Dockerfile to use protokit-base
+
+## Contributing
+
+Contributions to ZeroPoll are welcome and highly appreciated!
+
+Consider [Open an Issue](https://github.com/anarkrypto/zeropoll/issues/new) or send a Pull Request
+
+## Authors
+
+- Kaique Nunes ([@anarkrypto](https://github.com/anarkrypto))
+
+## Security
+
+If you believe you have found a security vulnerability in ZeroPoll, we encourage you to responsibly disclose this and NOT open a public issue.
+We will investigate all legitimate reports. Email anarkrypto@gmail.com to disclose any security vulnerabilities
+
+## License
+
+MIT
