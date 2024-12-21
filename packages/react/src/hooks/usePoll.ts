@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect, useSyncExternalStore } from 'react';
 import { PollState } from '@zeropoll/core/controllers';
-import { useEngine } from '../engine-context';
+import { useZeroPoll } from '../engine-context';
 
 export interface UsePollReturn {
 	data: Omit<PollState, 'loading'>;
@@ -23,8 +23,8 @@ export const usePoll = (
 	id: string,
 	options?: UsePollOptions
 ): UsePollReturn => {
-	const { engine, initialized } = useEngine();
-	const pollController = engine.context.poll;
+	const { zeroPoll, initialized } = useZeroPoll();
+	const pollController = zeroPoll.context.poll;
 
 	const [error, setError] = useState<string | null>(null);
 

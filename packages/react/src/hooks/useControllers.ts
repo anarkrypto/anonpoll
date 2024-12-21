@@ -1,9 +1,9 @@
 'use client';
 
 import { Controllers } from '@zeropoll/core';
-import { useEngine } from '../engine-context';
+import { useZeroPoll } from '../engine-context';
 
 export const useControllers = (): Controllers => {
-	const { engine } = useEngine();
-	return engine.context;
+	const { zeroPoll } = useZeroPoll();
+	return zeroPoll.context;
 };

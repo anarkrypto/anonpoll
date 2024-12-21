@@ -19,32 +19,31 @@ export interface Controllers {
 	pollManager: PollManagerController;
 }
 
-export interface EngineConfig {
+export interface ZeroPollConfig {
 	tickInterval?: number;
 	protokitGraphqlUrl: string;
 	ipfsApiUrl: string;
 }
 
-export interface EngineState {
+export interface ZeroPollState {
 	wallet: WalletState;
 	chain: ChainState;
 	poll: PollState;
 	pollManager: PollManagerState;
 }
 
-export type EngineContext = Controllers;
+export type ZeroPollContext = Controllers;
 
 /**
- * Core controller responsible for composing other controllers together
- * and exposing convenience methods for common wallet operations.
+ * ZeroPoll core engine
  */
-export class Engine {
-	/**
-	 * A collection of all controller instances
-	 */
-	context: EngineContext;
+export class ZeroPoll {
+	context: ZeroPollContext;
 
-	constructor(config: EngineConfig, initialState: Partial<EngineState> = {}) {
+	constructor(
+		config: ZeroPollConfig,
+		initialState: Partial<ZeroPollState> = {}
+	) {
 		const chain = new ChainController(
 			{
 				tickInterval: config.tickInterval || 1000,
