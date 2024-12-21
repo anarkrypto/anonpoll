@@ -60,7 +60,6 @@ The monorepo contains 1 package and 1 app:
 For running with persistance / deploying on a server
 
 - docker `>= 24.0`
-- docker-compose `>= 2.22.0`
 
 ## Setup
 
