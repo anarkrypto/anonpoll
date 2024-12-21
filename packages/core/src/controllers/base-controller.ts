@@ -98,7 +98,7 @@ export class BaseController<
 	 * @param state - The new state.
 	 * @param overwrite - Overwrite state instead of merging.
 	 */
-	update(state: Partial<State>) {
+	protected update(state: Partial<State>) {
 		this.internalState = Object.assign({}, this.internalState, state);
 		this.notify(this.internalState, state);
 	}
