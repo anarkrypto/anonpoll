@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# ZeroPoll Web App
+
+A private voting system powered by zero-knowledge proofs
+
+Visit: [zeropoll.xyz](https://zeropoll.xyz).
+
+## Overview
+
+ZeroPoll Web App is the official frontend implementation of the ZeroPoll voting system.
+
+It provides a user-friendly interface for creating and participating in private polls using zero-knowledge proof technology.
+
+## Technology Stack
+
+- [Next.js](https://nextjs.org/) - React framework for production
+- [React](https://reactjs.org/) - Frontend library
+- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
+- [@zeropoll/react](https://www.npmjs.com/package/@zeropoll/react) - Core ZeroPoll React components
+- [@zeropoll/react-ui](https://www.npmjs.com/package/@zeropoll/react-ui) - ZeroPoll UI components
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18)
+- [pnpm](https://pnpm.io/) (v9)
+
+### Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Clone the repository
+git clone https://github.com/anarkrypto/zeropoll.git
+cd zeropoll/apps/web
+
+# Install dependencies
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+To run the development server:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```bash
+pnpm dev
+```
 
-## Learn More
+The application will be available at `http://localhost:3000`.
 
-To learn more about Next.js, take a look at the following resources:
+### Building for Production
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# Create a production build
+pnpm build
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+# Start the production server
+pnpm start
+```
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+MIT
