@@ -1,6 +1,15 @@
-# ZeroPoll
+<p align="center">
+  <a href="https://zeropoll.xyz">
+    <picture>
+      <img src="https://github.com/user-attachments/assets/39f708cd-5d6a-4e8a-a2af-32b7ddbb704f" height="128">
+    </picture>
+    <h1 align="center">ZeroPoll.xyz</h1>
+  </a>
+</p>
 
-A private voting system powered by zero-knowledge proofs
+A private voting system powered by zero-knowledge proofs.
+
+Secure, anonymous and verifiable!
 
 https://zeropoll.xyz
 
