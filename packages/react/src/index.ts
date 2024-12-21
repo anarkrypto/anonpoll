@@ -1,2 +1,2 @@
-export * from './engine-context';
+export * from './zeropoll-provider';
 export * from './hooks';

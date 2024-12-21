@@ -4,7 +4,7 @@ import { Inter as FontSans } from 'next/font/google';
 import Header from '@/components/header';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/cn';
-import { EngineProvider } from '@zeropoll/react';
+import { ZeroPollProvider } from '@zeropoll/react';
 import { TransactionNotifications } from '@/components/transaction-notifications';
 import { Metadata } from 'next';
 
@@ -34,7 +34,7 @@ export default function RootLayout({
 					fontSans.variable
 				)}
 			>
-				<EngineProvider
+				<ZeroPollProvider
 					protokitGraphqlUrl={process.env.NEXT_PUBLIC_PROTOKIT_GRAPHQL_URL!}
 					ipfsApiUrl={process.env.NEXT_PUBLIC_IPFS_API_URL!}
 				>
@@ -42,7 +42,7 @@ export default function RootLayout({
 					<>{children}</>
 					<Toaster />
 					<TransactionNotifications />
-				</EngineProvider>
+				</ZeroPollProvider>
 			</body>
 		</html>
 	);

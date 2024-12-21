@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect, useSyncExternalStore } from 'react';
 import { PollState } from '@zeropoll/core/controllers';
-import { useZeroPoll } from '../engine-context';
+import { useZeroPoll } from '../zeropoll-provider';
 
 export interface UsePollReturn {
 	data: Omit<PollState, 'loading'>;

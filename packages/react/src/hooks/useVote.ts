@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useControllers } from './useControllers';
-import { useZeroPoll } from '../engine-context';
+import { useZeroPoll } from '../zeropoll-provider';
 
 export interface UseVoteOptions {
 	encryptionKey?: string;

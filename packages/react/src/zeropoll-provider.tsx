@@ -10,14 +10,14 @@ import React, {
 import { ZeroPoll, ZeroPollConfig } from '@zeropoll/core';
 import { AuroWallet } from '@zeropoll/core/signers';
 
-type EngineContextValue = {
+type ZeroPollContextValue = {
 	zeroPoll: ZeroPoll;
 	initialized: boolean;
 };
 
-const EngineContext = createContext({} as EngineContextValue);
+const ZeroPollContext = createContext({} as ZeroPollContextValue);
 
-export function EngineProvider({
+export function ZeroPollProvider({
 	children,
 	tickInterval,
 	protokitGraphqlUrl,
@@ -44,12 +44,12 @@ export function EngineProvider({
 	}, []);
 
 	return (
-		<EngineContext.Provider value={{ zeroPoll, initialized }}>
+		<ZeroPollContext.Provider value={{ zeroPoll, initialized }}>
 			{children}
-		</EngineContext.Provider>
+		</ZeroPollContext.Provider>
 	);
 }
 
 export const useZeroPoll = () => {
-	return useContext(EngineContext);
+	return useContext(ZeroPollContext);
 };
