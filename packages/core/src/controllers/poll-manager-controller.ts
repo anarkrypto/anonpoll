@@ -34,15 +34,21 @@ export class PollManagerController extends BaseController<
 	wallet: WalletController;
 	store: AbstractMetadataStore;
 
+	static readonly defaultState: PollManagerState = {
+		polls: [],
+	};
+
 	constructor(
 		config: PollManagerConfig,
 		state: Partial<PollManagerState> = {}
 	) {
-		super(config, state);
+		super(config, {
+			...PollManagerController.defaultState,
+			...state,
+		});
 		this.client = config.client;
 		this.wallet = config.wallet;
 		this.store = config.store;
-		this.initialize();
 	}
 
 	public async create(

@@ -53,7 +53,7 @@ export class WalletController extends BaseController<
 	WalletConfig,
 	WalletState
 > {
-	readonly defaultState: WalletState = {
+	static readonly defaultState: WalletState = {
 		initialized: false,
 		account: null,
 		connected: false,
@@ -68,9 +68,11 @@ export class WalletController extends BaseController<
 	private transactions = new Map<string, TransactionJSON>();
 
 	constructor(config: WalletConfig, state: Partial<WalletState> = {}) {
-		super(config, state);
+		super(config, {
+			...WalletController.defaultState,
+			...state,
+		});
 		this.chain = config.chain;
-		this.initialize();
 	}
 
 	public async init(provider: MinaSignerAbstract) {

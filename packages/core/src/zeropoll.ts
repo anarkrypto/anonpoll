@@ -38,11 +38,22 @@ export class ZeroPoll extends BaseController<ZeroPollConfig, ZeroPollState> {
 	poll: PollController;
 	pollManager: PollManagerController;
 
+	static readonly defaultState: ZeroPollState = {
+		initialized: false,
+		wallet: WalletController.defaultState,
+		chain: ChainController.defaultState,
+		poll: PollController.defaultState,
+		pollManager: PollManagerController.defaultState,
+	};
+
 	constructor(
 		config: ZeroPollConfig,
 		initialState: Partial<ZeroPollState> = {}
 	) {
-		super(config, initialState);
+		super(config, {
+			...ZeroPoll.defaultState,
+			...initialState,
+		});
 
 		this.chain = new ChainController(
 			{

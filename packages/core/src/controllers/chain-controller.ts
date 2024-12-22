@@ -49,7 +49,7 @@ export interface ChainState extends BaseState {
 export class ChainController extends BaseController<ChainConfig, ChainState> {
 	private interval: NodeJS.Timeout | undefined;
 
-	readonly defaultState: ChainState = {
+	static readonly defaultState: ChainState = {
 		loading: true,
 		online: false,
 		block: {
@@ -62,8 +62,7 @@ export class ChainController extends BaseController<ChainConfig, ChainState> {
 		if (config.tickInterval < 1000) {
 			throw new Error('Tick interval must be at least 1000ms');
 		}
-		super(config, state);
-		this.initialize();
+		super(config, { ...ChainController.defaultState, ...state });
 	}
 
 	async loadBlock() {

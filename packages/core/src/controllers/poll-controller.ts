@@ -60,7 +60,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
 	private voters = new Map<string, PublicKey>();
 	private store: AbstractMetadataStore<PollData | EncryptedMetadataV1>;
 
-	readonly defaultState: PollState = {
+	static readonly defaultState: PollState = {
 		commitment: null,
 		loading: false,
 		metadata: null,
@@ -68,12 +68,11 @@ export class PollController extends BaseController<PollConfig, PollState> {
 	};
 
 	constructor(config: PollConfig, state: Partial<PollState> = {}) {
-		super(config, state);
+		super(config, { ...PollController.defaultState, ...state });
 		this.wallet = config.wallet;
 		this.chain = config.chain;
 		this.client = config.client;
 		this.store = config.store;
-		this.initialize();
 	}
 
 	public async loadPoll(
