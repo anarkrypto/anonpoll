@@ -59,6 +59,9 @@ export class ChainController extends BaseController<ChainConfig, ChainState> {
 	};
 
 	constructor(config: ChainConfig, state: Partial<ChainState> = {}) {
+		if (config.tickInterval < 1000) {
+			throw new Error('Tick interval must be at least 1000ms');
+		}
 		super(config, state);
 		this.initialize();
 	}
