@@ -3,7 +3,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { CreatePollData } from '@zeropoll/core/controllers';
 import { MetadataEncryptionV1 } from '@zeropoll/core/utils';
-import { useControllers } from './useControllers';
+import { useZeroPoll } from 'src/zeropoll-provider';
 
 export interface CreatePollResult {
 	id: string;
@@ -31,7 +31,7 @@ export const useCreatePoll = (
 	const [isPending, setIsPending] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [data, setData] = useState<CreatePollResult | null>(null);
-	const { pollManager: pollManagerController } = useControllers();
+	const { zeroPoll } = useZeroPoll();
 
 	const encryptionKey = useMemo(() => MetadataEncryptionV1.generateKey(), []);
 
@@ -41,7 +41,7 @@ export const useCreatePoll = (
 			setError(null);
 			setData(null);
 			try {
-				const result = await pollManagerController.create(
+				const result = await zeroPoll.pollManager.create(
 					pollData,
 					encryptionKey
 				);
@@ -56,7 +56,7 @@ export const useCreatePoll = (
 				setIsPending(false);
 			}
 		},
-		[pollManagerController, options]
+		[zeroPoll.pollManager, options]
 	);
 
 	return {

@@ -34,7 +34,7 @@ export function ZeroPollProvider({
 		await zeroPoll.init();
 		if (AuroWallet.isInstalled()) {
 			const walletProvider = new AuroWallet();
-			await zeroPoll.context.wallet.init(walletProvider);
+			await zeroPoll.wallet.init(walletProvider);
 		}
 		setInitialized(true);
 	};

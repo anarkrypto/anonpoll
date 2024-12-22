@@ -2,23 +2,23 @@
 
 import { WalletState } from '@zeropoll/core/controllers';
 import { useCallback, useSyncExternalStore } from 'react';
-import { useControllers } from './useControllers';
+import { useZeroPoll } from 'src/zeropoll-provider';
 
 export interface UseWalletReturn extends WalletState {
 	connect: () => Promise<void>;
 }
 
 export const useWallet = (): UseWalletReturn => {
-	const { wallet: walletController } = useControllers();
+	const { zeroPoll } = useZeroPoll();
 
 	const state = useSyncExternalStore(
-		callback => walletController.subscribe(callback),
-		() => walletController.state,
-		() => walletController.state
+		callback => zeroPoll.wallet.subscribe(callback),
+		() => zeroPoll.wallet.state,
+		() => zeroPoll.wallet.state
 	);
 
 	return {
 		...state,
-		connect: useCallback(() => walletController.connect(), [walletController]),
+		connect: useCallback(() => zeroPoll.wallet.connect(), [zeroPoll.wallet]),
 	};
 };

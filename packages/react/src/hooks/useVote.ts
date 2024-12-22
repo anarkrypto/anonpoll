@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import { useControllers } from './useControllers';
 import { useZeroPoll } from '../zeropoll-provider';
 
 export interface UseVoteOptions {
@@ -26,15 +25,15 @@ export const useVote = (
 	const [isPending, setIsPending] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [data, setData] = useState<{ hash: string } | null>(null);
-	const { poll: pollController } = useControllers();
+	const { zeroPoll } = useZeroPoll();
 	const { initialized } = useZeroPoll();
 
 	useEffect(() => {
 		// Preload the poll
 		if (initialized) {
-			pollController.loadPoll(pollId, options?.encryptionKey);
+			zeroPoll.poll.loadPoll(pollId, options?.encryptionKey);
 		}
-	}, [pollId, pollController, initialized]);
+	}, [pollId, zeroPoll, initialized]);
 
 	const vote = useCallback(
 		async (optionHash: string) => {
@@ -42,7 +41,7 @@ export const useVote = (
 			setError(null);
 			setData(null);
 			try {
-				const result = await pollController.vote(optionHash);
+				const result = await zeroPoll.poll.vote(optionHash);
 				setData(result);
 				options?.onSuccess?.(result);
 			} catch (err) {
@@ -53,7 +52,7 @@ export const useVote = (
 				setIsPending(false);
 			}
 		},
-		[pollController, options]
+		[zeroPoll, options]
 	);
 
 	return {

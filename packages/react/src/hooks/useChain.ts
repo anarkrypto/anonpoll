@@ -2,17 +2,17 @@
 
 import { ChainState } from '@zeropoll/core/controllers';
 import { useSyncExternalStore } from 'react';
-import { useControllers } from './useControllers';
+import { useZeroPoll } from 'src/zeropoll-provider';
 
 export interface UseChainReturn extends ChainState {}
 
 export const useChain = (): UseChainReturn => {
-	const { chain: chanController } = useControllers();
+	const { zeroPoll } = useZeroPoll();
 
 	const chainState = useSyncExternalStore(
-		callback => chanController.subscribe(callback),
-		() => chanController.state,
-		() => chanController.state
+		callback => zeroPoll.chain.subscribe(callback),
+		() => zeroPoll.chain.state,
+		() => zeroPoll.chain.state
 	);
 
 	return {

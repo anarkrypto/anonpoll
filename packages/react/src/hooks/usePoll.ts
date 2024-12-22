@@ -24,7 +24,7 @@ export const usePoll = (
 	options?: UsePollOptions
 ): UsePollReturn => {
 	const { zeroPoll, initialized } = useZeroPoll();
-	const pollController = zeroPoll.context.poll;
+	const pollController = zeroPoll.poll;
 
 	const [error, setError] = useState<string | null>(null);
 
