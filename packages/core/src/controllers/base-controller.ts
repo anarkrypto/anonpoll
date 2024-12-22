@@ -25,41 +25,18 @@ export class BaseController<
 	Config extends BaseConfig,
 	State extends BaseState,
 > {
-	readonly defaultConfig: Config = {
-		isDevelopment: false,
-	} as Config;
-	readonly defaultState: State = {} as State;
-
-	private readonly initialConfig: Config;
-	private readonly initialState: State;
-
-	private internalConfig: Config = this.defaultConfig;
-	private internalState: State = this.defaultState;
+	private internalConfig: Config;
+	private internalState: State;
 
 	private internalListeners = new Set<Listener<State>>();
 	protected logger: Logger;
 
-	constructor(config: Partial<Config>, state: Partial<State> = {} as State) {
+	constructor(config: Config, state: State) {
 		this.logger = new Logger({
-			isLocalDev: this.internalConfig.isDevelopment,
+			isLocalDev: config.isDevelopment,
 		});
-		this.initialState = state as State;
-		this.initialConfig = config as Config;
-	}
-
-	/**
-	 * Enables the controller. This sets each config option as a member
-	 * variable on this instance and triggers any defined setters. This
-	 * also sets initial state and triggers any listeners.
-	 *
-	 * @returns This controller instance.
-	 */
-	protected initialize() {
-		this.internalState = this.defaultState;
-		this.internalConfig = this.defaultConfig;
-		this.configure(this.initialConfig);
-		this.update(this.initialState);
-		return this;
+		this.internalConfig = config;
+		this.internalState = state;
 	}
 
 	/**
