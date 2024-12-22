@@ -2,7 +2,7 @@
 
 import { ChainState } from '@zeropoll/core/controllers';
 import { useSyncExternalStore } from 'react';
-import { useZeroPoll } from 'src/zeropoll-provider';
+import { useZeroPoll } from '../zeropoll-provider';
 
 export interface UseChainReturn extends ChainState {}
 

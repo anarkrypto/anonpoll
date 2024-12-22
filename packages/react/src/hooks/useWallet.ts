@@ -2,7 +2,7 @@
 
 import { WalletState } from '@zeropoll/core/controllers';
 import { useCallback, useSyncExternalStore } from 'react';
-import { useZeroPoll } from 'src/zeropoll-provider';
+import { useZeroPoll } from '../zeropoll-provider';
 
 export interface UseWalletReturn extends WalletState {
 	connect: () => Promise<void>;
