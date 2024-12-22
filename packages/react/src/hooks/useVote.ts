@@ -31,7 +31,7 @@ export const useVote = (
 	useEffect(() => {
 		// Preload the poll
 		if (initialized) {
-			zeroPoll.poll.loadPoll(pollId, options?.encryptionKey);
+			zeroPoll.poll.load(pollId, options?.encryptionKey);
 		}
 	}, [pollId, zeroPoll, initialized]);
 

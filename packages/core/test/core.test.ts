@@ -86,7 +86,7 @@ describe('Poll Manager', () => {
 			store,
 		});
 
-		await poll.loadPoll(pollId);
+		await poll.load(pollId);
 
 		expect(poll.options.length).toBe(2);
 

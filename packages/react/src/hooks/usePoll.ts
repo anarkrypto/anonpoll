@@ -37,7 +37,7 @@ export const usePoll = (
 	const loadPoll = useCallback(async () => {
 		setError(null);
 		try {
-			await pollController.loadPoll(id, options?.encryptionKey);
+			await pollController.load(id, options?.encryptionKey);
 			options?.onSuccess?.({ hash: id });
 		} catch (err) {
 			const message =

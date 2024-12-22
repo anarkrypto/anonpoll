@@ -75,10 +75,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
 		this.store = config.store;
 	}
 
-	public async loadPoll(
-		id: string,
-		encryptionKey?: string
-	): Promise<PollResult> {
+	public async load(id: string, encryptionKey?: string): Promise<PollResult> {
 		try {
 			if (this.metadata?.id === id) {
 				// Do not load the same poll twice
