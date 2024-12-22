@@ -8,53 +8,53 @@ import {
 	PollManagerState,
 	WalletController,
 	WalletState,
+	BaseState,
+	BaseController,
+	BaseConfig,
 } from '@/controllers';
 import { IpfsMetadataStore } from '@/stores/metadata-store';
 import { PollData } from '@/schemas';
 
-export interface Controllers {
-	wallet: WalletController;
-	chain: ChainController;
-	poll: PollController;
-	pollManager: PollManagerController;
-}
-
-export interface ZeroPollConfig {
+export interface ZeroPollConfig extends BaseConfig {
 	tickInterval?: number;
 	protokitGraphqlUrl: string;
 	ipfsApiUrl: string;
 }
 
-export interface ZeroPollState {
+export interface ZeroPollState extends BaseState {
+	initialized: boolean;
 	wallet: WalletState;
 	chain: ChainState;
 	poll: PollState;
 	pollManager: PollManagerState;
 }
 
-export type ZeroPollContext = Controllers;
-
 /**
- * ZeroPoll core engine
+ * ZeroPoll core controller engine
  */
-export class ZeroPoll {
-	context: ZeroPollContext;
+export class ZeroPoll extends BaseController<ZeroPollConfig, ZeroPollState> {
+	chain: ChainController;
+	wallet: WalletController;
+	poll: PollController;
+	pollManager: PollManagerController;
 
 	constructor(
 		config: ZeroPollConfig,
 		initialState: Partial<ZeroPollState> = {}
 	) {
-		const chain = new ChainController(
+		super(config, initialState);
+
+		this.chain = new ChainController(
 			{
-				tickInterval: config.tickInterval || 1000,
+				tickInterval: config.tickInterval ?? 1000,
 				graphqlUrl: config.protokitGraphqlUrl,
 			},
 			initialState.chain
 		);
 
-		const wallet = new WalletController(
+		this.wallet = new WalletController(
 			{
-				chain,
+				chain: this.chain,
 				client,
 			},
 			initialState.wallet
@@ -62,25 +62,33 @@ export class ZeroPoll {
 
 		const pollStore = new IpfsMetadataStore<PollData>(config.ipfsApiUrl);
 
-		const pollManager = new PollManagerController(
-			{ store: pollStore, client, wallet },
+		this.pollManager = new PollManagerController(
+			{ store: pollStore, client, wallet: this.wallet },
 			initialState.pollManager
 		);
 
-		const poll = new PollController(
-			{ wallet, chain, client, store: pollStore },
+		this.poll = new PollController(
+			{ wallet: this.wallet, chain: this.chain, client, store: pollStore },
 			initialState.poll
 		);
 
-		this.context = {
-			wallet,
-			chain,
-			poll,
-			pollManager,
+		const controllers = {
+			wallet: this.wallet,
+			chain: this.chain,
+			poll: this.poll,
+			pollManager: this.pollManager,
 		};
+
+		Object.entries(controllers).forEach(([key, controller]) => {
+			controller.subscribe(childState => {
+				this.update({
+					[key]: childState,
+				});
+			});
+		});
 	}
 
 	async init() {
-		await Promise.all([client.start(), this.context.chain.start()]);
+		await Promise.all([client.start(), this.chain.start()]);
 	}
 }
