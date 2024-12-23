@@ -1,6 +1,6 @@
 {
 	"name": "@zeropoll/react",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"description": "ZeroPoll React",
 	"main": "dist/index.js",
 	"private": false,
