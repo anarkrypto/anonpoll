@@ -1,6 +1,6 @@
 {
 	"name": "@zeropoll/react-ui",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "ZeroPoll React UI",
 	"main": "dist/index.js",
 	"private": false,
