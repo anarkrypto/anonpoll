@@ -109,7 +109,7 @@ interface PollResult {
 		description: string;
 		options: string[];
 		votersWallets: string[];
-		salt: string;
+		salt?: string;
 	};
 	options: {
 		text: string;
@@ -155,7 +155,7 @@ interface PollMetadata {
 	description: string;
 	options: string[];
 	votersWallets: string[];
-	salt: string;
+	salt?: string;
 }
 
 interface UseCreatePollOptions {
@@ -178,7 +178,7 @@ await createPoll({
 	description: 'Poll description',
 	options: ['Option 1', 'Option 2'],
 	votersWallets: ['wallet1', 'wallet2'],
-	salt: 'random-salt',
+	salt: 'random-salt', // Optional
 });
 ```
 
