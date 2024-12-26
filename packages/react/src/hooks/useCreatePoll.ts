@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useCallback, useMemo } from 'react';
-import { CreatePollData } from '@zeropoll/core/controllers';
 import { MetadataEncryptionV1 } from '@zeropoll/core/utils';
 import { useZeroPoll } from '../zeropoll-provider';
+import { PollMetadata } from '@zeropoll/core/schemas';
 
 export interface CreatePollResult {
 	id: string;
@@ -17,7 +17,7 @@ export interface UseCreatePollOptions {
 }
 
 export interface UseCreatePollReturn {
-	createPoll: (data: CreatePollData) => Promise<void>;
+	createPoll: (data: PollMetadata) => Promise<void>;
 	isPending: boolean;
 	isSuccess: boolean;
 	isError: boolean;
@@ -36,7 +36,7 @@ export const useCreatePoll = (
 	const encryptionKey = useMemo(() => MetadataEncryptionV1.generateKey(), []);
 
 	const createPoll = useCallback(
-		async (pollData: CreatePollData) => {
+		async (pollData: PollMetadata) => {
 			setIsPending(true);
 			setError(null);
 			setData(null);

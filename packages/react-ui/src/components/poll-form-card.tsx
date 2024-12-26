@@ -16,11 +16,10 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useState } from 'react';
-import { pollMetadataSchema } from '@zeropoll/core/schemas';
+import { PollMetadata, pollMetadataSchema } from '@zeropoll/core/schemas';
 import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from '@zeropoll/core/constants';
 import { useCreatePoll, UseCreatePollOptions } from '@zeropoll/react';
 import { cn } from '@/lib/cn';
-import { CreatePollData } from '@zeropoll/core/controllers';
 import { generateSalt, isValidPublicKey } from '@zeropoll/core/utils';
 
 export type PollFormCardProps = {
@@ -34,7 +33,7 @@ export function PollFormCard({
 }: PollFormCardProps) {
 	const [step, setStep] = useState(1);
 
-	const form = useForm<CreatePollData>({
+	const form = useForm<PollMetadata>({
 		defaultValues: {
 			title: '',
 			description: '',
@@ -56,7 +55,7 @@ export function PollFormCard({
 	});
 
 	const handleSubmit = useCallback(
-		async (data: CreatePollData) => {
+		async (data: PollMetadata) => {
 			if (step === 1) {
 				// Prevent duplicated options and add error to the input that is duplicated
 				const options = new Set<string>();
