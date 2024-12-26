@@ -1,5 +1,5 @@
 import { BaseConfig, BaseController, BaseState } from './base-controller';
-import { EncryptedMetadataV1, pollInsertSchema } from '@/schemas';
+import { EncryptedMetadataV1, pollMetadataSchema } from '@/schemas';
 import { z } from 'zod';
 import { Bool, CircuitString, MerkleMap, Poseidon, PublicKey } from 'o1js';
 import { WalletController } from './wallet-controller';
@@ -8,7 +8,7 @@ import { AbstractMetadataStore } from '@/stores/metadata-store';
 import type { client } from '@zeropoll/chain';
 import { MetadataEncryptionV1 } from '@/utils';
 
-export type CreatePollData = z.infer<typeof pollInsertSchema>;
+export type CreatePollData = z.infer<typeof pollMetadataSchema>;
 
 export interface PollManagerConfig extends BaseConfig {
 	client: Pick<typeof client, 'query' | 'runtime' | 'transaction'>;

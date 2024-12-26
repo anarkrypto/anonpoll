@@ -16,7 +16,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useState } from 'react';
-import { pollInsertSchema } from '@zeropoll/core/schemas';
+import { pollMetadataSchema } from '@zeropoll/core/schemas';
 import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from '@zeropoll/core/constants';
 import { useCreatePoll, UseCreatePollOptions } from '@zeropoll/react';
 import { cn } from '@/lib/cn';
@@ -45,9 +45,9 @@ export function PollFormCard({
 		resolver:
 			step === 1
 				? zodResolver(
-						pollInsertSchema.omit({ votersWallets: true, salt: true })
+						pollMetadataSchema.omit({ votersWallets: true, salt: true })
 					)
-				: zodResolver(pollInsertSchema),
+				: zodResolver(pollMetadataSchema),
 	});
 
 	const { createPoll, isPending: creatingPoll } = useCreatePoll({

@@ -19,13 +19,13 @@ import { ChainController } from './chain-controller';
 import { WalletController } from './wallet-controller';
 import { AbstractMetadataStore } from '@/stores/metadata-store';
 import { MetadataEncryptionV1 } from '@/utils';
-import { EncryptedMetadataV1, PollData } from '@/schemas';
+import { EncryptedMetadataV1, PollMetadata } from '@/schemas';
 
 export interface PollConfig extends BaseConfig {
 	wallet: WalletController;
 	chain: ChainController;
 	client: Pick<typeof client, 'query' | 'runtime' | 'transaction'>;
-	store: AbstractMetadataStore<PollData>;
+	store: AbstractMetadataStore<PollMetadata>;
 }
 
 export interface PollOption {
@@ -38,13 +38,13 @@ export interface PollOption {
 export interface PollState extends BaseState {
 	loading: boolean;
 	commitment: string | null;
-	metadata: (PollData & { id: string }) | null;
+	metadata: (PollMetadata & { id: string }) | null;
 	options: PollOption[];
 }
 
 export interface PollResult {
 	commitment: string;
-	metadata: PollData & { id: string };
+	metadata: PollMetadata & { id: string };
 	options: PollOption[];
 }
 
@@ -58,7 +58,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
 	private chain: ChainController;
 	private client: Pick<typeof client, 'query' | 'runtime' | 'transaction'>;
 	private voters = new Map<string, PublicKey>();
-	private store: AbstractMetadataStore<PollData | EncryptedMetadataV1>;
+	private store: AbstractMetadataStore<PollMetadata | EncryptedMetadataV1>;
 
 	static readonly defaultState: PollState = {
 		commitment: null,
@@ -138,14 +138,14 @@ export class PollController extends BaseController<PollConfig, PollState> {
 	private async getMetadata(
 		pollId: string,
 		encryptionKey?: string
-	): Promise<PollData> {
+	): Promise<PollMetadata> {
 		if (this.state.metadata?.id === pollId) {
 			return this.state.metadata;
 		}
 
 		const metadata = await this.store.get(pollId);
 
-		let decryptedMetadata = metadata as PollData;
+		let decryptedMetadata = metadata as PollMetadata;
 
 		if (MetadataEncryptionV1.isEncryptedMetadataV1(metadata)) {
 			if (!encryptionKey) {
@@ -206,7 +206,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
 		}
 	};
 
-	private buildOptions(metadata: PollData, votingResults: VotingResult[]) {
+	private buildOptions(metadata: PollMetadata, votingResults: VotingResult[]) {
 		const totalVotesCast = votingResults.reduce(
 			(acc, option) => acc + option.votesCount,
 			0
