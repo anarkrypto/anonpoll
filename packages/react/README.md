@@ -102,13 +102,14 @@ const {
 #### Poll Data Structure
 
 ```tsx
-interface PollData {
+interface PollResult {
+	id: string;
 	metadata: {
 		title: string;
 		description: string;
 		options: string[];
 		votersWallets: string[];
-		id: string;
+		salt: string;
 	};
 	options: {
 		text: string;
@@ -149,7 +150,7 @@ await vote(optionHash);
 Create new polls.
 
 ```tsx
-interface CreatePollData {
+interface PollMetadata {
 	title: string;
 	description: string;
 	options: string[];
@@ -193,7 +194,7 @@ function CreatePollForm() {
 		},
 	});
 
-	const handleSubmit = async (data: CreatePollData) => {
+	const handleSubmit = async (data: PollMetadata) => {
 		try {
 			await createPoll(data);
 		} catch (err) {
