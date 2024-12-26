@@ -185,7 +185,11 @@ export class PollController extends BaseController<PollConfig, PollState> {
 		return { votingResults, commitment };
 	}
 
-	private compareHashes(hashes: string[], optionsText: string[], salt: string) {
+	private compareHashes(
+		hashes: string[],
+		optionsText: string[],
+		salt?: string
+	) {
 		const computedHashes = OptionsHashes.fromStrings(optionsText, salt)
 			.hashes as Field[];
 		if (
