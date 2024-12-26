@@ -9,7 +9,7 @@ export const pollMetadataSchema = z.object({
 		.array(z.string().trim().min(1).max(128))
 		.min(2)
 		.max(MAX_POLL_OPTIONS),
-	salt: z.string().min(1).max(128),
+	salt: z.string().min(1).max(128).optional(),
 	votersWallets: z
 		.array(
 			z.string().refine(
