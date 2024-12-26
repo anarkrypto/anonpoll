@@ -37,14 +37,15 @@ export interface PollOption {
 
 export interface PollState extends BaseState {
 	loading: boolean;
+	id: string | null;
 	commitment: string | null;
-	metadata: (PollMetadata & { id: string }) | null;
+	metadata: PollMetadata | null;
 	options: PollOption[];
 }
 
 export interface PollResult {
 	commitment: string;
-	metadata: PollMetadata & { id: string };
+	metadata: PollMetadata;
 	options: PollOption[];
 }
 
@@ -61,6 +62,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
 	private store: AbstractMetadataStore<PollMetadata | EncryptedMetadataV1>;
 
 	static readonly defaultState: PollState = {
+		id: null,
 		commitment: null,
 		loading: false,
 		metadata: null,
@@ -77,10 +79,10 @@ export class PollController extends BaseController<PollConfig, PollState> {
 
 	public async load(id: string, encryptionKey?: string): Promise<PollResult> {
 		try {
-			if (this.metadata?.id === id) {
+			if (this.id === id) {
 				// Do not load the same poll twice
 				return {
-					metadata: this.metadata,
+					metadata: this.metadata as PollMetadata,
 					commitment: this.state.commitment as string,
 					options: this.options,
 				};
@@ -139,8 +141,8 @@ export class PollController extends BaseController<PollConfig, PollState> {
 		pollId: string,
 		encryptionKey?: string
 	): Promise<PollMetadata> {
-		if (this.state.metadata?.id === pollId) {
-			return this.state.metadata;
+		if (this.id === pollId) {
+			return this.state.metadata as PollMetadata;
 		}
 
 		const metadata = await this.store.get(pollId);
@@ -236,11 +238,11 @@ export class PollController extends BaseController<PollConfig, PollState> {
 	}
 
 	private async updateVotingResults() {
-		if (!this.metadata) {
+		if (!this.id || !this.metadata) {
 			throw new Error('Poll not loaded');
 		}
 
-		const { votingResults } = await this.getPoll(this.metadata.id);
+		const { votingResults } = await this.getPoll(this.id);
 
 		const options = this.buildOptions(this.metadata, votingResults);
 
@@ -252,7 +254,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
 	public async vote(optionHash: string): Promise<{ hash: string }> {
 		this.validateVotePrerequisites();
 
-		const pollId = CircuitString.fromString(this.state.metadata!.id);
+		const pollId = CircuitString.fromString(this.id!);
 
 		const witness = this.createVotersWitness();
 		const proof = await this.createVoteProof(witness, pollId);
@@ -341,6 +343,10 @@ export class PollController extends BaseController<PollConfig, PollState> {
 		}
 
 		return hash;
+	}
+
+	public get id() {
+		return this.state.id;
 	}
 
 	public get metadata() {
