@@ -71,7 +71,7 @@ export class PollManagerController extends BaseController<
 			map.set(hashKey, Bool(true).toField());
 		});
 
-		const optionsHashes = OptionsHashes.fromTexts(data.options, data.salt);
+		const optionsHashes = OptionsHashes.fromStrings(data.options, data.salt);
 
 		const storeData = encryptionKey
 			? await this.encrypt(data, encryptionKey)

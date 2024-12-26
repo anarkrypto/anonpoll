@@ -24,7 +24,7 @@ export class VoteOption extends Struct({
 }) {}
 
 export class OptionHash extends Field {
-	static fromText(text: string, salt: string = ""): Field {
+	static fromString(text: string, salt: string = ""): Field {
 		return Poseidon.hash(
 			CircuitString.toFields(
 				CircuitString.fromString(text).append(CircuitString.fromString(salt))
@@ -37,13 +37,13 @@ export class OptionsHashes extends Struct({
 	hashes: [Field, Field, Field, Field, Field, Field, Field, Field, Field, Field] // 10 options
 }) {
 	// Should be excuted on the client
-	static fromTexts(options: string[], salt: string = "") {
+	static fromStrings(options: string[], salt: string = "") {
 		return new OptionsHashes({
 			// Hash options inputs using Poseidon and fill the rest with
 			// indexes to make sure the hashes are unique
 			hashes: Array(10)
 				.fill(Field(0))
-				.map((_, i) => OptionHash.fromText(options[i] || i.toString(), salt))
+				.map((_, i) => OptionHash.fromString(options[i] || i.toString(), salt))
 		});
 	}
 

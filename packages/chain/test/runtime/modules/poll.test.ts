@@ -62,7 +62,7 @@ describe("Poll", () => {
 
 	const salt = PrivateKey.random().toBase58();
 
-	const optionsHashes = OptionsHashes.fromTexts(["Yes", "No"], salt);
+	const optionsHashes = OptionsHashes.fromStrings(["Yes", "No"], salt);
 	const yesHash = optionsHashes.hashes[0];
 	const noHash = optionsHashes.hashes[1];
 
