@@ -47,11 +47,17 @@ export const useCreatePoll = (
 				);
 				setData({ ...result, encryptionKey });
 				options.onSuccess?.({ ...result, encryptionKey });
-			} catch (err) {
-				const message = err instanceof Error ? err.message : 'Unknown error';
+			} catch (error) {
+				const message =
+					error instanceof Object &&
+					'message' in error &&
+					typeof error.message === 'string'
+						? error.message
+						: 'Unknown error';
 				setError(message);
 				options.onError?.(message);
-				console.error(err);
+				console.error({ error });
+				throw new Error(message);
 			} finally {
 				setIsPending(false);
 			}
