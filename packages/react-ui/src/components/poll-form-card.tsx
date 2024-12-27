@@ -178,7 +178,18 @@ export function PollFormCard({
 				className
 			)}
 		>
-			<CardHeader>
+			<CardHeader className="relative pt-4">
+				{step !== STEPS.PRIVACY && (
+					<Button
+						variant="outline"
+						size="icon"
+						className="absolute top-4 left-4"
+						onClick={() => setStep((step - 1) as Step)}
+						disabled={creatingPoll || form.formState.isSubmitting || isSuccess}
+					>
+						<ArrowRight className="transform rotate-180 h-4 w-4" />
+					</Button>
+				)}
 				<CardTitle className="text-center text-2xl text-secondary">
 					{STEP_TITLES[step]}
 				</CardTitle>
