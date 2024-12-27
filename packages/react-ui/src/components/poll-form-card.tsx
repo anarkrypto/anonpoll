@@ -294,6 +294,7 @@ function PollStep({ form }: { form: UseFormReturn<PollMetadata> }) {
 								required
 								{...field}
 								invalid={fieldState.invalid}
+								disabled={field.disabled || form.formState.isSubmitting}
 							/>
 						</FormControl>
 						<FormMessage />
@@ -313,6 +314,7 @@ function PollStep({ form }: { form: UseFormReturn<PollMetadata> }) {
 								invalid={fieldState.invalid}
 								{...field}
 								value={field.value || ''}
+								disabled={field.disabled || form.formState.isSubmitting}
 							/>
 						</FormControl>
 						<FormMessage />
@@ -332,6 +334,7 @@ function PollStep({ form }: { form: UseFormReturn<PollMetadata> }) {
 								onChange={field.onChange}
 								showError={fieldState.invalid}
 								max={MAX_POLL_OPTIONS}
+								disabled={field.disabled || form.formState.isSubmitting}
 							/>
 						</FormControl>
 						<FormMessage />
@@ -347,11 +350,13 @@ function OptionsInputsGroup({
 	onChange,
 	max = Infinity,
 	showError = false,
+	disabled = false,
 }: {
 	value: string[];
 	onChange: (value: string[]) => void;
 	max?: number;
 	showError?: boolean;
+	disabled?: boolean;
 }) {
 	// Fill the array with 2 empty values
 	const options = [value[0] ?? '', value[1] ?? '', ...value.slice(2)];
@@ -387,6 +392,7 @@ function OptionsInputsGroup({
 								(showError && option.length === 0) ||
 								(option !== '' && options.slice(0, index).includes(option)) // duplicated
 							}
+							disabled={disabled}
 						/>
 						{options.length > 2 && (
 							<Button
@@ -395,6 +401,7 @@ function OptionsInputsGroup({
 								size="icon"
 								onClick={() => removeOption(index)}
 								className="flex-shrink-0"
+								disabled={disabled}
 							>
 								<TrashIcon className="h-4 w-4" />
 							</Button>
@@ -417,6 +424,7 @@ function OptionsInputsGroup({
 					variant="outline"
 					onClick={addOption}
 					className="mt-2"
+					disabled={disabled}
 				>
 					<PlusIcon className="mr-2 h-4 w-4" /> Add Option
 				</Button>
@@ -480,6 +488,7 @@ function VotersWalletsStep({
 												(form.formState.isSubmitted && wallet.length === 0) ||
 												(wallet.length > 0 && !isValidPublicKey(wallet))
 											}
+											disabled={field.disabled || form.formState.isSubmitting}
 										/>
 										{wallets.length > 1 && (
 											<Button
@@ -488,6 +497,7 @@ function VotersWalletsStep({
 												size="icon"
 												onClick={() => removeWallet(index)}
 												className="flex-shrink-0"
+												disabled={field.disabled || form.formState.isSubmitting}
 											>
 												<TrashIcon className="h-4 w-4" />
 											</Button>
@@ -508,6 +518,7 @@ function VotersWalletsStep({
 									variant="outline"
 									onClick={addWallet}
 									className="mt-2"
+									disabled={field.disabled || form.formState.isSubmitting}
 								>
 									<PlusIcon className="mr-2 h-4 w-4" /> Add Wallet
 								</Button>
