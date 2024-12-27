@@ -3,7 +3,13 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowRight, PlusIcon, TrashIcon } from 'lucide-react';
+import {
+	ArrowRight,
+	GlobeIcon,
+	LockIcon,
+	PlusIcon,
+	TrashIcon,
+} from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
 	Form,
@@ -13,25 +19,53 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
-import { useForm } from 'react-hook-form';
+import { useForm, UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { PollMetadata, pollMetadataSchema } from '@zeropoll/core/schemas';
 import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from '@zeropoll/core/constants';
 import { useCreatePoll, UseCreatePollOptions } from '@zeropoll/react';
 import { cn } from '@/lib/cn';
 import { generateSalt, isValidPublicKey } from '@zeropoll/core/utils';
 
+// Types
 export type PollFormCardProps = {
 	className?: string | undefined;
 } & UseCreatePollOptions;
+
+type PollPrivacy = 'public' | 'private';
+type Step = (typeof STEPS)[keyof typeof STEPS];
+
+// Constants
+const STEPS = {
+	PRIVACY: 0 as const,
+	POLL: 1 as const,
+	VOTERS: 2 as const,
+};
+
+const STEP_TITLES: Record<Step, string> = {
+	[STEPS.PRIVACY]: 'Select Poll Privacy',
+	[STEPS.POLL]: 'Create a New Poll',
+	[STEPS.VOTERS]: 'Add Voters Wallets',
+};
+
+// Utilities
+const checkDuplicateOptions = (options: string[]): string | null => {
+	const seen = new Set<string>();
+	for (const option of options) {
+		if (seen.has(option)) return option;
+		seen.add(option);
+	}
+	return null;
+};
 
 export function PollFormCard({
 	className,
 	onSuccess,
 	onError,
 }: PollFormCardProps) {
-	const [step, setStep] = useState(1);
+	const [step, setStep] = useState<Step>(STEPS.PRIVACY);
+	const [privacy, setPrivacy] = useState<PollPrivacy | null>(null);
 
 	const form = useForm<PollMetadata>({
 		defaultValues: {
@@ -42,50 +76,99 @@ export function PollFormCard({
 			salt: generateSalt(),
 		},
 		resolver:
-			step === 1
+			step !== STEPS.PRIVACY
 				? zodResolver(
-						pollMetadataSchema.omit({ votersWallets: true, salt: true })
+						step === STEPS.POLL
+							? pollMetadataSchema.omit({ votersWallets: true, salt: true })
+							: pollMetadataSchema
 					)
-				: zodResolver(pollMetadataSchema),
+				: undefined,
 	});
 
-	const { createPoll, isPending: creatingPoll } = useCreatePoll({
+	const {
+		createPoll,
+		isPending: creatingPoll,
+		isSuccess,
+	} = useCreatePoll({
 		onSuccess,
 		onError,
 	});
 
+	const handlePrivacyChange = useCallback((selectedPrivacy: PollPrivacy) => {
+		setPrivacy(selectedPrivacy);
+	}, []);
+
 	const handleSubmit = useCallback(
 		async (data: PollMetadata) => {
-			if (step === 1) {
-				// Prevent duplicated options and add error to the input that is duplicated
-				const options = new Set<string>();
-				let hasError = false;
-				data.options.forEach(option => {
-					if (options.has(option)) {
-						hasError = true;
-						form.setError('options', {
-							type: 'duplicate',
-							message: 'Error: Remove duplicated options',
-							types: {},
-						});
-					}
-					options.add(option);
-				});
-
-				if (hasError) {
+			try {
+				if (step === STEPS.PRIVACY) {
+					if (!privacy) return;
+					setStep(STEPS.POLL);
 					return;
 				}
-				setStep(2);
-				return;
+
+				if (step === STEPS.POLL) {
+					const duplicateOption = checkDuplicateOptions(data.options);
+					if (duplicateOption) {
+						form.setError('options', {
+							type: 'duplicate',
+							message: `Duplicate option found: ${duplicateOption}`,
+						});
+						return;
+					}
+
+					if (privacy === 'private') {
+						setStep(STEPS.VOTERS);
+						return;
+					}
+
+					// Public poll submission
+					await createPoll({
+						...data,
+						salt: generateSalt(),
+						votersWallets: [],
+					});
+					return;
+				}
+
+				// Final submission for private polls
+				await createPoll({ ...data, salt: generateSalt() });
+			} catch (error) {
+				console.error({ error });
+				onError?.(
+					error instanceof Error ? error.message : 'Unknown error occurred'
+				);
 			}
-			await createPoll({ ...data, salt: generateSalt() });
 		},
-		[step, createPoll, form]
+		[step, privacy, createPoll, form, onError]
 	);
 
-	const handleError = (error: unknown) => {
-		// It should never happen, it means that something is wrong with the form.
-		console.error({ error });
+	const renderStepContent = () => {
+		switch (step) {
+			case STEPS.PRIVACY:
+				return <PrivacyStep onChange={handlePrivacyChange} />;
+			case STEPS.POLL:
+				return <PollStep form={form} />;
+			case STEPS.VOTERS:
+				return <VotersWalletsStep form={form} max={MAX_POLL_VOTERS} />;
+			default:
+				return null;
+		}
+	};
+
+	const renderButtonContent = () => {
+		if (
+			step === STEPS.PRIVACY ||
+			(step === STEPS.POLL && privacy === 'private')
+		) {
+			return (
+				<>
+					Next
+					<ArrowRight className="ml-2 h-4 w-4" />
+				</>
+			);
+		}
+		return 'Create Poll';
 	};
 
 	return (
@@ -97,106 +180,165 @@ export function PollFormCard({
 		>
 			<CardHeader>
 				<CardTitle className="text-center text-3xl text-secondary">
-					{step === 1 ? 'Create a New Poll' : 'Add Voters Wallets'}
+					{STEP_TITLES[step]}
 				</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<Form {...form}>
 					<form
-						onSubmit={form.handleSubmit(handleSubmit, handleError)}
+						onSubmit={form.handleSubmit(handleSubmit)}
 						className="space-y-4"
 					>
-						{step === 1 ? (
-							<>
-								<FormField
-									control={form.control}
-									name="title"
-									render={({ field, fieldState }) => (
-										<FormItem>
-											<FormLabel>Poll Title</FormLabel>
-											<FormControl>
-												<Input
-													placeholder="Enter poll title"
-													required
-													{...field}
-													invalid={fieldState.invalid}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-
-								<FormField
-									control={form.control}
-									name="description"
-									render={({ field, fieldState }) => (
-										<FormItem>
-											<FormLabel>Description</FormLabel>
-											<FormControl>
-												<Textarea
-													placeholder="Enter poll description"
-													invalid={fieldState.invalid}
-													{...field}
-													value={field.value || ''}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-
-								<FormField
-									control={form.control}
-									name="options"
-									render={({ field, fieldState }) => (
-										<FormItem>
-											<FormLabel>Options</FormLabel>
-											<FormControl>
-												<OptionsInputsGroup
-													value={field.value}
-													onChange={field.onChange}
-													showError={fieldState.invalid}
-													max={MAX_POLL_OPTIONS}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</>
-						) : (
-							<FormField
-								control={form.control}
-								name="votersWallets"
-								render={({ field, fieldState }) => (
-									<FormItem>
-										<FormLabel>Elegible voters wallets (public keys)</FormLabel>
-										<FormControl>
-											<VotersWalletsInputsGroup
-												value={field.value}
-												onChange={field.onChange}
-												showError={fieldState.invalid}
-												max={MAX_POLL_VOTERS}
-											/>
-										</FormControl>
-									</FormItem>
-								)}
-							/>
-						)}
+						{renderStepContent()}
 
 						<Button
 							type="submit"
 							className="w-full"
-							loading={creatingPoll || form.formState.isSubmitting}
+							disabled={
+								creatingPoll ||
+								form.formState.isSubmitting ||
+								isSuccess ||
+								!privacy
+							}
 						>
-							{step === 1 ? 'Next' : 'Create Poll'}
-							{step === 1 && <ArrowRight className="ml-2 h-4 w-4" />}
+							{renderButtonContent()}
 						</Button>
 					</form>
 				</Form>
 			</CardContent>
 		</Card>
+	);
+}
+
+function PrivacyStep({
+	onChange,
+}: {
+	onChange?: (privacy: PollPrivacy) => void;
+}) {
+	const [privacy, setPrivacy] = useState<PollPrivacy | null>(null);
+
+	const options = [
+		{
+			value: 'public',
+			icon: <GlobeIcon className="h-5 w-5 text-zinc-500" />,
+			title: 'Public Poll',
+			description: 'Votes are anonymous, but anyone can find the poll and vote',
+		},
+		{
+			value: 'private',
+			icon: <LockIcon className="h-5 w-5 text-zinc-500" />,
+			title: 'Private Poll',
+			description:
+				'Votes are anonymous, poll is encrypted and only specific wallets can vote',
+		},
+	];
+
+	const handleOnChange = (privacy: PollPrivacy) => {
+		setPrivacy(privacy);
+		onChange?.(privacy);
+	};
+
+	return (
+		<FormItem className="space-y-4">
+			{options.map(option => (
+				<FormItem
+					key={option.value}
+					className={cn(
+						'group flex items-center space-x-3 space-y-0 hover:bg-primary/10 rounded-lg p-4 border-2 border-zinc-200 select-none cursor-pointer hover:border-primary/50',
+						privacy === option.value && 'border-primary hover:border-primary'
+					)}
+					onClick={() => handleOnChange(option.value as PollPrivacy)}
+				>
+					<FormLabel
+						htmlFor={option.value}
+						className="flex-1 flex space-x-3 cursor-pointer"
+					>
+						{React.cloneElement(option.icon, {
+							className: cn(option.icon.props.className, 'mt-2'),
+						})}
+						<div className="flex-1">
+							<h3 className="text-xl font-semibold text-zinc-700">
+								{option.title}
+							</h3>
+							<p className="text-zinc-600 max-w-80 font-normal">
+								{option.description}
+							</p>
+						</div>
+						<div className="flex items-center">
+							<div
+								className={cn(
+									'w-3 bg-white ring-offset-2 ring-2 ring-zinc-400 h-3 rounded-full group-hover:ring-primary',
+									privacy === option.value && 'bg-primary ring-primary'
+								)}
+							></div>
+						</div>
+					</FormLabel>
+				</FormItem>
+			))}
+		</FormItem>
+	);
+}
+
+function PollStep({ form }: { form: UseFormReturn<PollMetadata> }) {
+	return (
+		<>
+			<FormField
+				control={form.control}
+				name="title"
+				render={({ field, fieldState }) => (
+					<FormItem>
+						<FormLabel>Poll Title</FormLabel>
+						<FormControl>
+							<Input
+								placeholder="Enter poll title"
+								required
+								{...field}
+								invalid={fieldState.invalid}
+							/>
+						</FormControl>
+						<FormMessage />
+					</FormItem>
+				)}
+			/>
+
+			<FormField
+				control={form.control}
+				name="description"
+				render={({ field, fieldState }) => (
+					<FormItem>
+						<FormLabel>Description</FormLabel>
+						<FormControl>
+							<Textarea
+								placeholder="Enter poll description"
+								invalid={fieldState.invalid}
+								{...field}
+								value={field.value || ''}
+							/>
+						</FormControl>
+						<FormMessage />
+					</FormItem>
+				)}
+			/>
+
+			<FormField
+				control={form.control}
+				name="options"
+				render={({ field, fieldState }) => (
+					<FormItem>
+						<FormLabel>Options</FormLabel>
+						<FormControl>
+							<OptionsInputsGroup
+								value={field.value}
+								onChange={field.onChange}
+								showError={fieldState.invalid}
+								max={MAX_POLL_OPTIONS}
+							/>
+						</FormControl>
+						<FormMessage />
+					</FormItem>
+				)}
+			/>
+		</>
 	);
 }
 
@@ -287,87 +429,97 @@ function OptionsInputsGroup({
 	);
 }
 
-function VotersWalletsInputsGroup({
-	value = [],
-	onChange,
+function VotersWalletsStep({
+	form,
 	max = Infinity,
-	showError = false,
 }: {
-	value: string[];
-	onChange: (value: string[]) => void;
+	form: UseFormReturn<PollMetadata>;
 	max?: number;
-	showError?: boolean;
 }) {
 	// Fill the array with 1 empty value
-	const wallets = [value[0] ?? '', ...value.slice(1)];
+	const wallets = [
+		form.watch('votersWallets')[0] ?? '',
+		...form.watch('votersWallets').slice(1),
+	];
 
 	const addWallet = () => {
-		onChange([...wallets, '']);
+		form.setValue('votersWallets', [...wallets, '']);
 	};
 
 	const removeWallet = (index: number) => {
 		const newOptions = [...wallets];
 		newOptions.splice(index, 1);
-		onChange(newOptions);
+		form.setValue('votersWallets', newOptions);
 	};
 
 	const handleWalletChange = (index: number, wallet: string) => {
 		const newOptions = [...wallets];
 		newOptions[index] = wallet;
-		onChange(newOptions);
+		form.setValue('votersWallets', newOptions);
 	};
 
 	return (
-		<div>
-			{wallets.map((wallet, index) => (
-				<div className="mb-2" key={index}>
-					<div key={index} className="flex items-center">
-						<Input
-							value={wallet}
-							onChange={e => handleWalletChange(index, e.target.value)}
-							placeholder={`Wallet ${index + 1}`}
-							required
-							className="mr-2"
-							invalid={
-								(showError && wallet.length === 0) ||
-								(wallet.length > 0 && !isValidPublicKey(wallet))
-							}
-						/>
-						{wallets.length > 1 && (
-							<Button
-								type="button"
-								variant="outline"
-								size="icon"
-								onClick={() => removeWallet(index)}
-								className="flex-shrink-0"
-							>
-								<TrashIcon className="h-4 w-4" />
-							</Button>
-						)}
-					</div>
-					{showError && wallet.length === 0 && (
-						<p className="text-red-500">Wallet cannot be empty.</p>
-					)}
-					{wallet.length > 0 && !isValidPublicKey(wallet) && (
-						<p className="text-red-500">Invalid wallet</p>
-					)}
-				</div>
-			))}
+		<FormField
+			control={form.control}
+			name="votersWallets"
+			render={({ field, fieldState }) => (
+				<FormItem>
+					<FormLabel>Eligible voters wallets (public keys)</FormLabel>
+					<FormControl>
+						<div>
+							{wallets.map((wallet, index) => (
+								<div className="mb-2" key={index}>
+									<div key={index} className="flex items-center">
+										<Input
+											value={wallet}
+											onChange={e => handleWalletChange(index, e.target.value)}
+											placeholder={`Wallet ${index + 1}`}
+											required
+											className="mr-2"
+											invalid={
+												(form.formState.isSubmitted && wallet.length === 0) ||
+												(wallet.length > 0 && !isValidPublicKey(wallet))
+											}
+										/>
+										{wallets.length > 1 && (
+											<Button
+												type="button"
+												variant="outline"
+												size="icon"
+												onClick={() => removeWallet(index)}
+												className="flex-shrink-0"
+											>
+												<TrashIcon className="h-4 w-4" />
+											</Button>
+										)}
+									</div>
+									{form.formState.isSubmitted && wallet.length === 0 && (
+										<p className="text-red-500">Wallet cannot be empty.</p>
+									)}
+									{wallet.length > 0 && !isValidPublicKey(wallet) && (
+										<p className="text-red-500">Invalid wallet</p>
+									)}
+								</div>
+							))}
 
-			{wallets.length < max ? (
-				<Button
-					type="button"
-					variant="outline"
-					onClick={addWallet}
-					className="mt-2"
-				>
-					<PlusIcon className="mr-2 h-4 w-4" /> Add Wallet
-				</Button>
-			) : (
-				<p className="mr-2 mt-2 text-sm text-red-500">
-					Maximum {max} wallets reached.
-				</p>
+							{wallets.length < max ? (
+								<Button
+									type="button"
+									variant="outline"
+									onClick={addWallet}
+									className="mt-2"
+								>
+									<PlusIcon className="mr-2 h-4 w-4" /> Add Wallet
+								</Button>
+							) : (
+								<p className="mr-2 mt-2 text-sm text-red-500">
+									Maximum {max} wallets reached.
+								</p>
+							)}
+						</div>
+					</FormControl>
+				</FormItem>
 			)}
-		</div>
+		/>
 	);
 }
