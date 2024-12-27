@@ -179,7 +179,7 @@ export function PollFormCard({
 			)}
 		>
 			<CardHeader>
-				<CardTitle className="text-center text-3xl text-secondary">
+				<CardTitle className="text-center text-2xl text-secondary">
 					{STEP_TITLES[step]}
 				</CardTitle>
 			</CardHeader>
