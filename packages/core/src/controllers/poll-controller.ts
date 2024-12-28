@@ -322,7 +322,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
 	private async submitVoteTransaction(
 		pollId: CircuitString,
 		optionHash: string,
-		proof: any
+		proof: PollProof
 	) {
 		const poll = this.client.runtime.resolve('Poll');
 		const tx = await this.client.transaction(
