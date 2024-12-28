@@ -168,7 +168,7 @@ export class Poll extends RuntimeModule {
 	}
 
 	@runtimeMethod()
-	async vote(id: CircuitString, optionHash: Field, poolProof: PollProof) {
+	async vote(id: CircuitString, optionHash: Field, proof: PollProof) {
 		/*
 			NOTE: This proof verification was based on private-airdrop-workshop repo, but it has
 			known vulnerabilities while Protokit is in development:
@@ -178,24 +178,24 @@ export class Poll extends RuntimeModule {
 			implement a new proof validation method
 		*/
 
-		poolProof.verify();
+		proof.verify();
 
 		const poll = await this.polls.get(id);
 
 		assert(poll.isSome, "Poll does not exist");
 
 		assert(
-			poolProof.publicOutput.root.equals(poll.value.commitment),
+			proof.publicOutput.root.equals(poll.value.commitment),
 			"Poll proof does not contain the correct commitment"
 		);
 
 		const isNullifierUsed = await this.nullifiers.get(
-			poolProof.publicOutput.nullifier
+			proof.publicOutput.nullifier
 		);
 
 		assert(isNullifierUsed.value.not(), "Nullifier has already been used");
 
-		await this.nullifiers.set(poolProof.publicOutput.nullifier, Bool(true));
+		await this.nullifiers.set(proof.publicOutput.nullifier, Bool(true));
 
 		const currentVotes = await poll.value.votes;
 
