@@ -24,10 +24,10 @@ export class VoteOption extends Struct({
 }) {}
 
 export class OptionHash extends Field {
-	static fromString(text: string, salt: string = ""): Field {
+	static fromString(str: string, salt: string = ""): Field {
 		return Poseidon.hash(
 			CircuitString.toFields(
-				CircuitString.fromString(text).append(CircuitString.fromString(salt))
+				CircuitString.fromString(str).append(CircuitString.fromString(salt))
 			)
 		);
 	}
