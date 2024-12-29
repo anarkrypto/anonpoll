@@ -148,8 +148,8 @@ export class PollController extends BaseController<PollConfig, PollState> {
 		pollId: string,
 		encryptionKey?: string
 	): Promise<PollMetadata> {
-		if (this.id === pollId) {
-			return this.state.metadata as PollMetadata;
+		if (this.id === pollId && !!this.state.metadata) {
+			return this.state.metadata;
 		}
 
 		const metadata = await this.store.get(pollId);
