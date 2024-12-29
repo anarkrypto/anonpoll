@@ -19,7 +19,11 @@ import { ChainController } from './chain-controller';
 import { WalletController } from './wallet-controller';
 import { AbstractMetadataStore } from '@/stores/metadata-store';
 import { MetadataEncryptionV1 } from '@/utils';
-import { EncryptedMetadataV1, PollMetadata } from '@/schemas';
+import {
+	EncryptedMetadataV1,
+	PollMetadata,
+	pollMetadataSchema,
+} from '@/schemas';
 
 export interface PollConfig extends BaseConfig {
 	wallet: WalletController;
@@ -160,8 +164,8 @@ export class PollController extends BaseController<PollConfig, PollState> {
 			decryptedMetadata = await metadataEncryptionV1.decrypt(metadata);
 		}
 
-		if (decryptedMetadata.options.length < 2) {
-			throw new Error('Poll must have at least 2 options');
+		if (!pollMetadataSchema.safeParse(decryptedMetadata).success) {
+			throw new Error('Invalid metadata');
 		}
 
 		return decryptedMetadata;
