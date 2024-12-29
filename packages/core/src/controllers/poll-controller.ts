@@ -65,6 +65,8 @@ export class PollController extends BaseController<PollConfig, PollState> {
 	private voters = new Map<string, PublicKey>();
 	private store: AbstractMetadataStore<PollMetadata | EncryptedMetadataV1>;
 
+	private pendingLoad: Promise<PollResult> | null = null;
+
 	static readonly defaultState: PollState = {
 		id: null,
 		commitment: null,
@@ -82,16 +84,31 @@ export class PollController extends BaseController<PollConfig, PollState> {
 	}
 
 	public async load(id: string, encryptionKey?: string): Promise<PollResult> {
-		try {
-			if (this.id === id) {
-				// Do not load the same poll twice
-				return {
-					metadata: this.metadata as PollMetadata,
-					commitment: this.state.commitment as string,
-					options: this.options,
-				};
+		if (this.id === id) {
+			// Do not load the same poll twice
+
+			if (this.loading) {
+				return await this.pendingLoad!;
 			}
 
+			return {
+				metadata: this.metadata as PollMetadata,
+				commitment: this.state.commitment as string,
+				options: this.options,
+			};
+		}
+
+		if (this.id !== id && this.loading) {
+			throw new Error('Another poll is being loaded');
+		}
+
+		this.pendingLoad = this.loadPoll(id, encryptionKey);
+
+		return await this.pendingLoad;
+	}
+
+	private async loadPoll(id: string, encryptionKey?: string) {
+		try {
 			this.update({
 				loading: true,
 				id,
