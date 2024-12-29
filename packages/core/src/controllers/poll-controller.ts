@@ -90,6 +90,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
 
 			this.update({
 				loading: true,
+				id,
 				commitment: null,
 				metadata: null,
 				options: [],
@@ -118,12 +119,14 @@ export class PollController extends BaseController<PollConfig, PollState> {
 				commitment,
 				metadata: {
 					...decryptedMetadata,
-					id,
 				},
 				options,
 			};
 
-			this.update(data);
+			this.update({
+				id,
+				...data,
+			});
 
 			metadata.votersWallets.forEach(wallet =>
 				this.voters.set(wallet, PublicKey.fromBase58(wallet))
