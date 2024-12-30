@@ -301,6 +301,44 @@ describe("Poll", () => {
 		);
 	});
 
+	it("should not allow unauthorized witness in proof", async () => {
+		const charliePrivateKey = PrivateKey.random();
+		const charliePublicKey = charliePrivateKey.toPublicKey();
+
+		appChain.setSigner(charliePrivateKey);
+		pollModule = appChain.runtime.resolve("Poll");
+
+		const map = new MerkleMap();
+		const charlieHashKey = Poseidon.hash(charliePublicKey.toFields());
+		map.set(charlieHashKey, Bool(true).toField());
+
+		const charlieWitness = map.getWitness(charlieHashKey);
+
+		const nullifier = Nullifier.fromJSON(
+			Nullifier.createTestNullifier(
+				CircuitString.toFields(pollId),
+				charliePrivateKey
+			)
+		);
+
+		const publicInput = new VotePublicInputs({
+			pollId,
+			optionHash: yesHash,
+			votersRoot
+		});
+
+		const privateInput = new VotePrivateInputs({
+			nullifier,
+			votersWitness: charlieWitness
+		});
+
+		const generateProof = USE_DUMMY_PROOF
+			? () => mockProof(publicInput, privateInput)
+			: () => voteProgram.vote(publicInput, privateInput);
+
+		expect(generateProof).rejects.toThrow();
+	});
+
 	it("should correctly count votes", async () => {
 		const poll = await appChain.query.runtime.Poll.polls.get(pollId);
 		const votes = poll!.votes;
