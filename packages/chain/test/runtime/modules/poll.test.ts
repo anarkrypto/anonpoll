@@ -3,9 +3,10 @@ import { TestingAppChain } from "@proto-kit/sdk";
 import {
 	OptionsHashes,
 	Poll,
-	PollProof,
-	PollPublicOutput,
-	canVote
+	voteProgram,
+	VotePrivateInputs,
+	VoteProof,
+	VotePublicInputs
 } from "../../../src/runtime/modules/poll";
 import {
 	Field,
@@ -21,6 +22,8 @@ import { dummyBase64Proof } from "o1js/dist/node/lib/proof-system/zkprogram";
 import { log } from "@proto-kit/common";
 import { Balances } from "../../../src/runtime/modules/balances";
 import { UInt64 } from "@proto-kit/library";
+
+const USE_DUMMY_PROOF = false;
 
 log.setLevel("ERROR");
 
@@ -40,7 +43,7 @@ describe("Poll", () => {
 	});
 
 	let pollModule: Poll;
-	let commitmentRoot: Field;
+	let votersRoot: Field;
 	const pollId = CircuitString.fromString("poll-id"); // Mock poll id
 
 	const alicePrivateKey = PrivateKey.fromBigInt(BigInt(1));
@@ -66,28 +69,38 @@ describe("Poll", () => {
 	const yesHash = optionsHashes.hashes[0];
 	const noHash = optionsHashes.hashes[1];
 
-	async function mockProof(publicOutput: PollPublicOutput): Promise<PollProof> {
+	async function mockProof(
+		publicInput: VotePublicInputs,
+		privateInput: VotePrivateInputs
+	): Promise<VoteProof> {
 		const [, proof] = Pickles.proofOfBase64(await dummyBase64Proof(), 2);
-		return new PollProof({
+
+		const publicOutput = await voteProgram.rawMethods.vote(
+			publicInput,
+			privateInput
+		);
+
+		return new VoteProof({
 			proof: proof,
 			maxProofsVerified: 2,
-			publicInput: undefined,
+			publicInput,
 			publicOutput
 		});
 	}
 
 	beforeAll(async () => {
 		await appChain.start();
+		if (!USE_DUMMY_PROOF) await voteProgram.compile();
 	});
 
-	it("should create a poll with the commitment and optionsHashes", async () => {
+	it("should create a poll with the votersRoot and optionsHashes", async () => {
 		appChain.setSigner(alicePrivateKey);
 		pollModule = appChain.runtime.resolve("Poll");
 
-		commitmentRoot = map.getRoot();
+		votersRoot = map.getRoot();
 
 		const tx = await appChain.transaction(alicePublicKey, async () => {
-			await pollModule.createPoll(pollId, commitmentRoot, optionsHashes);
+			await pollModule.createPoll(pollId, votersRoot, optionsHashes);
 		});
 
 		await tx.sign();
@@ -96,12 +109,12 @@ describe("Poll", () => {
 
 		const poll = await appChain.query.runtime.Poll.polls.get(pollId);
 		expect(poll).toBeDefined();
-		expect(poll!.commitment?.toBigInt()).toBe(commitmentRoot.toBigInt());
+		expect(poll!.votersRoot?.toBigInt()).toBe(votersRoot.toBigInt());
 	});
 
 	it("should not allow creating a poll with the same id", async () => {
 		const tx = await appChain.transaction(alicePublicKey, async () => {
-			await pollModule.createPoll(pollId, commitmentRoot, optionsHashes);
+			await pollModule.createPoll(pollId, votersRoot, optionsHashes);
 		});
 
 		await tx.sign();
@@ -120,11 +133,23 @@ describe("Poll", () => {
 			)
 		);
 
-		const publicOutput = await canVote(aliceWitness, nullifier, pollId);
-		const pollProof = await mockProof(publicOutput);
+		const publicInput = new VotePublicInputs({
+			pollId,
+			optionHash: yesHash,
+			votersRoot
+		});
+
+		const privateInput = new VotePrivateInputs({
+			nullifier,
+			votersWitness: aliceWitness
+		});
+
+		const proof = USE_DUMMY_PROOF
+			? await mockProof(publicInput, privateInput)
+			: await voteProgram.vote(publicInput, privateInput);
 
 		const tx = await appChain.transaction(alicePublicKey, async () => {
-			await pollModule.vote(pollId, yesHash, pollProof);
+			await pollModule.vote(proof);
 		});
 
 		await tx.sign();
@@ -133,7 +158,7 @@ describe("Poll", () => {
 		const block = await appChain.produceBlock();
 
 		const storedNullifier = await appChain.query.runtime.Poll.nullifiers.get(
-			pollProof.publicOutput.nullifier
+			proof.publicOutput.nullifier
 		);
 
 		expect(block?.transactions[0].status.toBoolean()).toBe(true);
@@ -148,11 +173,23 @@ describe("Poll", () => {
 			)
 		);
 
-		const publicOutput = await canVote(aliceWitness, nullifier, pollId);
-		const pollProof = await mockProof(publicOutput);
+		const publicInput = new VotePublicInputs({
+			pollId,
+			optionHash: yesHash,
+			votersRoot
+		});
+
+		const privateInput = new VotePrivateInputs({
+			nullifier,
+			votersWitness: aliceWitness
+		});
+
+		const proof = USE_DUMMY_PROOF
+			? await mockProof(publicInput, privateInput)
+			: await voteProgram.vote(publicInput, privateInput);
 
 		const tx = await appChain.transaction(alicePublicKey, async () => {
-			await pollModule.vote(pollId, yesHash, pollProof);
+			await pollModule.vote(proof);
 		});
 
 		await tx.sign();
@@ -161,7 +198,7 @@ describe("Poll", () => {
 		const block = await appChain.produceBlock();
 
 		const storedNullifier = await appChain.query.runtime.Poll.nullifiers.get(
-			pollProof.publicOutput.nullifier
+			proof.publicOutput.nullifier
 		);
 
 		expect(block?.transactions[0].status.toBoolean()).toBe(false);
@@ -182,11 +219,23 @@ describe("Poll", () => {
 			)
 		);
 
-		const publicOutput = await canVote(bobWitness, nullifier, pollId);
-		const pollProof = await mockProof(publicOutput);
+		const publicInput = new VotePublicInputs({
+			pollId,
+			optionHash: noHash,
+			votersRoot
+		});
+
+		const privateInput = new VotePrivateInputs({
+			nullifier,
+			votersWitness: bobWitness
+		});
+
+		const proof = USE_DUMMY_PROOF
+			? await mockProof(publicInput, privateInput)
+			: await voteProgram.vote(publicInput, privateInput);
 
 		const tx = await appChain.transaction(bobPublicKey, async () => {
-			await pollModule.vote(pollId, noHash, pollProof);
+			await pollModule.vote(proof);
 		});
 
 		await tx.sign();
@@ -195,14 +244,14 @@ describe("Poll", () => {
 		const block = await appChain.produceBlock();
 
 		const storedNullifier = await appChain.query.runtime.Poll.nullifiers.get(
-			pollProof.publicOutput.nullifier
+			proof.publicOutput.nullifier
 		);
 
 		expect(block?.transactions[0].status.toBoolean()).toBe(true);
 		expect(storedNullifier?.toBoolean()).toBe(true);
 	});
 
-	it("should not allow invalid participant proof", async () => {
+	it("should not allow proof with different votersRoot", async () => {
 		const charliePrivateKey = PrivateKey.random();
 		const charliePublicKey = charliePrivateKey.toPublicKey();
 
@@ -222,11 +271,23 @@ describe("Poll", () => {
 			)
 		);
 
-		const publicOutput = await canVote(charlieWitness, nullifier, pollId);
-		const pollProof = await mockProof(publicOutput);
+		const publicInput = new VotePublicInputs({
+			pollId,
+			optionHash: yesHash,
+			votersRoot: map.getRoot()
+		});
+
+		const privateInput = new VotePrivateInputs({
+			nullifier,
+			votersWitness: charlieWitness
+		});
+
+		const proof = USE_DUMMY_PROOF
+			? await mockProof(publicInput, privateInput)
+			: await voteProgram.vote(publicInput, privateInput);
 
 		const tx = await appChain.transaction(charliePublicKey, async () => {
-			await pollModule.vote(pollId, yesHash, pollProof);
+			await pollModule.vote(proof);
 		});
 
 		await tx.sign();
@@ -236,7 +297,7 @@ describe("Poll", () => {
 
 		expect(block?.transactions[0].status.toBoolean()).toBe(false);
 		expect(block?.transactions[0].statusMessage).toMatch(
-			/Poll proof does not contain the correct commitment/
+			/Poll proof does not contain the correct votersRoot/
 		);
 	});
 
