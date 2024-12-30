@@ -100,47 +100,59 @@ export class VoteOptions extends Struct({
 }
 
 export class PollStruct extends Struct({
-	commitment: Field,
+	votersRoot: Field,
 	votes: VoteOptions
 }) {}
 
-export class PollPublicOutput extends Struct({
-	root: Field,
+export class VotePublicInputs extends Struct({
+	pollId: CircuitString,
+	optionHash: Field,
+	votersRoot: Field
+}) {}
+
+export class VotePrivateInputs extends Struct({
+	nullifier: Nullifier,
+	votersWitness: MerkleMapWitness
+}) {}
+
+export class VotePublicOutputs extends Struct({
+	optionHash: Field,
 	nullifier: Field
 }) {}
 
-export async function canVote(
-	witness: MerkleMapWitness,
-	nullifier: Nullifier,
-	pollId: CircuitString
-): Promise<PollPublicOutput> {
-	const key = Poseidon.hash(nullifier.getPublicKey().toFields());
-	const [computedRoot, computedKey] = witness.computeRootAndKeyV2(
-		Bool(true).toField()
-	);
-	computedKey.assertEquals(key);
-
-	const message = CircuitString.toFields(pollId);
-	nullifier.verify(message);
-
-	return new PollPublicOutput({
-		root: computedRoot,
-		nullifier: nullifier.key()
-	});
-}
-
-export const pollProgram = ZkProgram({
-	name: "poll",
-	publicOutput: PollPublicOutput,
+export const voteProgram = ZkProgram({
+	name: "PollVote",
+	publicInput: VotePublicInputs,
+	publicOutput: VotePublicOutputs,
 	methods: {
-		canVote: {
-			privateInputs: [MerkleMapWitness, Nullifier, CircuitString],
-			method: canVote
+		vote: {
+			privateInputs: [VotePrivateInputs],
+			method: async (
+				publicInput: VotePublicInputs,
+				privateInput: VotePrivateInputs
+			): Promise<VotePublicOutputs> => {
+				const key = Poseidon.hash(
+					privateInput.nullifier.getPublicKey().toFields()
+				);
+				const [computedRoot, computedKey] =
+					privateInput.votersWitness.computeRootAndKeyV2(Bool(true).toField());
+
+				computedRoot.assertEquals(publicInput.votersRoot);
+				computedKey.assertEquals(key);
+
+				const message = CircuitString.toFields(publicInput.pollId);
+				privateInput.nullifier.verify(message);
+
+				return new VotePublicOutputs({
+					optionHash: publicInput.optionHash,
+					nullifier: privateInput.nullifier.key()
+				});
+			}
 		}
 	}
 });
 
-export class PollProof extends ZkProgram.Proof(pollProgram) {}
+export class VoteProof extends ZkProgram.Proof(voteProgram) {}
 
 @runtimeModule()
 export class Poll extends RuntimeModule {
@@ -153,7 +165,7 @@ export class Poll extends RuntimeModule {
 	@runtimeMethod()
 	public async createPoll(
 		id: CircuitString,
-		commitment: Field,
+		votersRoot: Field,
 		optionsHashes: OptionsHashes
 	) {
 		const checkPoll = await this.polls.get(id);
@@ -161,14 +173,14 @@ export class Poll extends RuntimeModule {
 		await this.polls.set(
 			id,
 			new PollStruct({
-				commitment,
+				votersRoot,
 				votes: VoteOptions.fromOptionsHashes(optionsHashes)
 			})
 		);
 	}
 
 	@runtimeMethod()
-	async vote(id: CircuitString, optionHash: Field, proof: PollProof) {
+	async vote(proof: VoteProof) {
 		/*
 			NOTE: This proof verification was based on private-airdrop-workshop repo, but it has
 			known vulnerabilities while Protokit is in development:
@@ -178,15 +190,17 @@ export class Poll extends RuntimeModule {
 			implement a new proof validation method
 		*/
 
+		const pollId = proof.publicInput.pollId;
+
 		proof.verify();
 
-		const poll = await this.polls.get(id);
+		const poll = await this.polls.get(pollId);
 
 		assert(poll.isSome, "Poll does not exist");
 
 		assert(
-			proof.publicOutput.root.equals(poll.value.commitment),
-			"Poll proof does not contain the correct commitment"
+			proof.publicInput.votersRoot.equals(poll.value.votersRoot),
+			"Poll proof does not contain the correct votersRoot"
 		);
 
 		const isNullifierUsed = await this.nullifiers.get(
@@ -200,10 +214,10 @@ export class Poll extends RuntimeModule {
 		const currentVotes = await poll.value.votes;
 
 		await this.polls.set(
-			id,
+			pollId,
 			new PollStruct({
-				commitment: poll.value.commitment,
-				votes: VoteOptions.cast(currentVotes, optionHash)
+				votersRoot: poll.value.votersRoot,
+				votes: VoteOptions.cast(currentVotes, proof.publicOutput.optionHash)
 			})
 		);
 	}
