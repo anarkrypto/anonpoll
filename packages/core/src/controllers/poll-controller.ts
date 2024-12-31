@@ -9,10 +9,12 @@ import {
 } from 'o1js';
 import type { client } from '@zeropoll/chain';
 import {
-	canVote,
+	OptionHash,
 	OptionsHashes,
-	PollProof,
-	PollPublicOutput,
+	VotePrivateInputs,
+	voteProgram,
+	VoteProof,
+	VotePublicInputs,
 } from '@zeropoll/chain/runtime/modules/poll';
 import { BaseConfig, BaseController, BaseState } from './base-controller';
 import { ChainController } from './chain-controller';
@@ -24,6 +26,8 @@ import {
 	PollMetadata,
 	pollMetadataSchema,
 } from '@/schemas';
+import { Pickles } from 'node_modules/o1js/dist/node/snarky';
+import { dummyBase64Proof } from 'node_modules/o1js/dist/node/lib/proof-system/zkprogram';
 
 export interface PollConfig extends BaseConfig {
 	wallet: WalletController;
@@ -42,13 +46,13 @@ export interface PollOption {
 export interface PollState extends BaseState {
 	loading: boolean;
 	id: string | null;
-	commitment: string | null;
+	votersRoot: string | null;
 	metadata: PollMetadata | null;
 	options: PollOption[];
 }
 
 export interface PollResult {
-	commitment: string;
+	votersRoot: string;
 	metadata: PollMetadata;
 	options: PollOption[];
 }
@@ -69,7 +73,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
 
 	static readonly defaultState: PollState = {
 		id: null,
-		commitment: null,
+		votersRoot: null,
 		loading: false,
 		metadata: null,
 		options: [],
@@ -93,7 +97,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
 
 			return {
 				metadata: this.metadata as PollMetadata,
-				commitment: this.state.commitment as string,
+				votersRoot: this.state.votersRoot as string,
 				options: this.options,
 			};
 		}
@@ -112,12 +116,12 @@ export class PollController extends BaseController<PollConfig, PollState> {
 			this.update({
 				loading: true,
 				id,
-				commitment: null,
+				votersRoot: null,
 				metadata: null,
 				options: [],
 			});
 
-			const [metadata, { votingResults, commitment }] = await Promise.all([
+			const [metadata, { votingResults, votersRoot }] = await Promise.all([
 				this.getMetadata(id, encryptionKey),
 				this.getPoll(id),
 			]);
@@ -129,15 +133,15 @@ export class PollController extends BaseController<PollConfig, PollState> {
 				metadata.salt
 			);
 
-			// Check if the votersWallets from metadata matches the onchain commitment
-			this.compareCommitment(metadata.votersWallets, commitment);
+			// Check if the votersWallets from metadata matches the onchain votersRoot
+			this.comparevotersRoot(metadata.votersWallets, votersRoot);
 
 			const options = this.buildOptions(metadata, votingResults);
 
 			let decryptedMetadata = metadata;
 
 			const data = {
-				commitment,
+				votersRoot,
 				metadata: {
 					...decryptedMetadata,
 				},
@@ -204,9 +208,9 @@ export class PollController extends BaseController<PollConfig, PollState> {
 			};
 		});
 
-		const commitment = Field(poll.commitment).toString();
+		const votersRoot = Field(poll.votersRoot).toString();
 
-		return { votingResults, commitment };
+		return { votingResults, votersRoot };
 	}
 
 	private compareHashes(
@@ -225,14 +229,14 @@ export class PollController extends BaseController<PollConfig, PollState> {
 		}
 	}
 
-	private compareCommitment = (publicKeys: string[], commitment: string) => {
+	private comparevotersRoot = (publicKeys: string[], votersRoot: string) => {
 		const map = new MerkleMap();
 		publicKeys.forEach(publicKey => {
 			const hashKey = Poseidon.hash(PublicKey.fromBase58(publicKey).toFields());
 			map.set(hashKey, Bool(true).toField());
 		});
-		if (commitment !== map.getRoot().toString()) {
-			throw new Error('Commitment does not match');
+		if (votersRoot !== map.getRoot().toString()) {
+			throw new Error('votersRoot does not match');
 		}
 	};
 
@@ -284,10 +288,15 @@ export class PollController extends BaseController<PollConfig, PollState> {
 
 		const pollId = CircuitString.fromString(this.id!);
 
-		const witness = this.createVotersWitness();
-		const proof = await this.createVoteProof(witness, pollId);
+		const { root, witness } = this.createVotersRootAndWitness();
+		const proof = await this.createVoteProof({
+			pollId,
+			optionHash: OptionHash.fromString(optionHash),
+			votersRoot: root,
+			votersWitness: witness,
+		});
 
-		const hash = await this.submitVoteTransaction(pollId, optionHash, proof);
+		const hash = await this.submitVoteTransaction(proof);
 
 		return { hash };
 	}
@@ -304,7 +313,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
 		}
 	}
 
-	private createVotersWitness() {
+	private createVotersRootAndWitness() {
 		const map = new MerkleMap();
 
 		const sender = this.wallet.publicKey();
@@ -319,40 +328,70 @@ export class PollController extends BaseController<PollConfig, PollState> {
 			map.set(hashKey, Bool(true).toField());
 		});
 
-		return map.getWitness(senderHashKey);
+		const root = map.getRoot();
+		const witness = map.getWitness(senderHashKey);
+
+		return {
+			root,
+			witness,
+		};
 	}
 
-	private async mockProof(publicOutput: PollPublicOutput): Promise<PollProof> {
-		const dummy = await PollProof.dummy([], [''], 2);
-		return new PollProof({
-			proof: dummy.proof,
+	private async mockProof(
+		publicInput: VotePublicInputs,
+		privateInput: VotePrivateInputs
+	): Promise<VoteProof> {
+		const [, proof] = Pickles.proofOfBase64(await dummyBase64Proof(), 2);
+
+		const publicOutput = await voteProgram.rawMethods.vote(
+			publicInput,
+			privateInput
+		);
+
+		return new VoteProof({
+			proof: proof,
 			maxProofsVerified: 2,
-			publicInput: undefined,
+			publicInput,
 			publicOutput,
 		});
 	}
 
-	private async createVoteProof(
-		witness: MerkleMapWitness,
-		pollId: CircuitString
-	) {
+	private async createVoteProof({
+		pollId,
+		optionHash,
+		votersRoot,
+		votersWitness,
+	}: {
+		pollId: CircuitString;
+		optionHash: Field;
+		votersRoot: Field;
+		votersWitness: MerkleMapWitness;
+	}) {
 		const nullifier = await this.wallet.createNullifier(
 			CircuitString.toFields(pollId).map(field => Number(field.toBigInt()))
 		);
-		const publicOutput = await canVote(witness, nullifier, pollId);
-		return await this.mockProof(publicOutput);
+
+		const publicInput = new VotePublicInputs({
+			pollId,
+			optionHash,
+			votersRoot,
+		});
+
+		const privateInput = new VotePrivateInputs({
+			nullifier,
+			votersWitness,
+		});
+
+		// TODO: remove mock / dummy proofs
+		return await this.mockProof(publicInput, privateInput);
 	}
 
-	private async submitVoteTransaction(
-		pollId: CircuitString,
-		optionHash: string,
-		proof: PollProof
-	) {
+	private async submitVoteTransaction(proof: VoteProof) {
 		const poll = this.client.runtime.resolve('Poll');
 		const tx = await this.client.transaction(
 			PublicKey.fromBase58(this.wallet.account!),
 			async () => {
-				await poll.vote(pollId, Field(optionHash), proof);
+				await poll.vote(proof);
 			}
 		);
 
