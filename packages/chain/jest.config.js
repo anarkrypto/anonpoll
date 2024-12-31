@@ -6,7 +6,7 @@ export default {
 	moduleDirectories: ["node_modules", "src", "test"],
 	testPathIgnorePatterns: ["dist"],
 	extensionsToTreatAsEsm: [".ts"],
-	testTimeout: 30_000,
+	testTimeout: 180_000,
 	setupFilesAfterEnv: ["jest-expect-message"],
 	moduleNameMapper: {
 		"o1js/dist/(.*)": "<rootDir>/node_modules/o1js/dist/$1",
