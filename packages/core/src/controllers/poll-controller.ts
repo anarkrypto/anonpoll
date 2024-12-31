@@ -289,7 +289,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
 		const { root, witness } = this.createVotersRootAndWitness();
 		const proof = await this.createVoteProof({
 			pollId,
-			optionHash: OptionHash.fromString(optionHash),
+			optionHash: Field(optionHash),
 			votersRoot: root,
 			votersWitness: witness,
 		});
