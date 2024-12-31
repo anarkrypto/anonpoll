@@ -6,7 +6,8 @@ import {
 	voteProgram,
 	VotePrivateInputs,
 	VoteProof,
-	VotePublicInputs
+	VotePublicInputs,
+	OptionHash
 } from "../../../src/runtime/modules/poll";
 import {
 	Field,
@@ -206,6 +207,45 @@ describe("Poll", () => {
 			/Nullifier has already been used/
 		);
 		expect(storedNullifier?.toBoolean()).toBe(true);
+	});
+
+	it("should not allow voting with an invalid option hash", async () => {
+		appChain.setSigner(bobPrivateKey);
+		pollModule = appChain.runtime.resolve("Poll");
+
+		const nullifier = Nullifier.fromJSON(
+			Nullifier.createTestNullifier(
+				CircuitString.toFields(pollId),
+				bobPrivateKey
+			)
+		);
+
+		const publicInput = new VotePublicInputs({
+			pollId,
+			optionHash: OptionHash.fromString("invalid"),
+			votersRoot
+		});
+
+		const privateInput = new VotePrivateInputs({
+			nullifier,
+			votersWitness: bobWitness
+		});
+
+		const proof = USE_DUMMY_PROOF
+			? await mockProof(publicInput, privateInput)
+			: await voteProgram.vote(publicInput, privateInput);
+
+		const tx = await appChain.transaction(bobPublicKey, async () => {
+			await pollModule.vote(proof);
+		});
+
+		await tx.sign();
+		await tx.send();
+
+		const block = await appChain.produceBlock();
+
+		expect(block?.transactions[0].status.toBoolean()).toBe(false);
+		expect(block?.transactions[0].statusMessage).toMatch(/Invalid option hash/);
 	});
 
 	it("should allow another valid vote from a different participant", async () => {
