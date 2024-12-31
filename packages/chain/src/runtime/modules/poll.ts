@@ -1,3 +1,8 @@
+/*
+	NOTE: The proof verification has known vulnerabilities while Protokit is in development
+	and snarky is not implemented yet.
+*/
+
 import { UInt32 } from "@proto-kit/library";
 import {
 	runtimeModule,
@@ -181,15 +186,6 @@ export class Poll extends RuntimeModule {
 
 	@runtimeMethod()
 	async vote(proof: VoteProof) {
-		/*
-			NOTE: This proof verification was based on private-airdrop-workshop repo, but it has
-			known vulnerabilities while Protokit is in development:
-			Read more: https://github.com/proto-kit/private-airdrop-workshop
-		 	
-			TODO: In the future, check for Protokit updates and, if necessarly,
-			implement a new proof validation method
-		*/
-
 		const pollId = proof.publicInput.pollId;
 
 		proof.verify();
