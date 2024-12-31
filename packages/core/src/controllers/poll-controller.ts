@@ -132,7 +132,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
 			);
 
 			// Check if the votersWallets from metadata matches the onchain votersRoot
-			this.comparevotersRoot(metadata.votersWallets, votersRoot);
+			this.compareVotersRoot(metadata.votersWallets, votersRoot);
 
 			const options = this.buildOptions(metadata, votingResults);
 
@@ -227,7 +227,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
 		}
 	}
 
-	private comparevotersRoot = (publicKeys: string[], votersRoot: string) => {
+	private compareVotersRoot = (publicKeys: string[], votersRoot: string) => {
 		const map = new MerkleMap();
 		publicKeys.forEach(publicKey => {
 			const hashKey = Poseidon.hash(PublicKey.fromBase58(publicKey).toFields());
