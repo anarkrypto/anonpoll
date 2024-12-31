@@ -48,6 +48,7 @@ export const useVote = (
 				const message = err instanceof Error ? err.message : 'Unknown error';
 				setError(message);
 				options?.onError?.(message);
+				throw new Error(message);
 			} finally {
 				setIsPending(false);
 			}

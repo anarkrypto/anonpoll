@@ -10,7 +10,7 @@ import { InMemoryMetadataStore } from '@/stores/metadata-store';
 import { ChainTestController } from './test-utils/chain-test-controller';
 import { PollController } from '@/controllers/poll-controller';
 import { CID } from 'multiformats/cid';
-import { PollData } from '@/schemas/poll';
+import { PollMetadata } from '@/schemas/metadata';
 
 const PRIVATE_KEY = 'EKDii5d1dA7DDw6NZwN7jF7qcdYR5MVjZ9TfESv1gc2TvmvV2WAE';
 
@@ -36,7 +36,7 @@ describe('Poll Manager', () => {
 		client: appChain,
 	});
 
-	let store: InMemoryMetadataStore<PollData>;
+	let store: InMemoryMetadataStore<PollMetadata>;
 	let pollId: string;
 
 	beforeAll(async () => {
@@ -53,7 +53,7 @@ describe('Poll Manager', () => {
 	it('should create a poll', async () => {
 		await chain.start();
 
-		store = new InMemoryMetadataStore<PollData>();
+		store = new InMemoryMetadataStore<PollMetadata>();
 
 		const pollManager = new PollManagerController({
 			client: appChain,

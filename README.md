@@ -38,7 +38,7 @@ https://zeropoll.xyz
 - Zero-knowledge proofs for voter eligibility
 - Poseidon hash function for option privacy
 - Nullifier-based double-vote prevention
-- Commitment-based voter set management
+- MerkleMap-based voter set management
 
 ## Quick start
 

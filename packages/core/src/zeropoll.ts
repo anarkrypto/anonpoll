@@ -13,7 +13,7 @@ import {
 	BaseConfig,
 } from '@/controllers';
 import { IpfsMetadataStore } from '@/stores/metadata-store';
-import { PollData } from '@/schemas';
+import { PollMetadata } from '@/schemas';
 
 export interface ZeroPollConfig extends BaseConfig {
 	tickInterval?: number;
@@ -71,7 +71,7 @@ export class ZeroPoll extends BaseController<ZeroPollConfig, ZeroPollState> {
 			initialState.wallet
 		);
 
-		const pollStore = new IpfsMetadataStore<PollData>(config.ipfsApiUrl);
+		const pollStore = new IpfsMetadataStore<PollMetadata>(config.ipfsApiUrl);
 
 		this.pollManager = new PollManagerController(
 			{ store: pollStore, client, wallet: this.wallet },

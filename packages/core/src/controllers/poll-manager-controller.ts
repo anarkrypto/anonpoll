@@ -1,5 +1,9 @@
 import { BaseConfig, BaseController, BaseState } from './base-controller';
-import { EncryptedMetadataV1, pollInsertSchema } from '@/schemas';
+import {
+	EncryptedMetadataV1,
+	PollMetadata,
+	pollMetadataSchema,
+} from '@/schemas';
 import { z } from 'zod';
 import { Bool, CircuitString, MerkleMap, Poseidon, PublicKey } from 'o1js';
 import { WalletController } from './wallet-controller';
@@ -7,8 +11,6 @@ import { OptionsHashes } from '@zeropoll/chain/runtime/modules/poll';
 import { AbstractMetadataStore } from '@/stores/metadata-store';
 import type { client } from '@zeropoll/chain';
 import { MetadataEncryptionV1 } from '@/utils';
-
-export type CreatePollData = z.infer<typeof pollInsertSchema>;
 
 export interface PollManagerConfig extends BaseConfig {
 	client: Pick<typeof client, 'query' | 'runtime' | 'transaction'>;
@@ -52,7 +54,7 @@ export class PollManagerController extends BaseController<
 	}
 
 	public async create(
-		data: CreatePollData,
+		data: PollMetadata,
 		encryptionKey?: string
 	): Promise<{ id: string; hash: string }> {
 		if (!this.wallet.account) {
@@ -69,7 +71,7 @@ export class PollManagerController extends BaseController<
 			map.set(hashKey, Bool(true).toField());
 		});
 
-		const optionsHashes = OptionsHashes.fromTexts(data.options, data.salt);
+		const optionsHashes = OptionsHashes.fromStrings(data.options, data.salt);
 
 		const storeData = encryptionKey
 			? await this.encrypt(data, encryptionKey)
@@ -106,7 +108,7 @@ export class PollManagerController extends BaseController<
 	}
 
 	private async encrypt(
-		data: CreatePollData,
+		data: PollMetadata,
 		key: string
 	): Promise<EncryptedMetadataV1> {
 		const metadataEncryptionV1 = new MetadataEncryptionV1(key);

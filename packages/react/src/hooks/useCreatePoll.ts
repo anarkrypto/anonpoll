@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useCallback, useMemo } from 'react';
-import { CreatePollData } from '@zeropoll/core/controllers';
 import { MetadataEncryptionV1 } from '@zeropoll/core/utils';
 import { useZeroPoll } from '../zeropoll-provider';
+import { PollMetadata } from '@zeropoll/core/schemas';
 
 export interface CreatePollResult {
 	id: string;
@@ -17,7 +17,7 @@ export interface UseCreatePollOptions {
 }
 
 export interface UseCreatePollReturn {
-	createPoll: (data: CreatePollData) => Promise<void>;
+	createPoll: (data: PollMetadata) => Promise<void>;
 	isPending: boolean;
 	isSuccess: boolean;
 	isError: boolean;
@@ -36,7 +36,7 @@ export const useCreatePoll = (
 	const encryptionKey = useMemo(() => MetadataEncryptionV1.generateKey(), []);
 
 	const createPoll = useCallback(
-		async (pollData: CreatePollData) => {
+		async (pollData: PollMetadata) => {
 			setIsPending(true);
 			setError(null);
 			setData(null);
@@ -47,11 +47,17 @@ export const useCreatePoll = (
 				);
 				setData({ ...result, encryptionKey });
 				options.onSuccess?.({ ...result, encryptionKey });
-			} catch (err) {
-				const message = err instanceof Error ? err.message : 'Unknown error';
+			} catch (error) {
+				const message =
+					error instanceof Object &&
+					'message' in error &&
+					typeof error.message === 'string'
+						? error.message
+						: 'Unknown error';
 				setError(message);
 				options.onError?.(message);
-				console.error(err);
+				console.error({ error });
+				throw new Error(message);
 			} finally {
 				setIsPending(false);
 			}
