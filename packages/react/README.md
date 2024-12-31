@@ -117,7 +117,7 @@ interface PollResult {
 		votesCount: number;
 		votesPercentage: number;
 	}[];
-	commitment: string;
+	votersRoot: string;
 }
 ```
 

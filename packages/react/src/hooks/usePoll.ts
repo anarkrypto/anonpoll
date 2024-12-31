@@ -56,7 +56,7 @@ export const usePoll = (
 			id: pollState.id,
 			metadata: pollState.metadata,
 			options: pollState.options,
-			commitment: pollState.commitment,
+			votersRoot: pollState.votersRoot,
 		},
 		isLoading: pollState.loading,
 		isSuccess: !pollState.loading && !error,
