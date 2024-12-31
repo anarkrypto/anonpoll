@@ -26,8 +26,6 @@ import {
 	PollMetadata,
 	pollMetadataSchema,
 } from '@/schemas';
-import { Pickles } from 'node_modules/o1js/dist/node/snarky';
-import { dummyBase64Proof } from 'node_modules/o1js/dist/node/lib/proof-system/zkprogram';
 
 export interface PollConfig extends BaseConfig {
 	wallet: WalletController;
@@ -341,7 +339,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
 		publicInput: VotePublicInputs,
 		privateInput: VotePrivateInputs
 	): Promise<VoteProof> {
-		const [, proof] = Pickles.proofOfBase64(await dummyBase64Proof(), 2);
+		const dummy = await VoteProof.dummy(publicInput, privateInput, 2);
 
 		const publicOutput = await voteProgram.rawMethods.vote(
 			publicInput,
@@ -349,7 +347,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
 		);
 
 		return new VoteProof({
-			proof: proof,
+			proof: dummy.proof,
 			maxProofsVerified: 2,
 			publicInput,
 			publicOutput,
