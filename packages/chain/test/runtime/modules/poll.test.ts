@@ -23,7 +23,7 @@ import { log } from "@proto-kit/common";
 import { Balances } from "../../../src/runtime/modules/balances";
 import { UInt64 } from "@proto-kit/library";
 
-const USE_DUMMY_PROOF = false;
+const USE_DUMMY_PROOF = true;
 
 log.setLevel("ERROR");
 
