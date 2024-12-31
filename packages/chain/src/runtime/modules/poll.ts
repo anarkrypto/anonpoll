@@ -70,20 +70,20 @@ export class VoteOptions extends Struct({
 	] // 10 options
 }) {
 	static cast(prevOptions: VoteOptions, optionHash: Field) {
+		let found = Bool(false);
 		for (let i = 0; i < prevOptions.options.length; i++) {
+			const match = prevOptions.options[i].hash.equals(optionHash);
 			prevOptions.options[i] = new VoteOption({
 				hash: prevOptions.options[i].hash,
 				votesCount: UInt32.Unsafe.fromField(
 					prevOptions.options[i].votesCount.value.add(
-						Provable.if(
-							prevOptions.options[i].hash.equals(optionHash),
-							Field(1),
-							Field(0)
-						)
+						Provable.if(match, Field(1), Field(0))
 					)
 				)
 			});
+			found = Provable.if(match, Bool(true), found);
 		}
+		assert(found, "Invalid option hash");
 		return prevOptions;
 	}
 
