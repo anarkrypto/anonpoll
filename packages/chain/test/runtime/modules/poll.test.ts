@@ -301,7 +301,7 @@ describe("Poll", () => {
 		);
 	});
 
-	it("should not allow unauthorized witness in proof", async () => {
+	it("should not allow invalid witness in proof", async () => {
 		const charliePrivateKey = PrivateKey.random();
 		const charliePublicKey = charliePrivateKey.toPublicKey();
 
