@@ -16,7 +16,8 @@
 		"./environments/*": "./dist/environments/*",
 		"./protocol": "./dist/protocol/index.js",
 		"./runtime": "./dist/runtime/index.js",
-		"./runtime/modules/*": "./dist/runtime/modules/*.js",
+		"./runtime/modules/*": "./dist/runtime/modules/*",
+		"./runtime/modules/poll": "./dist/runtime/modules/poll/index.js",
 		"./sequencer": "./dist/sequencer/index.js",
 		"./jest.config.js": "./jest.config.js"
 	},
