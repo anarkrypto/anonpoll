@@ -65,7 +65,7 @@ export class PollManagerController extends BaseController<
 		const sender = PublicKey.fromBase58(this.wallet.account);
 		const map = new MerkleMap();
 
-		data.votersWallets.forEach(address => {
+		data.votersWallets?.forEach(address => {
 			const publicKey = PublicKey.fromBase58(address);
 			const hashKey = Poseidon.hash(publicKey.toFields());
 			map.set(hashKey, Bool(true).toField());
