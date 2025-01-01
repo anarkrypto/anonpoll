@@ -174,7 +174,7 @@ export class Poll extends RuntimeModule {
 	}
 
 	@runtimeMethod()
-	async vote(proof: VoteProof) {
+	public async vote(proof: VoteProof) {
 		const pollId = proof.publicInput.pollId;
 
 		proof.verify();
