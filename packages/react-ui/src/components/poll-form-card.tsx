@@ -457,8 +457,8 @@ function VotersWalletsStep({
 }) {
 	// Fill the array with 1 empty value
 	const wallets = [
-		form.watch('votersWallets')[0] ?? '',
-		...form.watch('votersWallets').slice(1),
+		form.watch('votersWallets')?.[0] ?? '',
+		...(form.watch('votersWallets')?.slice(1) || []),
 	];
 
 	const addWallet = () => {
