@@ -9,7 +9,8 @@ import {
 	Nullifier,
 	ZkProgram,
 	Provable,
-	CircuitString
+	CircuitString,
+	MerkleMap
 } from "o1js";
 
 export class Vote extends Struct({
@@ -103,7 +104,7 @@ export const voteProgram = ZkProgram({
 	publicInput: VotePublicInputs,
 	publicOutput: VotePublicOutputs,
 	methods: {
-		vote: {
+		voteInInviteOnlyPoll: {
 			privateInputs: [VotePrivateInputs],
 			method: async (
 				publicInput: VotePublicInputs,
@@ -117,6 +118,25 @@ export const voteProgram = ZkProgram({
 
 				computedRoot.assertEquals(publicInput.votersRoot);
 				computedKey.assertEquals(key);
+
+				const message = CircuitString.toFields(publicInput.pollId);
+				privateInput.nullifier.verify(message);
+
+				return new VotePublicOutputs({
+					optionHash: publicInput.optionHash,
+					nullifier: privateInput.nullifier.key()
+				});
+			}
+		},
+		voteInOpenPoll: {
+			privateInputs: [VotePrivateInputs],
+			method: async (
+				publicInput: VotePublicInputs,
+				privateInput: VotePrivateInputs
+			): Promise<VotePublicOutputs> => {
+				const emptyRoot = new MerkleMap().getRoot();
+
+				publicInput.votersRoot.assertEquals(emptyRoot, "Invalid open poll");
 
 				const message = CircuitString.toFields(publicInput.pollId);
 				privateInput.nullifier.verify(message);
