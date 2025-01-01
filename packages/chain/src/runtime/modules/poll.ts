@@ -23,7 +23,7 @@ import {
 	CircuitString
 } from "o1js";
 
-export class VoteOption extends Struct({
+export class Vote extends Struct({
 	hash: Field,
 	votesCount: UInt32
 }) {}
@@ -60,25 +60,14 @@ export class OptionsHashes extends Struct({
 	}
 }
 
-export class VoteOptions extends Struct({
-	options: [
-		VoteOption,
-		VoteOption,
-		VoteOption,
-		VoteOption,
-		VoteOption,
-		VoteOption,
-		VoteOption,
-		VoteOption,
-		VoteOption,
-		VoteOption
-	] // 10 options
+export class Votes extends Struct({
+	options: [Vote, Vote, Vote, Vote, Vote, Vote, Vote, Vote, Vote, Vote] // 10 options
 }) {
-	static cast(prevOptions: VoteOptions, optionHash: Field) {
+	static cast(prevOptions: Votes, optionHash: Field) {
 		let found = Bool(false);
 		for (let i = 0; i < prevOptions.options.length; i++) {
 			const match = prevOptions.options[i].hash.equals(optionHash);
-			prevOptions.options[i] = new VoteOption({
+			prevOptions.options[i] = new Vote({
 				hash: prevOptions.options[i].hash,
 				votesCount: UInt32.Unsafe.fromField(
 					prevOptions.options[i].votesCount.value.add(
@@ -93,9 +82,9 @@ export class VoteOptions extends Struct({
 	}
 
 	static fromOptionsHashes(optionsHashes: OptionsHashes) {
-		return new VoteOptions({
+		return new Votes({
 			options: optionsHashes.hashes.map((hash) => {
-				return new VoteOption({
+				return new Vote({
 					hash,
 					votesCount: UInt32.from(0)
 				});
@@ -106,7 +95,7 @@ export class VoteOptions extends Struct({
 
 export class PollStruct extends Struct({
 	votersRoot: Field,
-	votes: VoteOptions
+	votes: Votes
 }) {}
 
 export class VotePublicInputs extends Struct({
@@ -179,7 +168,7 @@ export class Poll extends RuntimeModule {
 			id,
 			new PollStruct({
 				votersRoot,
-				votes: VoteOptions.fromOptionsHashes(optionsHashes)
+				votes: Votes.fromOptionsHashes(optionsHashes)
 			})
 		);
 	}
@@ -213,7 +202,7 @@ export class Poll extends RuntimeModule {
 			pollId,
 			new PollStruct({
 				votersRoot: poll.value.votersRoot,
-				votes: VoteOptions.cast(currentVotes, proof.publicOutput.optionHash)
+				votes: Votes.cast(currentVotes, proof.publicOutput.optionHash)
 			})
 		);
 	}
