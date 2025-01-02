@@ -1,6 +1,6 @@
 {
 	"name": "@zeropoll/chain",
-	"version": "1.0.1",
+	"version": "2.0.0",
 	"description": "ZeroPoll Chain",
 	"type": "module",
 	"main": "dist/index.js",
