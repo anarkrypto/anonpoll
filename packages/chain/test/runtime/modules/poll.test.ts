@@ -76,7 +76,7 @@ describe("Poll", () => {
 	): Promise<VoteProof> {
 		const [, proof] = Pickles.proofOfBase64(await dummyBase64Proof(), 2);
 
-		const publicOutput = await voteProgram.rawMethods.vote(
+		const publicOutput = await voteProgram.rawMethods.voteInInviteOnlyPoll(
 			publicInput,
 			privateInput
 		);
@@ -147,7 +147,7 @@ describe("Poll", () => {
 
 		const proof = USE_DUMMY_PROOF
 			? await mockProof(publicInput, privateInput)
-			: await voteProgram.vote(publicInput, privateInput);
+			: await voteProgram.voteInInviteOnlyPoll(publicInput, privateInput);
 
 		const tx = await appChain.transaction(alicePublicKey, async () => {
 			await pollModule.vote(proof);
@@ -187,7 +187,7 @@ describe("Poll", () => {
 
 		const proof = USE_DUMMY_PROOF
 			? await mockProof(publicInput, privateInput)
-			: await voteProgram.vote(publicInput, privateInput);
+			: await voteProgram.voteInInviteOnlyPoll(publicInput, privateInput);
 
 		const tx = await appChain.transaction(alicePublicKey, async () => {
 			await pollModule.vote(proof);
@@ -233,7 +233,7 @@ describe("Poll", () => {
 
 		const proof = USE_DUMMY_PROOF
 			? await mockProof(publicInput, privateInput)
-			: await voteProgram.vote(publicInput, privateInput);
+			: await voteProgram.voteInInviteOnlyPoll(publicInput, privateInput);
 
 		const tx = await appChain.transaction(bobPublicKey, async () => {
 			await pollModule.vote(proof);
@@ -272,7 +272,7 @@ describe("Poll", () => {
 
 		const proof = USE_DUMMY_PROOF
 			? await mockProof(publicInput, privateInput)
-			: await voteProgram.vote(publicInput, privateInput);
+			: await voteProgram.voteInInviteOnlyPoll(publicInput, privateInput);
 
 		const tx = await appChain.transaction(bobPublicKey, async () => {
 			await pollModule.vote(proof);
@@ -324,7 +324,7 @@ describe("Poll", () => {
 
 		const proof = USE_DUMMY_PROOF
 			? await mockProof(publicInput, privateInput)
-			: await voteProgram.vote(publicInput, privateInput);
+			: await voteProgram.voteInInviteOnlyPoll(publicInput, privateInput);
 
 		const tx = await appChain.transaction(charliePublicKey, async () => {
 			await pollModule.vote(proof);
@@ -374,7 +374,7 @@ describe("Poll", () => {
 
 		const generateProof = USE_DUMMY_PROOF
 			? () => mockProof(publicInput, privateInput)
-			: () => voteProgram.vote(publicInput, privateInput);
+			: () => voteProgram.voteInInviteOnlyPoll(publicInput, privateInput);
 
 		expect(generateProof).rejects.toThrow();
 	});
