@@ -109,12 +109,12 @@ export const voteProgram = ZkProgram({
 			method: async (
 				publicInput: VotePublicInputs,
 				privateInput: VotePrivateInputs
-			): Promise<VotePublicOutputs> => {
+			) => {
 				const key = Poseidon.hash(
 					privateInput.nullifier.getPublicKey().toFields()
 				);
 				const [computedRoot, computedKey] =
-					privateInput.votersWitness.computeRootAndKeyV2(Bool(true).toField());
+					privateInput.votersWitness.computeRootAndKey(Bool(true).toField());
 
 				computedRoot.assertEquals(publicInput.votersRoot);
 				computedKey.assertEquals(key);
@@ -122,10 +122,12 @@ export const voteProgram = ZkProgram({
 				const message = CircuitString.toFields(publicInput.pollId);
 				privateInput.nullifier.verify(message);
 
-				return new VotePublicOutputs({
-					optionHash: publicInput.optionHash,
-					nullifier: privateInput.nullifier.key()
-				});
+				return {
+					publicOutput: new VotePublicOutputs({
+						optionHash: publicInput.optionHash,
+						nullifier: privateInput.nullifier.key()
+					})
+				};
 			}
 		},
 		voteInOpenPoll: {
@@ -133,7 +135,7 @@ export const voteProgram = ZkProgram({
 			method: async (
 				publicInput: VotePublicInputs,
 				privateInput: VotePrivateInputs
-			): Promise<VotePublicOutputs> => {
+			) => {
 				const emptyRoot = new MerkleMap().getRoot();
 
 				publicInput.votersRoot.assertEquals(emptyRoot, "Invalid open poll");
@@ -141,10 +143,12 @@ export const voteProgram = ZkProgram({
 				const message = CircuitString.toFields(publicInput.pollId);
 				privateInput.nullifier.verify(message);
 
-				return new VotePublicOutputs({
-					optionHash: publicInput.optionHash,
-					nullifier: privateInput.nullifier.key()
-				});
+				return {
+					publicOutput: new VotePublicOutputs({
+						optionHash: publicInput.optionHash,
+						nullifier: privateInput.nullifier.key()
+					})
+				};
 			}
 		}
 	}

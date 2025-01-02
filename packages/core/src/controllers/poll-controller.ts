@@ -349,7 +349,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
 	): Promise<VoteProof> {
 		const dummy = await VoteProof.dummy(publicInput, privateInput, 2);
 
-		const publicOutput = isOpenPoll
+		const { publicOutput } = isOpenPoll
 			? await voteProgram.rawMethods.voteInOpenPoll(publicInput, privateInput)
 			: await voteProgram.rawMethods.voteInInviteOnlyPoll(
 					publicInput,
