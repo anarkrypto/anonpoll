@@ -72,7 +72,6 @@ export function PollFormCard({
 			title: '',
 			description: '',
 			options: [],
-			votersWallets: [],
 			salt: generateSalt(),
 		},
 		resolver:
@@ -126,7 +125,6 @@ export function PollFormCard({
 					await createPoll({
 						...data,
 						salt: generateSalt(),
-						votersWallets: [],
 					});
 					return;
 				}
