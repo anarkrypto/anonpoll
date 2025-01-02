@@ -344,13 +344,10 @@ export class PollController extends BaseController<PollConfig, PollState> {
 
 	private async mockProof(
 		publicInput: VotePublicInputs,
-		privateInput: VotePrivateInputs
+		privateInput: VotePrivateInputs,
+		isOpenPoll: boolean
 	): Promise<VoteProof> {
 		const dummy = await VoteProof.dummy(publicInput, privateInput, 2);
-
-		const isOpenPoll = privateInput.votersWitness.equals(
-			MerkleMapWitness.empty()
-		);
 
 		const publicOutput = isOpenPoll
 			? await voteProgram.rawMethods.voteInOpenPoll(publicInput, privateInput)
@@ -393,8 +390,10 @@ export class PollController extends BaseController<PollConfig, PollState> {
 			votersWitness,
 		});
 
+		const isOpenPoll = this.voters.size === 0;
+
 		// TODO: remove mock / dummy proofs
-		return await this.mockProof(publicInput, privateInput);
+		return await this.mockProof(publicInput, privateInput, isOpenPoll);
 	}
 
 	private async submitVoteTransaction(proof: VoteProof) {
