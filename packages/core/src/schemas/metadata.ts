@@ -27,7 +27,8 @@ export const pollMetadataSchema = z.object({
 			)
 		)
 		.min(1)
-		.max(MAX_POLL_VOTERS),
+		.max(MAX_POLL_VOTERS)
+		.optional(),
 });
 
 export type PollMetadata = z.infer<typeof pollMetadataSchema>;

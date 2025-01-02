@@ -9,7 +9,6 @@ import {
 } from 'o1js';
 import type { client } from '@zeropoll/chain';
 import {
-	OptionHash,
 	OptionsHashes,
 	VotePrivateInputs,
 	voteProgram,
@@ -132,7 +131,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
 			);
 
 			// Check if the votersWallets from metadata matches the onchain votersRoot
-			this.compareVotersRoot(metadata.votersWallets, votersRoot);
+			this.compareVotersRoot(metadata.votersWallets || [], votersRoot);
 
 			const options = this.buildOptions(metadata, votingResults);
 
@@ -151,7 +150,7 @@ export class PollController extends BaseController<PollConfig, PollState> {
 				...data,
 			});
 
-			metadata.votersWallets.forEach(wallet =>
+			metadata.votersWallets?.forEach(wallet =>
 				this.voters.set(wallet, PublicKey.fromBase58(wallet))
 			);
 
@@ -306,13 +305,22 @@ export class PollController extends BaseController<PollConfig, PollState> {
 		if (!this.state.metadata) {
 			throw new Error('Poll not loaded');
 		}
-		if (!this.voters.has(this.wallet.account)) {
-			throw new Error('Wallet is not allowed to vote');
-		}
+		// if (!this.voters.has(this.wallet.account)) {
+		// 	throw new Error('Wallet is not allowed to vote');
+		// }
 	}
 
 	private createVotersRootAndWitness() {
 		const map = new MerkleMap();
+
+		const isOpenPoll = this.voters.size === 0;
+
+		if (isOpenPoll) {
+			return {
+				root: map.getRoot(),
+				witness: MerkleMapWitness.empty(),
+			};
+		}
 
 		const sender = this.wallet.publicKey();
 		const senderHashKey = Poseidon.hash(sender.toFields());
@@ -326,25 +334,27 @@ export class PollController extends BaseController<PollConfig, PollState> {
 			map.set(hashKey, Bool(true).toField());
 		});
 
-		const root = map.getRoot();
 		const witness = map.getWitness(senderHashKey);
 
 		return {
-			root,
+			root: map.getRoot(),
 			witness,
 		};
 	}
 
 	private async mockProof(
 		publicInput: VotePublicInputs,
-		privateInput: VotePrivateInputs
+		privateInput: VotePrivateInputs,
+		isOpenPoll: boolean
 	): Promise<VoteProof> {
 		const dummy = await VoteProof.dummy(publicInput, privateInput, 2);
 
-		const publicOutput = await voteProgram.rawMethods.vote(
-			publicInput,
-			privateInput
-		);
+		const { publicOutput } = isOpenPoll
+			? await voteProgram.rawMethods.voteInOpenPoll(publicInput, privateInput)
+			: await voteProgram.rawMethods.voteInInviteOnlyPoll(
+					publicInput,
+					privateInput
+				);
 
 		return new VoteProof({
 			proof: dummy.proof,
@@ -380,8 +390,10 @@ export class PollController extends BaseController<PollConfig, PollState> {
 			votersWitness,
 		});
 
+		const isOpenPoll = this.voters.size === 0;
+
 		// TODO: remove mock / dummy proofs
-		return await this.mockProof(publicInput, privateInput);
+		return await this.mockProof(publicInput, privateInput, isOpenPoll);
 	}
 
 	private async submitVoteTransaction(proof: VoteProof) {

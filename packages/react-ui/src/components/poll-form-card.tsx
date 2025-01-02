@@ -33,7 +33,7 @@ export type PollFormCardProps = {
 	className?: string | undefined;
 } & UseCreatePollOptions;
 
-type PollPrivacy = 'public' | 'private';
+type PollPrivacy = 'open' | 'invite-only';
 type Step = (typeof STEPS)[keyof typeof STEPS];
 
 // Constants
@@ -72,7 +72,6 @@ export function PollFormCard({
 			title: '',
 			description: '',
 			options: [],
-			votersWallets: [],
 			salt: generateSalt(),
 		},
 		resolver:
@@ -117,7 +116,7 @@ export function PollFormCard({
 						return;
 					}
 
-					if (privacy === 'private') {
+					if (privacy === 'invite-only') {
 						setStep(STEPS.VOTERS);
 						return;
 					}
@@ -126,7 +125,6 @@ export function PollFormCard({
 					await createPoll({
 						...data,
 						salt: generateSalt(),
-						votersWallets: [],
 					});
 					return;
 				}
@@ -159,7 +157,7 @@ export function PollFormCard({
 	const renderButtonContent = () => {
 		if (
 			step === STEPS.PRIVACY ||
-			(step === STEPS.POLL && privacy === 'private')
+			(step === STEPS.POLL && privacy === 'invite-only')
 		) {
 			return (
 				<>
@@ -230,15 +228,15 @@ function PrivacyStep({
 
 	const options = [
 		{
-			value: 'public',
+			value: 'open',
 			icon: <GlobeIcon className="h-5 w-5 text-zinc-500" />,
-			title: 'Public Poll',
+			title: 'Open Poll',
 			description: 'Votes are anonymous, but anyone can find the poll and vote',
 		},
 		{
-			value: 'private',
+			value: 'invite-only',
 			icon: <LockIcon className="h-5 w-5 text-zinc-500" />,
-			title: 'Private Poll',
+			title: 'Invite-only Poll',
 			description:
 				'Votes are anonymous, poll is encrypted and only specific wallets can vote',
 		},
@@ -457,8 +455,8 @@ function VotersWalletsStep({
 }) {
 	// Fill the array with 1 empty value
 	const wallets = [
-		form.watch('votersWallets')[0] ?? '',
-		...form.watch('votersWallets').slice(1),
+		form.watch('votersWallets')?.[0] ?? '',
+		...(form.watch('votersWallets')?.slice(1) || []),
 	];
 
 	const addWallet = () => {

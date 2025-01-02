@@ -212,17 +212,19 @@ export function PollCard({
 					</div>
 				</CardContent>
 				<CardFooter className="flex gap-2">
-					<Button
-						className="w-full"
-						loading={isLoading}
-						onClick={() => setOpenVotersModal(true)}
-						variant="outline"
-					>
-						Eligible Voters
-						<Badge className={cn('ml-2', 'bg-green-100 text-green-700')}>
-							{metadata!.votersWallets.length}
-						</Badge>
-					</Button>
+					{!!metadata.votersWallets && (
+						<Button
+							className="w-full"
+							loading={isLoading}
+							onClick={() => setOpenVotersModal(true)}
+							variant="outline"
+						>
+							Eligible Voters
+							<Badge className={cn('ml-2', 'bg-green-100 text-green-700')}>
+								{metadata!.votersWallets?.length}
+							</Badge>
+						</Button>
+					)}
 					<Button className="w-full" onClick={handleShare} variant="outline">
 						{linkCopied ? (
 							<>
@@ -239,7 +241,7 @@ export function PollCard({
 				</CardFooter>
 			</Card>
 			<VotersModal
-				votersWallets={metadata!.votersWallets}
+				votersWallets={metadata!.votersWallets || []}
 				open={openVotersModal}
 				onOpenChange={setOpenVotersModal}
 			/>

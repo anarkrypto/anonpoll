@@ -24,7 +24,7 @@ import { log } from "@proto-kit/common";
 import { Balances } from "../../../src/runtime/modules/balances";
 import { UInt64 } from "@proto-kit/library";
 
-const USE_DUMMY_PROOF = true;
+const USE_DUMMY_PROOF = false;
 
 log.setLevel("ERROR");
 
@@ -73,20 +73,22 @@ describe("Poll", () => {
 	async function mockProof(
 		publicInput: VotePublicInputs,
 		privateInput: VotePrivateInputs
-	): Promise<VoteProof> {
+	): Promise<{ proof: VoteProof }> {
 		const [, proof] = Pickles.proofOfBase64(await dummyBase64Proof(), 2);
 
-		const publicOutput = await voteProgram.rawMethods.vote(
+		const { publicOutput } = await voteProgram.rawMethods.voteInInviteOnlyPoll(
 			publicInput,
 			privateInput
 		);
 
-		return new VoteProof({
-			proof: proof,
-			maxProofsVerified: 2,
-			publicInput,
-			publicOutput
-		});
+		return {
+			proof: new VoteProof({
+				proof: proof,
+				maxProofsVerified: 2,
+				publicInput,
+				publicOutput
+			})
+		};
 	}
 
 	beforeAll(async () => {
@@ -145,9 +147,9 @@ describe("Poll", () => {
 			votersWitness: aliceWitness
 		});
 
-		const proof = USE_DUMMY_PROOF
+		const { proof } = USE_DUMMY_PROOF
 			? await mockProof(publicInput, privateInput)
-			: await voteProgram.vote(publicInput, privateInput);
+			: await voteProgram.voteInInviteOnlyPoll(publicInput, privateInput);
 
 		const tx = await appChain.transaction(alicePublicKey, async () => {
 			await pollModule.vote(proof);
@@ -185,9 +187,9 @@ describe("Poll", () => {
 			votersWitness: aliceWitness
 		});
 
-		const proof = USE_DUMMY_PROOF
+		const { proof } = USE_DUMMY_PROOF
 			? await mockProof(publicInput, privateInput)
-			: await voteProgram.vote(publicInput, privateInput);
+			: await voteProgram.voteInInviteOnlyPoll(publicInput, privateInput);
 
 		const tx = await appChain.transaction(alicePublicKey, async () => {
 			await pollModule.vote(proof);
@@ -231,9 +233,9 @@ describe("Poll", () => {
 			votersWitness: bobWitness
 		});
 
-		const proof = USE_DUMMY_PROOF
+		const { proof } = USE_DUMMY_PROOF
 			? await mockProof(publicInput, privateInput)
-			: await voteProgram.vote(publicInput, privateInput);
+			: await voteProgram.voteInInviteOnlyPoll(publicInput, privateInput);
 
 		const tx = await appChain.transaction(bobPublicKey, async () => {
 			await pollModule.vote(proof);
@@ -270,9 +272,9 @@ describe("Poll", () => {
 			votersWitness: bobWitness
 		});
 
-		const proof = USE_DUMMY_PROOF
+		const { proof } = USE_DUMMY_PROOF
 			? await mockProof(publicInput, privateInput)
-			: await voteProgram.vote(publicInput, privateInput);
+			: await voteProgram.voteInInviteOnlyPoll(publicInput, privateInput);
 
 		const tx = await appChain.transaction(bobPublicKey, async () => {
 			await pollModule.vote(proof);
@@ -322,9 +324,9 @@ describe("Poll", () => {
 			votersWitness: charlieWitness
 		});
 
-		const proof = USE_DUMMY_PROOF
+		const { proof } = USE_DUMMY_PROOF
 			? await mockProof(publicInput, privateInput)
-			: await voteProgram.vote(publicInput, privateInput);
+			: await voteProgram.voteInInviteOnlyPoll(publicInput, privateInput);
 
 		const tx = await appChain.transaction(charliePublicKey, async () => {
 			await pollModule.vote(proof);
@@ -374,7 +376,7 @@ describe("Poll", () => {
 
 		const generateProof = USE_DUMMY_PROOF
 			? () => mockProof(publicInput, privateInput)
-			: () => voteProgram.vote(publicInput, privateInput);
+			: () => voteProgram.voteInInviteOnlyPoll(publicInput, privateInput);
 
 		expect(generateProof).rejects.toThrow();
 	});

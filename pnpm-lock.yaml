@@ -265,34 +265,34 @@ importers:
     dependencies:
       '@proto-kit/api':
         specifier: '*'
-        version: 0.1.1-develop.1088(4yiay5rbal2tq5qczbpprw4yfa)
+        version: 0.1.1-develop.1088(jibe6vn2ykm2jr5ngnp3vkzdv4)
       '@proto-kit/common':
         specifier: '*'
-        version: 0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0)
+        version: 0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0)
       '@proto-kit/deployment':
         specifier: '*'
-        version: 0.1.1-develop.1088(gbywmjouxqrdep3p2v3wg6x7fu)
+        version: 0.1.1-develop.1088(nn53aum35siskwzsstyum3fdrm)
       '@proto-kit/library':
         specifier: '*'
-        version: 0.1.1-develop.1088(4yiay5rbal2tq5qczbpprw4yfa)
+        version: 0.1.1-develop.1088(jibe6vn2ykm2jr5ngnp3vkzdv4)
       '@proto-kit/module':
         specifier: '*'
-        version: 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0)
+        version: 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0)
       '@proto-kit/persistance':
         specifier: '*'
-        version: 0.1.1-develop.1088(4yiay5rbal2tq5qczbpprw4yfa)
+        version: 0.1.1-develop.1088(jibe6vn2ykm2jr5ngnp3vkzdv4)
       '@proto-kit/protocol':
         specifier: '*'
-        version: 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0)
+        version: 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0)
       '@proto-kit/sdk':
         specifier: '*'
-        version: 0.1.1-develop.1088(lksza4orw5gb3hqaypuiswe3f4)
+        version: 0.1.1-develop.1088(h3sotaklpmwieoftftutywe4oa)
       '@proto-kit/sequencer':
         specifier: '*'
-        version: 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/module@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0)
+        version: 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/module@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0)
       o1js:
-        specifier: 1.6.0
-        version: 1.6.0
+        specifier: 2.2.0
+        version: 2.2.0
       reflect-metadata:
         specifier: ^0.1.13
         version: 0.1.14
@@ -360,6 +360,9 @@ importers:
       process:
         specifier: ^0.11.10
         version: 0.11.10
+      rimraf:
+        specifier: ^6.0.1
+        version: 6.0.1
       stream-browserify:
         specifier: ^3.0.0
         version: 3.0.0
@@ -389,22 +392,22 @@ importers:
     dependencies:
       '@proto-kit/common':
         specifier: '*'
-        version: 0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0)
+        version: 0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0)
       '@proto-kit/library':
         specifier: '*'
-        version: 0.1.1-develop.1088(4yiay5rbal2tq5qczbpprw4yfa)
+        version: 0.1.1-develop.1088(jibe6vn2ykm2jr5ngnp3vkzdv4)
       '@proto-kit/module':
         specifier: '*'
-        version: 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0)
+        version: 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0)
       '@proto-kit/protocol':
         specifier: '*'
-        version: 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0)
+        version: 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0)
       '@proto-kit/sdk':
         specifier: '*'
-        version: 0.1.1-develop.1088(lksza4orw5gb3hqaypuiswe3f4)
+        version: 0.1.1-develop.1088(h3sotaklpmwieoftftutywe4oa)
       '@proto-kit/sequencer':
         specifier: '*'
-        version: 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/module@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0)
+        version: 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/module@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0)
       '@zeropoll/chain':
         specifier: workspace:*
         version: link:../chain
@@ -415,8 +418,8 @@ importers:
         specifier: ^13.3.1
         version: 13.3.1
       o1js:
-        specifier: 1.6.0
-        version: 1.6.0
+        specifier: 2.2.0
+        version: 2.2.0
       zod:
         specifier: ^3.22.4
         version: 3.24.1
@@ -3549,6 +3552,11 @@ packages:
     resolution: {integrity: sha512-7Bv8RF0k6xjo7d4A/PxYLbUCfb6c+Vpd2/mB2yRDlew7Jb5hEXiCD9ibfO7wpk8i4sevK6DFny9h7EYbM3/sHg==}
     hasBin: true
 
+  glob@11.0.0:
+    resolution: {integrity: sha512-9UiX/Bl6J2yaBbxKoEBRm4Cipxgok8kQYcOPEhScPwebu2I0HoQOuYdIO6S3hLuWoZgpDpwQZMzTFxgpkyT76g==}
+    engines: {node: 20 || >=22}
+    hasBin: true
+
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
     deprecated: Glob versions prior to v9 are no longer supported
@@ -4012,6 +4020,10 @@ packages:
   jackspeak@3.4.3:
     resolution: {integrity: sha512-OGlZQpz2yfahA/Rd1Y8Cd9SIEsqvXkLVoSw/cgwhnhFMDbsQFeZYoJJ7bIZBS9BcamUW96asq/npPWugM+RQBw==}
 
+  jackspeak@4.0.2:
+    resolution: {integrity: sha512-bZsjR/iRjl1Nk1UkjGpAzLNfQtzuijhn2g+pbZb98HQ1Gk8vM9hfbxeMBP+M2/UUdwj0RqGG3mlvk2MsAqwvEw==}
+    engines: {node: 20 || >=22}
+
   jake@10.9.2:
     resolution: {integrity: sha512-2P4SQ0HrLQ+fw6llpLnOaGAvN2Zu6778SJMrCUwns4fOoG9ayrTiZk3VV8sCPkVZF8ab0zksVpS8FDY5pRCNBA==}
     engines: {node: '>=10'}
@@ -4301,6 +4313,10 @@ packages:
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
 
+  lru-cache@11.0.2:
+    resolution: {integrity: sha512-123qHRfJBmo2jXDbo/a5YOQrJoHF/GNQTLzQ5+IdK5pWpceK17yRc6ozlWd25FxvGKQbIUs91fDFkXmDHTKcyA==}
+    engines: {node: 20 || >=22}
+
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
@@ -4385,6 +4401,10 @@ packages:
 
   minimalistic-crypto-utils@1.0.1:
     resolution: {integrity: sha512-JIYlbt6g8i5jKfJ3xz7rF0LXmv2TkDxBLUkiBeZ7bAx4GnnNMr8xFpGnOxn6GhTEHx3SjRrZEoU+j04prX1ktg==}
+
+  minimatch@10.0.1:
+    resolution: {integrity: sha512-ethXTt3SGGR+95gudmqJ1eNhRO7eGEGIgYA9vnPatK4/etz2MEVDno5GMCibdMTuBMyElzIlgxMna3K94XDIDQ==}
+    engines: {node: 20 || >=22}
 
   minimatch@3.1.2:
     resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}
@@ -4531,8 +4551,8 @@ packages:
     resolution: {integrity: sha512-wAOd0moNX2kSA2FNvt8+7ORwYaJpQ1ZoWjUYdb1bBCxq4nkWuU0IiJa9VpVxrj5Ks+FGXQd62OC/Bjk0aSr+dg==}
     hasBin: true
 
-  o1js@1.6.0:
-    resolution: {integrity: sha512-5pHCM0qIHG+MhLlcRJZRK8YFC7MOCjlxwSYbmrLDKER267eUip7JRDtWATytIRxtCPqOBvqKeJb0hR/mvjWxqg==}
+  o1js@2.2.0:
+    resolution: {integrity: sha512-lR8vmBlvzz3h+tDUajZfC/zVM+yKyrJFoIa57nED7F8WRfCGZHHy5lUpaUgHwVsC3ZE+aRaFtj2B2IzYyJu1AQ==}
     engines: {node: '>=18.14.0'}
     hasBin: true
 
@@ -4678,6 +4698,10 @@ packages:
   path-scurry@1.11.1:
     resolution: {integrity: sha512-Xa4Nw17FS9ApQFJ9umLiJS4orGjm7ZzwUrwamcGQuHSzDyth9boKDaycYdDcZDuqYATXw4HFXgaqWTctW/v1HA==}
     engines: {node: '>=16 || 14 >=14.18'}
+
+  path-scurry@2.0.0:
+    resolution: {integrity: sha512-ypGJsmGtdXUOeM5u93TyeIEfEhM6s+ljAhrk5vAvSx8uyY/02OvrZnA0YNGUrPXfpJMgI1ODd3nwz8Npx4O4cg==}
+    engines: {node: 20 || >=22}
 
   path-to-regexp@0.1.12:
     resolution: {integrity: sha512-RA1GjUVMnvYFxuqovrEqZoxxW5NUZqbwKtYz/Tt7nXerk0LbLblQmrsgdeOxV5SFHf0UDggjS/bSeOZwt1pmEQ==}
@@ -5051,6 +5075,11 @@ packages:
   reusify@1.0.4:
     resolution: {integrity: sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==}
     engines: {iojs: '>=1.0.0', node: '>=0.10.0'}
+
+  rimraf@6.0.1:
+    resolution: {integrity: sha512-9dkvaxAsk/xNXSJzMgFqqMCuFgt2+KsOFek3TMLfo8NCPfWpBmqwyNn5Y+NX56QUYfCtsyhF3ayiboEoUmJk/A==}
+    engines: {node: 20 || >=22}
+    hasBin: true
 
   ripemd160@2.0.2:
     resolution: {integrity: sha512-ii4iagi25WusVoiC4B4lq7pbXfAp3D9v5CwfkY33vffw2+pkDjY1D8GaN7spsxvCSx8dkPqOZCEZyfxcmJG2IA==}
@@ -7315,13 +7344,13 @@ snapshots:
     dependencies:
       '@prisma/debug': 5.7.1
 
-  '@proto-kit/api@0.1.1-develop.1088(4yiay5rbal2tq5qczbpprw4yfa)':
+  '@proto-kit/api@0.1.1-develop.1088(jibe6vn2ykm2jr5ngnp3vkzdv4)':
     dependencies:
       '@graphql-tools/stitch': 9.4.10(graphql@16.10.0)
-      '@proto-kit/common': 0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0)
-      '@proto-kit/module': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0)
-      '@proto-kit/protocol': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0)
-      '@proto-kit/sequencer': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/module@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0)
+      '@proto-kit/common': 0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0)
+      '@proto-kit/module': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0)
+      '@proto-kit/protocol': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0)
+      '@proto-kit/sequencer': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/module@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0)
       '@types/humanize-duration': 3.27.4
       class-validator: 0.14.1
       graphql: 16.10.0
@@ -7330,109 +7359,109 @@ snapshots:
       humanize-duration: 3.32.1
       koa: 2.15.3
       lodash: 4.17.21
-      o1js: 1.6.0
+      o1js: 2.2.0
       reflect-metadata: 0.1.14
       tsyringe: 4.8.0
       type-graphql: 2.0.0-rc.2(class-validator@0.14.1)(graphql-scalars@1.24.0(graphql@16.10.0))(graphql@16.10.0)
     transitivePeerDependencies:
       - supports-color
 
-  '@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0)':
+  '@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0)':
     dependencies:
       lodash: 4.17.21
       loglevel: 1.9.2
-      o1js: 1.6.0
+      o1js: 2.2.0
       reflect-metadata: 0.1.14
       tsyringe: 4.8.0
       typescript-memoize: 1.1.1
 
-  '@proto-kit/deployment@0.1.1-develop.1088(gbywmjouxqrdep3p2v3wg6x7fu)':
+  '@proto-kit/deployment@0.1.1-develop.1088(nn53aum35siskwzsstyum3fdrm)':
     dependencies:
-      '@proto-kit/common': 0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0)
-      '@proto-kit/persistance': 0.1.1-develop.1088(4yiay5rbal2tq5qczbpprw4yfa)
-      '@proto-kit/sdk': 0.1.1-develop.1088(lksza4orw5gb3hqaypuiswe3f4)
-      '@proto-kit/sequencer': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/module@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0)
+      '@proto-kit/common': 0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0)
+      '@proto-kit/persistance': 0.1.1-develop.1088(jibe6vn2ykm2jr5ngnp3vkzdv4)
+      '@proto-kit/sdk': 0.1.1-develop.1088(h3sotaklpmwieoftftutywe4oa)
+      '@proto-kit/sequencer': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/module@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0)
       '@types/yargs': 17.0.33
       bullmq: 3.16.2
       loglevel: 1.9.2
-      o1js: 1.6.0
+      o1js: 2.2.0
       reflect-metadata: 0.1.14
       tsyringe: 4.8.0
       yargs: 17.7.2
 
-  '@proto-kit/library@0.1.1-develop.1088(4yiay5rbal2tq5qczbpprw4yfa)':
+  '@proto-kit/library@0.1.1-develop.1088(jibe6vn2ykm2jr5ngnp3vkzdv4)':
     dependencies:
-      '@proto-kit/common': 0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0)
-      '@proto-kit/module': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0)
-      '@proto-kit/protocol': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0)
-      '@proto-kit/sequencer': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/module@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0)
+      '@proto-kit/common': 0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0)
+      '@proto-kit/module': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0)
+      '@proto-kit/protocol': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0)
+      '@proto-kit/sequencer': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/module@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0)
       bigint-isqrt: 0.3.2
       lodash: 4.17.21
       loglevel: 1.9.2
-      o1js: 1.6.0
+      o1js: 2.2.0
       reflect-metadata: 0.1.14
       tsyringe: 4.8.0
 
-  '@proto-kit/module@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0)':
+  '@proto-kit/module@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0)':
     dependencies:
-      '@proto-kit/common': 0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0)
-      '@proto-kit/protocol': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0)
+      '@proto-kit/common': 0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0)
+      '@proto-kit/protocol': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0)
       lodash: 4.17.21
       loglevel: 1.9.2
-      o1js: 1.6.0
+      o1js: 2.2.0
       reflect-metadata: 0.1.14
       tsyringe: 4.8.0
 
-  '@proto-kit/persistance@0.1.1-develop.1088(4yiay5rbal2tq5qczbpprw4yfa)':
+  '@proto-kit/persistance@0.1.1-develop.1088(jibe6vn2ykm2jr5ngnp3vkzdv4)':
     dependencies:
       '@prisma/client': 5.7.1(prisma@5.7.1)
-      '@proto-kit/common': 0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0)
-      '@proto-kit/module': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0)
-      '@proto-kit/protocol': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0)
-      '@proto-kit/sequencer': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/module@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0)
+      '@proto-kit/common': 0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0)
+      '@proto-kit/module': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0)
+      '@proto-kit/protocol': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0)
+      '@proto-kit/sequencer': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/module@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0)
       lodash: 4.17.21
-      o1js: 1.6.0
+      o1js: 2.2.0
       prisma: 5.7.1
       redis: 4.7.0
       reflect-metadata: 0.1.14
       tsyringe: 4.8.0
 
-  '@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0)':
+  '@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0)':
     dependencies:
-      '@proto-kit/common': 0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0)
+      '@proto-kit/common': 0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0)
       lodash: 4.17.21
       loglevel: 1.9.2
-      o1js: 1.6.0
+      o1js: 2.2.0
       reflect-metadata: 0.1.14
       ts-mixer: 6.0.4
       ts-pattern: 4.3.0
       tsyringe: 4.8.0
 
-  '@proto-kit/sdk@0.1.1-develop.1088(lksza4orw5gb3hqaypuiswe3f4)':
+  '@proto-kit/sdk@0.1.1-develop.1088(h3sotaklpmwieoftftutywe4oa)':
     dependencies:
-      '@proto-kit/common': 0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0)
-      '@proto-kit/library': 0.1.1-develop.1088(4yiay5rbal2tq5qczbpprw4yfa)
-      '@proto-kit/module': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0)
-      '@proto-kit/protocol': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0)
-      '@proto-kit/sequencer': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/module@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0)
+      '@proto-kit/common': 0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0)
+      '@proto-kit/library': 0.1.1-develop.1088(jibe6vn2ykm2jr5ngnp3vkzdv4)
+      '@proto-kit/module': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0)
+      '@proto-kit/protocol': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0)
+      '@proto-kit/sequencer': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/module@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0)
       '@urql/core': 4.3.0(graphql@16.10.0)
       comlink: 4.4.2
       lodash: 4.17.21
       loglevel: 1.9.2
-      o1js: 1.6.0
+      o1js: 2.2.0
       reflect-metadata: 0.1.14
       tsyringe: 4.8.0
     transitivePeerDependencies:
       - graphql
 
-  '@proto-kit/sequencer@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/module@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0)':
+  '@proto-kit/sequencer@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/module@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0)':
     dependencies:
-      '@proto-kit/common': 0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0)
-      '@proto-kit/module': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@1.6.0)(tsyringe@4.8.0)
-      '@proto-kit/protocol': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@1.6.0)(tsyringe@4.8.0))(o1js@1.6.0)(ts-pattern@4.3.0)(tsyringe@4.8.0)
+      '@proto-kit/common': 0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0)
+      '@proto-kit/module': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(@proto-kit/protocol@0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0))(o1js@2.2.0)(tsyringe@4.8.0)
+      '@proto-kit/protocol': 0.1.1-develop.1088(@proto-kit/common@0.1.1-develop.1088(patch_hash=7f63gpjcyakneb6idugmnqdfs4)(o1js@2.2.0)(tsyringe@4.8.0))(o1js@2.2.0)(ts-pattern@4.3.0)(tsyringe@4.8.0)
       compute-gcd: 1.2.1
       lodash: 4.17.21
-      o1js: 1.6.0
+      o1js: 2.2.0
       reflect-metadata: 0.1.14
       ts-pattern: 4.3.0
       tsyringe: 4.8.0
@@ -9581,6 +9610,15 @@ snapshots:
       package-json-from-dist: 1.0.1
       path-scurry: 1.11.1
 
+  glob@11.0.0:
+    dependencies:
+      foreground-child: 3.3.0
+      jackspeak: 4.0.2
+      minimatch: 10.0.1
+      minipass: 7.1.2
+      package-json-from-dist: 1.0.1
+      path-scurry: 2.0.0
+
   glob@7.2.3:
     dependencies:
       fs.realpath: 1.0.0
@@ -10104,6 +10142,10 @@ snapshots:
       '@isaacs/cliui': 8.0.2
     optionalDependencies:
       '@pkgjs/parseargs': 0.11.0
+
+  jackspeak@4.0.2:
+    dependencies:
+      '@isaacs/cliui': 8.0.2
 
   jake@10.9.2:
     dependencies:
@@ -10691,6 +10733,8 @@ snapshots:
 
   lru-cache@10.4.3: {}
 
+  lru-cache@11.0.2: {}
+
   lru-cache@5.1.1:
     dependencies:
       yallist: 3.1.1
@@ -10761,6 +10805,10 @@ snapshots:
   minimalistic-assert@1.0.1: {}
 
   minimalistic-crypto-utils@1.0.1: {}
+
+  minimatch@10.0.1:
+    dependencies:
+      brace-expansion: 2.0.1
 
   minimatch@3.1.2:
     dependencies:
@@ -10919,7 +10967,7 @@ snapshots:
       nodemon: 2.0.22
       through2: 4.0.2
 
-  o1js@1.6.0:
+  o1js@2.2.0:
     dependencies:
       blakejs: 1.2.1
       cachedir: 2.4.0
@@ -11077,6 +11125,11 @@ snapshots:
   path-scurry@1.11.1:
     dependencies:
       lru-cache: 10.4.3
+      minipass: 7.1.2
+
+  path-scurry@2.0.0:
+    dependencies:
+      lru-cache: 11.0.2
       minipass: 7.1.2
 
   path-to-regexp@0.1.12: {}
@@ -11406,6 +11459,11 @@ snapshots:
   retry@0.13.1: {}
 
   reusify@1.0.4: {}
+
+  rimraf@6.0.1:
+    dependencies:
+      glob: 11.0.0
+      package-json-from-dist: 1.0.1
 
   ripemd160@2.0.2:
     dependencies:
