@@ -30,7 +30,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 COPY ./packages ./packages
 COPY ./apps ./apps
 
-RUN pnpm run build --filter=web
+RUN pnpm run build --filter=@zeropoll/web
 
 # Production image, copy all the files and run next
 FROM base AS runner

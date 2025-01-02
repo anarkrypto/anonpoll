@@ -30,8 +30,8 @@ RUN apt update && apt install dos2unix && apt clean
 
 COPY ./packages ./packages
 
-RUN pnpm prisma:generate --filter=chain
-RUN pnpm build --filter=chain
+RUN pnpm prisma:generate --filter=@zeropoll/chain
+RUN pnpm build --filter=@zeropoll/chain
 
 COPY ./docker/base/entry.sh ./entry.sh
 RUN dos2unix ./entry.sh
