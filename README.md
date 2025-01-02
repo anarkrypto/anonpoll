@@ -1,7 +1,7 @@
 <p align="center">
   <a href="https://zeropoll.xyz">
     <picture>
-      <img src="https://github.com/user-attachments/assets/39f708cd-5d6a-4e8a-a2af-32b7ddbb704f" height="128">
+      <img src=".github/images/logo.png" height="128">
     </picture>
     <h1 align="center">ZeroPoll.xyz</h1>
   </a>
