@@ -1,4 +1,3 @@
-import { UInt32 } from "@proto-kit/library";
 import { assert } from "@proto-kit/protocol";
 import {
 	Field,
@@ -15,7 +14,7 @@ import {
 
 export class Vote extends Struct({
 	hash: Field,
-	votesCount: UInt32
+	votesCount: Field
 }) {}
 
 export class OptionHash extends Field {
@@ -59,10 +58,8 @@ export class Votes extends Struct({
 			const match = prevOptions.options[i].hash.equals(optionHash);
 			prevOptions.options[i] = new Vote({
 				hash: prevOptions.options[i].hash,
-				votesCount: UInt32.Unsafe.fromField(
-					prevOptions.options[i].votesCount.value.add(
-						Provable.if(match, Field(1), Field(0))
-					)
+				votesCount: prevOptions.options[i].votesCount.add(
+					Provable.if(match, Field(1), Field(0))
 				)
 			});
 			found = Provable.if(match, Bool(true), found);
@@ -76,7 +73,7 @@ export class Votes extends Struct({
 			options: optionsHashes.hashes.map((hash) => {
 				return new Vote({
 					hash,
-					votesCount: UInt32.from(0)
+					votesCount: Field(0)
 				});
 			})
 		});
