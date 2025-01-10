@@ -1,10 +1,5 @@
 import { BaseConfig, BaseController, BaseState } from './base-controller';
-import {
-	EncryptedMetadataV1,
-	PollMetadata,
-	pollMetadataSchema,
-} from '@/schemas';
-import { z } from 'zod';
+import { EncryptedMetadataV1, PollMetadata } from '@/schemas';
 import { Bool, CircuitString, MerkleMap, Poseidon, PublicKey } from 'o1js';
 import { WalletController } from './wallet-controller';
 import { OptionsHashes } from '@zeropoll/chain/runtime/modules/poll';
