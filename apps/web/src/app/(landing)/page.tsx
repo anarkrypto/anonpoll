@@ -31,7 +31,7 @@ export default function LandingPage() {
 				</div>
 
 				{/* Features Section */}
-				<div className="mt-24 grid grid-cols-1 gap-8 md:grid-cols-3">
+				<div className="mt-10 grid grid-cols-1 gap-8 sm:mt-20 md:grid-cols-3">
 					<FeatureCard
 						Icon={Shield}
 						title="Secure"
