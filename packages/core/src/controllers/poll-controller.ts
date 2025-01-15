@@ -305,9 +305,12 @@ export class PollController extends BaseController<PollConfig, PollState> {
 		if (!this.state.metadata) {
 			throw new Error('Poll not loaded');
 		}
-		// if (!this.voters.has(this.wallet.account)) {
-		// 	throw new Error('Wallet is not allowed to vote');
-		// }
+		if (
+			!!this.metadata?.votersWallets &&
+			!this.voters.has(this.wallet.account)
+		) {
+			throw new Error('Wallet is not allowed to vote');
+		}
 	}
 
 	private createVotersRootAndWitness() {
