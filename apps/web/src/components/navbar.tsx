@@ -71,7 +71,7 @@ export function Navbar() {
 						<div>
 							{/* wallet */}
 							<Button
-								className="button-3d bg-primary hover:bg-primary/90"
+								className="button-3d after:!border-secondary"
 								loading={loading}
 								onClick={handleConnect}
 								variant="secondary"
