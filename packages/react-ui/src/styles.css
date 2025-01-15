@@ -48,3 +48,53 @@
 		--zeropoll-ring: 240 4.9% 83.9%;
 	}
 }
+
+
+.button-3d, .card-3d, .privacy-option, .poll-option {
+	position: relative;
+	border-radius: 4px 1px !important;
+	border: 1px solid hsl(var(--zeropoll-border));
+	transform-style: preserve-3d;
+}
+
+.button-3d:after, .card-3d:after, .privacy-option:after, .poll-option:after {
+	content: "";
+	position: absolute;
+	border: 1px solid hsl(var(--zeropoll-primary));
+	border-radius: 4px 1px;
+	inset: .25rem -.25rem -.25rem .25rem;
+	transform: translateZ(-1px);
+	transition: transform .2s ease-in 0ms, border 50ms ease-in .1s;
+	pointer-events: none;
+}
+
+.button-3d:hover:after, .poll-option:hover:after {
+	border: 0 solid transparent;
+	transform: translate(-.25rem, -.25rem);
+}
+
+.button-3d:disabled:after {
+	border: 0 solid transparent;
+}
+
+.poll-option-active:after {
+	border: 0 solid transparent;
+	transform: translate(-.25rem, -.25rem);
+}
+
+.card-3d:after, .privacy-option:after {
+	border: 1px solid hsl(var(--zeropoll-border));
+}
+
+.card-3d:after, .privacy-option:after {
+	inset: .5rem -.5rem -.5rem .5rem;
+	z-index: -1;
+}
+
+.privacy-option:disabled:after {
+	border: 0 solid transparent;
+}
+
+.privacy-option-active:after {
+	border: 2px solid hsl(var(--zeropoll-primary));
+}

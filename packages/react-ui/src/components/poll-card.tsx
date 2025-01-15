@@ -128,7 +128,7 @@ export function PollCard({
 
 	return (
 		<>
-			<Card className={cn('w-full max-w-xl sm:p-4', className)}>
+			<Card className={cn('w-full max-w-xl sm:p-4 card-3d', className)}>
 				<CardHeader>
 					<CardTitle>{metadata.title}</CardTitle>
 					{metadata.description?.trim() && (
@@ -137,15 +137,15 @@ export function PollCard({
 				</CardHeader>
 				<CardContent>
 					<div className="flex flex-col gap-4">
-						<ul className="flex flex-col gap-2">
+						<ul className="flex flex-col gap-4">
 							{options.map((option, index) => (
 								<li key={index}>
 									<Button
 										size="lg"
 										className={cn(
-											'relative w-full px-12',
+											'relative w-full px-12 after:border-border poll-option',
 											activeOptionHash === option.hash &&
-												'overflow-hidden rounded-lg border-2 border-primary/40 bg-primary/20 hover:bg-primary/20',
+												'poll-option-active overflow-hidden rounded-lg !border-2 !border-primary/50 bg-primary/20 hover:bg-primary/20',
 											'disabled:opacity-100'
 										)}
 										loading={isLoading}
@@ -190,7 +190,7 @@ export function PollCard({
 						{!!account && !isVoted && (
 							<Button
 								size="lg"
-								className="w-full"
+								className="w-full button-3d"
 								type="submit"
 								onClick={handleVote}
 								disabled={!canVote}
@@ -214,7 +214,7 @@ export function PollCard({
 				<CardFooter className="flex gap-2">
 					{!!metadata.votersWallets && (
 						<Button
-							className="w-full"
+							className="w-full button-3d after:border-border"
 							loading={isLoading}
 							onClick={() => setOpenVotersModal(true)}
 							variant="outline"
@@ -225,7 +225,11 @@ export function PollCard({
 							</Badge>
 						</Button>
 					)}
-					<Button className="w-full" onClick={handleShare} variant="outline">
+					<Button
+						className="w-full after:border-border button-3d"
+						onClick={handleShare}
+						variant="outline"
+					>
 						{linkCopied ? (
 							<>
 								Link Copied!

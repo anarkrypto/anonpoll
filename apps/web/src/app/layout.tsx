@@ -1,12 +1,13 @@
 import './globals.css';
 import '@zeropoll/react-ui/styles.css';
 import { Inter as FontSans } from 'next/font/google';
-import Header from '@/components/header';
+import { Navbar } from '@/components/navbar';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/cn';
 import { ZeroPollProvider } from '@zeropoll/react';
 import { TransactionNotifications } from '@/components/transaction-notifications';
 import { Metadata } from 'next';
+import { Footer } from '@/components/footer';
 
 export const fontSans = FontSans({
 	subsets: ['latin'],
@@ -38,8 +39,9 @@ export default function RootLayout({
 					protokitGraphqlUrl={process.env.NEXT_PUBLIC_PROTOKIT_GRAPHQL_URL!}
 					ipfsApiUrl={process.env.NEXT_PUBLIC_IPFS_API_URL!}
 				>
-					<Header />
-					<>{children}</>
+					<Navbar />
+					<div className="flex flex-1 flex-col">{children}</div>
+					<Footer />
 					<Toaster />
 					<TransactionNotifications />
 				</ZeroPollProvider>

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
+	ArrowLeft,
 	ArrowRight,
 	GlobeIcon,
 	LockIcon,
@@ -172,21 +173,25 @@ export function PollFormCard({
 	return (
 		<Card
 			className={cn(
-				'mx-auto max-w-2xl rounded-lg bg-white shadow-md lg:p-6',
+				'mx-auto max-w-2xl rounded-lg bg-white shadow-md lg:p-6 card-3d',
 				className
 			)}
 		>
 			<CardHeader className="relative pt-4">
 				{step !== STEPS.PRIVACY && (
-					<Button
-						variant="outline"
-						size="icon"
-						className="absolute top-4 left-4"
-						onClick={() => setStep((step - 1) as Step)}
-						disabled={creatingPoll || form.formState.isSubmitting || isSuccess}
-					>
-						<ArrowRight className="transform rotate-180 h-4 w-4" />
-					</Button>
+					<div className="absolute top-4 left-4 bg-white">
+						<Button
+							variant="outline"
+							size="icon"
+							className="button-3d after:border-border"
+							onClick={() => setStep((step - 1) as Step)}
+							disabled={
+								creatingPoll || form.formState.isSubmitting || isSuccess
+							}
+						>
+							<ArrowLeft className="h-4 w-4" />
+						</Button>
+					</div>
 				)}
 				<CardTitle className="text-center text-2xl text-secondary">
 					{STEP_TITLES[step]}
@@ -196,13 +201,13 @@ export function PollFormCard({
 				<Form {...form}>
 					<form
 						onSubmit={form.handleSubmit(handleSubmit)}
-						className="space-y-4"
+						className="space-y-6"
 					>
 						{renderStepContent()}
 
 						<Button
 							type="submit"
-							className="w-full"
+							className="w-full button-3d"
 							disabled={
 								creatingPoll ||
 								form.formState.isSubmitting ||
@@ -253,8 +258,10 @@ function PrivacyStep({
 				<FormItem
 					key={option.value}
 					className={cn(
-						'group flex items-center space-x-3 space-y-0 hover:bg-primary/10 rounded-lg p-4 border-2 border-zinc-200 select-none cursor-pointer hover:border-primary/50',
-						privacy === option.value && 'border-primary hover:border-primary'
+						'privacy-option bg-white group flex items-center space-x-3 space-y-0 rounded-lg p-4 !border-2 select-none cursor-pointer',
+						privacy === option.value
+							? 'privacy-option-active !border-primary hover:border-primary'
+							: 'border-zinc-200 hover:bg-violet-100'
 					)}
 					onClick={() => handleOnChange(option.value as PollPrivacy)}
 				>
@@ -432,7 +439,7 @@ function OptionsInputsGroup({
 					type="button"
 					variant="outline"
 					onClick={addOption}
-					className="mt-2"
+					className="mt-2 button-3d after:border-border"
 					disabled={disabled}
 				>
 					<PlusIcon className="mr-2 h-4 w-4" /> Add Option
@@ -526,7 +533,7 @@ function VotersWalletsStep({
 									type="button"
 									variant="outline"
 									onClick={addWallet}
-									className="mt-2"
+									className="mt-2 button-3d after:border-border"
 									disabled={field.disabled || form.formState.isSubmitting}
 								>
 									<PlusIcon className="mr-2 h-4 w-4" /> Add Wallet

@@ -17,16 +17,7 @@ const montserrat = Montserrat({
 	weight: ['600', '700'],
 });
 
-export interface HeaderProps {
-	loading: boolean;
-	wallet?: string;
-	onConnectWallet: () => void;
-	balance?: string;
-	balanceLoading: boolean;
-	blockHeight?: string;
-}
-
-export default function Header() {
+export function Navbar() {
 	const {
 		account,
 		loading,
@@ -62,47 +53,46 @@ export default function Header() {
 
 	return (
 		<>
-			<header className="flex justify-center border-b bg-white p-2 shadow-sm">
-				<div className="flex w-full max-w-7xl items-center justify-between">
-					<div className="flex items-center">
-						<Link href="/">
-							<h1 className={cn(montserrat.className, 'text-xl')}>
-								<span className="bg-gradient-to-b from-zinc-600 to-zinc-800 bg-clip-text font-semibold text-transparent">
-									Zero
-								</span>
-								<span className="bg-gradient-to-b from-violet-500 to-violet-700 bg-clip-text font-bold text-transparent">
-									Poll
-								</span>
-							</h1>
-						</Link>
-						<Separator className="mx-4 h-8" orientation={'vertical'} />
-						<div className="flex-grow">
-							<ChainStatus />
+			<nav className="sticky left-0 right-0 top-0 z-50 border-b border-zinc-200 bg-white/80 backdrop-blur-lg">
+				<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+					<div className="flex h-16 items-center justify-between">
+						<div className="flex items-center">
+							<Link href="/">
+								<h1 className={cn(montserrat.className, 'text-2xl font-bold')}>
+									<span className="text-zinc-700">Zero</span>
+									<span className="text-primary">Poll</span>
+								</h1>
+							</Link>
+							<Separator className="mx-4 h-8" orientation={'vertical'} />
+							<div className="flex-grow">
+								<ChainStatus />
+							</div>
+						</div>
+						<div>
+							{/* wallet */}
+							<Button
+								className="button-3d bg-primary hover:bg-primary/90"
+								loading={loading}
+								onClick={handleConnect}
+								variant="secondary"
+							>
+								{showWallet ? (
+									<>
+										<div className="hidden text-sm sm:block">
+											{truncateWalletAddress(account, 7)}
+										</div>
+										<div className="text-xs sm:hidden">
+											{truncateWalletAddress(account, 4)}
+										</div>
+									</>
+								) : (
+									<div className="text-sm">Connect Wallet</div>
+								)}
+							</Button>
 						</div>
 					</div>
-					<div>
-						{/* wallet */}
-						<Button
-							loading={loading}
-							onClick={handleConnect}
-							variant="secondary"
-						>
-							{showWallet ? (
-								<>
-									<div className="hidden text-sm sm:block">
-										{truncateWalletAddress(account, 7)}
-									</div>
-									<div className="text-xs sm:hidden">
-										{truncateWalletAddress(account, 4)}
-									</div>
-								</>
-							) : (
-								<div className="text-sm">Connect Wallet</div>
-							)}
-						</Button>
-					</div>
 				</div>
-			</header>
+			</nav>
 			<InstallAuroWalletModal
 				open={openInstallAuroWalletModal}
 				onOpenChange={setOpenInstallAuroWalletModal}
