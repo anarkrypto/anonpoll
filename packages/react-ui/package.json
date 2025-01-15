@@ -23,7 +23,10 @@
 		"lint": "eslint .",
 		"predev": "cd ../../packages/react && pnpm predev && pnpm build",
 		"build": "pnpm run build:css && tsc -p tsconfig.json && tsc-alias",
-		"build:css": "tailwindcss -i ./src/styles.css -o ./dist/styles.css"
+		"build:css": "tailwindcss -i ./src/styles.css -o ./dist/styles.css",
+		"dev": "concurrently \"pnpm run watch:css\" \"pnpm run watch:ts\"",
+		"watch:css": "tailwindcss -i ./src/styles.css -o ./dist/styles.css --watch",
+		"watch:ts": "concurrently \"tsc -p tsconfig.json --watch\" \"tsc-alias --watch\""
 	},
 	"keywords": [],
 	"dependencies": {
