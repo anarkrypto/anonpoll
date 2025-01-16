@@ -1,6 +1,6 @@
 export function Footer() {
 	return (
-		<footer className="mt-16 border-t border-zinc-200">
+		<footer className="border-t border-zinc-200">
 			<div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
 				<div className="flex items-center justify-between">
 					<p className="text-zinc-500">© 2024 ZeroPoll</p>
