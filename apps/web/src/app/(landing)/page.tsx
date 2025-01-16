@@ -7,28 +7,26 @@ import Link from 'next/link';
 
 export default function LandingPage() {
 	return (
-		<main className="flex flex-1 flex-col justify-center">
+		<main className="mx-auto flex max-w-7xl flex-1 flex-col gap-12 px-4 sm:px-6 lg:px-8">
 			{/* Hero Section */}
-			<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-				<div className="text-center">
-					<h1 className="animate-fade-in mb-4 text-3xl font-bold text-zinc-700 md:text-4xl lg:text-5xl">
-						A Private Voting System
-						<span className="block">
-							Powered by{' '}
-							<span className="text-primary">Zero-Knowledge Proofs</span>
-						</span>
-					</h1>
-					<p className="mx-auto mb-8 max-w-2xl text-xl text-zinc-600">
-						Experience the future of voting with zero-knowledge proof
-						technology. Create polls, cast votes, and verify results
-						anonymously.
-					</p>
-					<Link href="/new">
-						<Button className="button-3d rounded-lg bg-primary px-8 py-6 text-lg text-white hover:bg-primary/90">
-							Create a New Poll <ArrowRight className="ml-2 h-4 w-4" />
-						</Button>
-					</Link>
-				</div>
+			<section className="flex flex-1 flex-col items-center justify-center text-center">
+				<h1 className="animate-fade-in mb-4 text-3xl font-bold text-zinc-700 md:text-4xl lg:text-5xl">
+					A Private Voting System
+					<span className="block">
+						Powered by{' '}
+						<span className="text-primary">Zero-Knowledge Proofs</span>
+					</span>
+				</h1>
+				<p className="mx-auto mb-8 max-w-2xl text-xl text-zinc-600">
+					Experience the future of voting with zero-knowledge proof technology.
+					Create polls, cast votes, and verify results anonymously.
+				</p>
+				<Link href="/new">
+					<Button className="button-3d rounded-lg bg-primary px-8 py-6 text-lg text-white hover:bg-primary/90">
+						Create a New Poll <ArrowRight className="ml-2 h-4 w-4" />
+					</Button>
+				</Link>
+			</section>
 
 			{/* Features Section */}
 			<section className="grid grid-cols-1 gap-8 md:grid-cols-3">
