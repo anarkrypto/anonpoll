@@ -50,14 +50,14 @@
 }
 
 
-.button-3d, .card-3d, .privacy-option, .poll-option {
+.button-3d, .card-3d, .privacy-option {
 	position: relative;
 	border-radius: 4px 1px !important;
 	border: 1px solid hsl(var(--zeropoll-border));
 	transform-style: preserve-3d;
 }
 
-.button-3d:after, .card-3d:after, .privacy-option:after, .poll-option:after {
+.button-3d:after, .card-3d:after, .privacy-option:after {
 	content: "";
 	position: absolute;
 	border: 1px solid hsl(var(--zeropoll-primary));
@@ -68,18 +68,13 @@
 	pointer-events: none;
 }
 
-.button-3d:hover:after, .poll-option:hover:after {
+.button-3d:hover:after {
 	border: 0 solid transparent;
 	transform: translate(-.25rem, -.25rem);
 }
 
 .button-3d:disabled:after {
 	border: 0 solid transparent;
-}
-
-.poll-option-active:after {
-	border: 0 solid transparent;
-	transform: translate(-.25rem, -.25rem);
 }
 
 .card-3d:after, .privacy-option:after {

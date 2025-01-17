@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { DialogDescription, DialogProps } from '@radix-ui/react-dialog';
 import { useEffect, useMemo, useState } from 'react';
 import {
+	CheckIcon,
 	CircleCheckBigIcon,
 	CircleIcon,
 	CopyCheckIcon,
@@ -143,9 +144,9 @@ export function PollCard({
 									<Button
 										size="lg"
 										className={cn(
-											'relative w-full px-12 after:border-border poll-option',
+											'group relative w-full px-12 py-6 hover:border-primary/40 hover:bg-white hover:shadow-lg overflow-hidden',
 											activeOptionHash === option.hash &&
-												'poll-option-active overflow-hidden rounded-lg !border-2 !border-primary/50 bg-primary/20 hover:bg-primary/20',
+												'overflow-hidden rounded-lg !border-[1.5px] !border-primary/50',
 											'disabled:opacity-100'
 										)}
 										loading={isLoading}
@@ -154,10 +155,7 @@ export function PollCard({
 										disabled={!account || isVoted}
 									>
 										<div
-											className={cn(
-												'absolute bottom-0 left-0 h-full bg-green-400/30 transition-all duration-500 ease-in-out',
-												activeOptionHash === option.hash && 'bg-primary/30'
-											)}
+											className="absolute bottom-0 left-0 h-full bg-primary/20 transition-all duration-500 ease-in-out"
 											style={{
 												width: loadProgressBar
 													? `${option.votesPercentage * 0.6}%`
@@ -166,21 +164,15 @@ export function PollCard({
 										/>
 										<div className="absolute left-2 top-1/2 mr-2 -translate-y-1/2">
 											{activeOptionHash === option.hash ? (
-												<CircleCheckBigIcon className="h-5 w-5 text-primary" />
+												<CheckIcon className="h-5 w-5 text-white rounded-full p-1 bg-primary" />
 											) : (
-												<CircleIcon className="h-5 w-5 text-zinc-400" />
+												<CircleIcon className="text-zinc-400 group-hover:text-primary h-5 w-5" />
 											)}
 										</div>
-										<div className="flex flex-1 justify-start">
+										<div className="flex flex-1 justify-start text-base text-zinc-700">
 											{option.text}
 										</div>
-										<div
-											className={cn(
-												'absolute right-2 top-1/2 -translate-y-1/2',
-												winnerOption?.hash === option.hash &&
-													'font-bold text-green-600'
-											)}
-										>
+										<div className="absolute right-2 top-1/2 -translate-y-1/2 font-semibold text-primary">
 											{option.votesPercentage}%
 										</div>
 									</Button>
