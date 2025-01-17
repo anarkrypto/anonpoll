@@ -38,6 +38,7 @@
 		"@zeropoll/react": "workspace:*",
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.0.0",
+		"concurrently": "^9.1.2",
 		"lucide-react": "^0.468.0",
 		"react-hook-form": "^7.48.2",
 		"tailwind-merge": "^2.0.0"
