@@ -50,9 +50,9 @@ export default function LandingPage() {
 			{/* Made with by Section */}
 			<section className="flex flex-1 flex-col items-center justify-center">
 				<h3 className="mb-2 text-center text-base text-zinc-400">Made with</h3>
-				<div className="align-center flex w-fit flex-row flex-wrap items-center justify-center gap-12">
+				<div className="align-center grid w-fit grid-cols-2 flex-row flex-wrap items-center justify-center gap-y-6 md:grid-cols-4">
 					{madeWithList.map((item, index) => (
-						<a href={item.url} target="_blank" key={index}>
+						<a href={item.url} target="_blank" key={index} className="px-6">
 							<img
 								alt={item.name}
 								className="mx-auto w-auto text-center opacity-60 grayscale hover:opacity-100 hover:grayscale-0"
