@@ -144,7 +144,7 @@ export function PollCard({
 									<Button
 										size="lg"
 										className={cn(
-											'group relative w-full px-12 py-6 hover:border-primary/40 hover:bg-white hover:shadow-lg overflow-hidden',
+											'group relative w-full px-12 py-7 hover:border-primary/40 hover:bg-white hover:shadow-lg overflow-hidden',
 											activeOptionHash === option.hash &&
 												'overflow-hidden rounded-lg !border-[1.5px] !border-primary/50',
 											'disabled:opacity-100'
