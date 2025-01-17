@@ -162,7 +162,7 @@ export function PollCard({
 													: option.votesPercentage * 0.2,
 											}}
 										/>
-										<div className="absolute left-2 top-1/2 mr-2 -translate-y-1/2">
+										<div className="absolute left-2 sm:left-4 top-1/2 mr-2 -translate-y-1/2">
 											{activeOptionHash === option.hash ? (
 												<CheckIcon className="h-5 w-5 text-white rounded-full p-1 bg-primary" />
 											) : (
@@ -172,7 +172,7 @@ export function PollCard({
 										<div className="flex flex-1 justify-start text-base text-zinc-700">
 											{option.text}
 										</div>
-										<div className="absolute right-2 top-1/2 -translate-y-1/2 space-x-3 flex flex-col sm:flex-row">
+										<div className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 space-x-3 flex flex-col sm:flex-row">
 											<span className="font-normal text-zinc-500">
 												{option.votesCount} vote{option.votesCount !== 1 && 's'}
 											</span>
