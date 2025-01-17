@@ -172,8 +172,13 @@ export function PollCard({
 										<div className="flex flex-1 justify-start text-base text-zinc-700">
 											{option.text}
 										</div>
-										<div className="absolute right-2 top-1/2 -translate-y-1/2 font-semibold text-primary">
-											{option.votesPercentage}%
+										<div className="absolute right-2 top-1/2 -translate-y-1/2 space-x-3 flex flex-col sm:flex-row">
+											<span className="font-normal text-zinc-500">
+												{option.votesCount} vote{option.votesCount !== 1 && 's'}
+											</span>
+											<span className="font-semibold text-primary">
+												{option.votesPercentage}%
+											</span>
 										</div>
 									</Button>
 								</li>
