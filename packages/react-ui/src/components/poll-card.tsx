@@ -14,7 +14,6 @@ import { DialogDescription, DialogProps } from '@radix-ui/react-dialog';
 import { useEffect, useMemo, useState } from 'react';
 import {
 	CheckIcon,
-	CircleCheckBigIcon,
 	CircleIcon,
 	CopyCheckIcon,
 	Share2Icon,
