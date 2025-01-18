@@ -112,7 +112,7 @@ interface PollResult {
 		salt?: string;
 	};
 	options: {
-		text: string;
+		label: string;
 		hash: string;
 		votesCount: number;
 		votesPercentage: number;

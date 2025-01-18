@@ -169,7 +169,7 @@ export function PollCard({
 											)}
 										</div>
 										<div className="w-full text-base text-zinc-700 overflow-hidden whitespace-normal text-left">
-											{option.text}
+											{option.label}
 										</div>
 										<div className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 space-x-3 flex flex-col sm:flex-row">
 											<span className="font-normal text-zinc-500 ">

@@ -34,7 +34,7 @@ export interface PollConfig extends BaseConfig {
 }
 
 export interface PollOption {
-	text: string;
+	label: string;
 	hash: string;
 	votesCount: number;
 	votesPercentage: number;
@@ -212,10 +212,10 @@ export class PollController extends BaseController<PollConfig, PollState> {
 
 	private compareHashes(
 		hashes: string[],
-		optionsText: string[],
+		optionsLabel: string[],
 		salt?: string
 	) {
-		const computedHashes = OptionsHashes.fromStrings(optionsText, salt)
+		const computedHashes = OptionsHashes.fromStrings(optionsLabel, salt)
 			.hashes as Field[];
 		if (
 			!computedHashes.every(
@@ -245,12 +245,12 @@ export class PollController extends BaseController<PollConfig, PollState> {
 
 		// TODO: Investigate implications of relying on the index of the options
 
-		return metadata.options.map((text, index) => {
+		return metadata.options.map((label, index) => {
 			const votesCount = votingResults[index].votesCount || 0;
 			const votesPercentage =
 				totalVotesCast === 0 ? 0 : (votesCount / totalVotesCast) * 100;
 			return {
-				text,
+				label,
 				hash: votingResults[index].hash,
 				votesCount: votingResults[index].votesCount,
 				votesPercentage,
