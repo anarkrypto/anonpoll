@@ -143,7 +143,7 @@ export function PollCard({
 									<Button
 										size="lg"
 										className={cn(
-											'group relative w-full px-12 py-7 hover:border-primary/40 hover:bg-white hover:shadow-lg overflow-hidden',
+											'group relative w-full px-10 h-auto sm:px-12 py-4 hover:border-primary/40 hover:bg-white hover:shadow-lg overflow-hidden',
 											activeOptionHash === option.hash &&
 												'overflow-hidden rounded-lg !border-[1.5px] !border-primary/50',
 											'disabled:opacity-100'
@@ -168,11 +168,11 @@ export function PollCard({
 												<CircleIcon className="text-zinc-400 group-hover:text-primary h-5 w-5" />
 											)}
 										</div>
-										<div className="flex flex-1 justify-start text-base text-zinc-700">
+										<div className="w-full text-base text-zinc-700 overflow-hidden whitespace-normal text-left">
 											{option.text}
 										</div>
 										<div className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 space-x-3 flex flex-col sm:flex-row">
-											<span className="font-normal text-zinc-500">
+											<span className="font-normal text-zinc-500 ">
 												{option.votesCount} vote{option.votesCount !== 1 && 's'}
 											</span>
 											<span className="font-semibold text-primary">
