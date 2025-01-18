@@ -29,10 +29,10 @@ export default function RootLayout({
 	children: React.ReactNode;
 }) {
 	return (
-		<html lang="en" className="h-full bg-primary/5">
+		<html lang="en" className="h-full">
 			<body
 				className={cn(
-					'flex min-h-screen flex-col bg-gradient-to-b from-background to-primary/5 font-sans antialiased',
+					'flex min-h-screen flex-col font-sans antialiased',
 					fontSans.className
 				)}
 			>
