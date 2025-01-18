@@ -1,6 +1,6 @@
 import './globals.css';
 import '@zeropoll/react-ui/styles.css';
-import { Inter as FontSans } from 'next/font/google';
+import { Ubuntu_Sans as FontSans } from 'next/font/google';
 import { Navbar } from '@/components/navbar';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/cn';
@@ -12,6 +12,7 @@ import { Footer } from '@/components/footer';
 export const fontSans = FontSans({
 	subsets: ['latin'],
 	variable: '--font-sans',
+	weight: ['200', '300', '400', '500', '600', '700', '800'],
 });
 
 export const metadata: Metadata = {
@@ -32,7 +33,7 @@ export default function RootLayout({
 			<body
 				className={cn(
 					'flex min-h-screen flex-col bg-gradient-to-b from-background to-primary/5 font-sans antialiased',
-					fontSans.variable
+					fontSans.className
 				)}
 			>
 				<ZeroPollProvider
