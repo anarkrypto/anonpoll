@@ -212,7 +212,7 @@ export function PollCard({
 						)}
 					</div>
 				</CardContent>
-				<CardFooter className="flex gap-2">
+				<CardFooter className="flex gap-2 -mt-2">
 					{!!metadata.votersWallets && (
 						<Button
 							className="w-full button-3d after:border-border"
