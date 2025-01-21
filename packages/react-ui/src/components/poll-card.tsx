@@ -175,7 +175,12 @@ export function PollCard({
 											<span className="font-normal text-zinc-500 ">
 												{option.votesCount} vote{option.votesCount !== 1 && 's'}
 											</span>
-											<span className="font-semibold text-primary">
+											<span
+												className={cn(
+													'font-semibold text-primary',
+													winnerOption?.hash === option.hash && 'font-extrabold'
+												)}
+											>
 												{option.votesPercentage}%
 											</span>
 										</div>
