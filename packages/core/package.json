@@ -1,6 +1,6 @@
 {
 	"name": "@zeropoll/core",
-	"version": "3.0.0",
+	"version": "3.1.0",
 	"description": "ZeroPoll Core",
 	"main": "dist/index.js",
 	"author": "anarkrypto <anarkrypto@gmail.com>",
