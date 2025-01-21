@@ -20,7 +20,8 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"format": "prettier --write .",
 		"predev": "cd ../../packages/core && pnpm predev && pnpm build",
-		"build": "tsc -p tsconfig.json",
+		"clean": "rimraf dist",
+		"build": "pnpm clean && tsc -p tsconfig.json",
 		"lint": "eslint ."
 	},
 	"keywords": [],
@@ -32,6 +33,7 @@
 		"@types/react": "^18",
 		"@zeropoll/eslint-config": "workspace:*",
 		"@zeropoll/prettier-config": "workspace:*",
+		"rimraf": "^6.0.1",
 		"typescript": "5.4.5"
 	},
 	"repository": {

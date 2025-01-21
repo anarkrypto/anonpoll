@@ -442,6 +442,9 @@ importers:
       jest:
         specifier: ^29.6.1
         version: 29.7.0(@types/node@22.10.2)(ts-node@10.9.2(@types/node@22.10.2)(typescript@5.4.5))
+      rimraf:
+        specifier: ^6.0.1
+        version: 6.0.1
       ts-jest:
         specifier: ^29.1.1
         version: 29.2.5(@babel/core@7.26.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.26.0))(esbuild@0.24.1)(jest@29.7.0(@types/node@22.10.2)(ts-node@10.9.2(@types/node@22.10.2)(typescript@5.4.5)))(typescript@5.4.5)
@@ -500,6 +503,9 @@ importers:
       '@zeropoll/prettier-config':
         specifier: workspace:*
         version: link:../prettier-config
+      rimraf:
+        specifier: ^6.0.1
+        version: 6.0.1
       typescript:
         specifier: 5.4.5
         version: 5.4.5
@@ -570,6 +576,9 @@ importers:
       postcss:
         specifier: ^8
         version: 8.4.49
+      rimraf:
+        specifier: ^6.0.1
+        version: 6.0.1
       tailwindcss:
         specifier: ^3.3.0
         version: 3.4.17(ts-node@10.9.2(@types/node@22.10.2)(typescript@5.4.5))
