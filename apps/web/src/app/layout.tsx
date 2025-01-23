@@ -8,8 +8,7 @@ import { ZeroPollProvider } from '@zeropoll/react';
 import { TransactionNotifications } from '@/components/transaction-notifications';
 import { Metadata } from 'next';
 import { Footer } from '@/components/footer';
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL!;
+import { SITE_URL } from './config';
 
 export const metadata: Metadata = {
 	title: {
