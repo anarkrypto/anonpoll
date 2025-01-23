@@ -1,0 +1,1 @@
+A private voting system powered by Zero-knowledge Proofs.
