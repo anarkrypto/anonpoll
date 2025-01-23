@@ -38,6 +38,7 @@ export const metadata: Metadata = {
 			'max-snippet': -1,
 		},
 	},
+	metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL as string),
 };
 
 export default function RootLayout({
