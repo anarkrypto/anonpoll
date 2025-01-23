@@ -21,6 +21,23 @@ export const metadata: Metadata = {
 		template: '%s | ZeroPoll',
 	},
 	description: 'A private voting system powered by zero-knowledge proofs',
+	applicationName: 'ZeroPoll',
+	authors: {
+		url: 'https://github.com/anarkrypto',
+		name: 'anarkrypto',
+	},
+	category: 'Voting',
+	robots: {
+		index: true,
+		follow: true,
+		googleBot: {
+			index: true,
+			follow: true,
+			'max-video-preview': -1,
+			'max-image-preview': 'large',
+			'max-snippet': -1,
+		},
+	},
 };
 
 export default function RootLayout({
