@@ -9,11 +9,7 @@ import { TransactionNotifications } from '@/components/transaction-notifications
 import { Metadata } from 'next';
 import { Footer } from '@/components/footer';
 
-export const fontSans = FontSans({
-	subsets: ['latin'],
-	variable: '--font-sans',
-	weight: ['200', '300', '400', '500', '600', '700', '800'],
-});
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL!;
 
 export const metadata: Metadata = {
 	title: {
@@ -38,8 +34,20 @@ export const metadata: Metadata = {
 			'max-snippet': -1,
 		},
 	},
-	metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL as string),
+	alternates: {
+		canonical: `${SITE_URL}/`,
+		languages: {
+			'en-US': `${SITE_URL}/`,
+		},
+	},
+	metadataBase: new URL(SITE_URL),
 };
+
+export const fontSans = FontSans({
+	subsets: ['latin'],
+	variable: '--font-sans',
+	weight: ['200', '300', '400', '500', '600', '700', '800'],
+});
 
 export default function RootLayout({
 	children,
