@@ -36,16 +36,31 @@ export default function LandingPage() {
 					Icon={Shield}
 					title="Secure"
 					description="Your vote is protected by state-of-the-art cryptography."
+					className="animate-fade-in opacity-0"
+					style={{
+						animationDelay: '.2s',
+						animationDuration: '1.2s',
+					}}
 				/>
 				<FeatureCard
 					Icon={Lock}
 					title="Private"
 					description="Your identity remains anonymous throught the voting process."
+					className="animate-fade-in opacity-0"
+					style={{
+						animationDelay: '.6s',
+						animationDuration: '1.2s',
+					}}
 				/>
 				<FeatureCard
 					Icon={CheckSquare}
 					title="Verifiable"
 					description="Ensure the integrity of the voting results without compromising privacy."
+					className="animate-fade-in opacity-0"
+					style={{
+						animationDelay: '1s',
+						animationDuration: '1.2s',
+					}}
 				/>
 			</section>
 
