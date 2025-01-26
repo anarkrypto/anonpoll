@@ -14,10 +14,12 @@ export default function LandingPage() {
 					A Private Voting System
 					<span className="block">
 						Powered by{' '}
-						<span className="text-primary">Zero-Knowledge Proofs</span>
+						<span className="animate-fade-in text-primary">
+							Zero-Knowledge Proofs
+						</span>
 					</span>
 				</h1>
-				<p className="mx-auto mb-8 max-w-2xl text-xl text-zinc-600">
+				<p className="animate-slide-up mx-auto mb-8 max-w-2xl text-xl text-zinc-600">
 					Experience the future of voting with zero-knowledge proof technology.
 					Create polls, cast votes, and verify results anonymously.
 				</p>
