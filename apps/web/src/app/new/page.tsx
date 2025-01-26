@@ -19,6 +19,10 @@ export default function PollFormPage() {
 		router.push(`/polls/${id}?key=${encryptionKey}`);
 	};
 
+	const onCloseConnectWalletModal = () => {
+		router.push('/');
+	};
+
 	const onError = (message: string) => {
 		toast({
 			title: 'Error',
@@ -34,7 +38,10 @@ export default function PollFormPage() {
 				onSuccess={onSuccess}
 				onError={onError}
 			/>
-			<ConnectWalletModal open={openConnectWalletModal} />
+			<ConnectWalletModal
+				open={openConnectWalletModal}
+				onOpenChange={open => !open && onCloseConnectWalletModal()}
+			/>
 		</>
 	);
 }
