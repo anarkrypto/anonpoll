@@ -37,18 +37,18 @@ export default function InstallAuroWalletModal(props: DialogProps) {
 				</div>
 				<DialogFooter className="flex flex-col gap-2 sm:flex-row sm:justify-between">
 					<Button
-						variant="ghost"
+						variant="outline"
 						onClick={() => props.onOpenChange?.(false)}
-						className="w-full text-primary hover:bg-violet-200 hover:text-violet-800 sm:w-auto"
+						className="w-full border-primary/20 text-primary hover:bg-primary/20 hover:text-primary sm:w-auto"
 					>
 						Close
 					</Button>
-					<Link href="https://www.aurowallet.com" target="_blank">
-						<Button className="w-full sm:w-auto">
+					<Button className="w-full sm:w-auto" asChild>
+						<Link href="https://www.aurowallet.com" target="_blank">
 							Install Now
 							<ExternalLinkIcon className="ml-2 h-4 w-4" />
-						</Button>
-					</Link>
+						</Link>
+					</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>
