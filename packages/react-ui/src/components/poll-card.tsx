@@ -207,7 +207,7 @@ export function PollCard({
 								loading={isLoading}
 								onClick={connect}
 							>
-								Connect your Wallet
+								Connect your wallet
 							</Button>
 						)}
 					</div>
@@ -239,7 +239,7 @@ export function PollCard({
 						) : (
 							<>
 								Share
-								<Share2Icon className="ml-2 h-4 w-4 text-violet-500" />
+								<Share2Icon className="ml-2 h-4 w-4 text-primary/90" />
 							</>
 						)}
 					</Button>
