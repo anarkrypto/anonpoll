@@ -13,7 +13,7 @@ export default function PollLayout({
 }) {
 	return (
 		<div>
-			<div className="flex flex-1 flex-col items-center justify-center p-4 md:p-8">
+			<div className="flex flex-1 flex-col items-center justify-center px-4">
 				<Alert className="mx-auto mb-4 w-full max-w-xl border-yellow-500 text-yellow-700">
 					<AlertTriangleIcon className="h-4 w-4 !text-yellow-700" />
 					<AlertTitle>Experimental Poll</AlertTitle>

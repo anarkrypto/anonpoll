@@ -11,7 +11,7 @@ export default function NewPollLayout({
 }) {
 	return (
 		<div className="flex justify-center">
-			<div className="w-full p-4">{children}</div>
+			<div className="w-full px-4">{children}</div>
 		</div>
 	);
 }
