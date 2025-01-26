@@ -135,13 +135,9 @@ export class PollController extends BaseController<PollConfig, PollState> {
 
 			const options = this.buildOptions(metadata, votingResults);
 
-			let decryptedMetadata = metadata;
-
 			const data = {
 				votersRoot,
-				metadata: {
-					...decryptedMetadata,
-				},
+				metadata,
 				options,
 			};
 
