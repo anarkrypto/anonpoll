@@ -50,14 +50,14 @@
 }
 
 
-.button-3d, .card-3d, .privacy-option {
+.button-3d, .card-3d {
 	position: relative;
 	border-radius: 4px 1px !important;
 	border: 1px solid hsl(var(--zeropoll-border));
 	transform-style: preserve-3d;
 }
 
-.button-3d:after, .card-3d:after, .privacy-option:after {
+.button-3d:after, .card-3d:after {
 	content: "";
 	position: absolute;
 	border: 1px solid hsl(var(--zeropoll-primary));
@@ -77,19 +77,11 @@
 	border: 0 solid transparent;
 }
 
-.card-3d:after, .privacy-option:after {
+.card-3d:after {
 	border: 1px solid hsl(var(--zeropoll-border));
 }
 
-.card-3d:after, .privacy-option:after {
+.card-3d:after {
 	inset: .5rem -.5rem -.5rem .5rem;
 	z-index: -1;
-}
-
-.privacy-option:disabled:after {
-	border: 0 solid transparent;
-}
-
-.privacy-option-active:after {
-	border: 2px solid hsl(var(--zeropoll-primary));
 }

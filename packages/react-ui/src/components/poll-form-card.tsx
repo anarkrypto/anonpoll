@@ -258,10 +258,8 @@ function PrivacyStep({
 				<FormItem
 					key={option.value}
 					className={cn(
-						'privacy-option bg-white group flex items-center space-x-3 space-y-0 rounded-lg p-4 !border-2 select-none cursor-pointer',
-						privacy === option.value
-							? 'privacy-option-active !border-primary hover:border-primary'
-							: 'border-zinc-200 hover:bg-violet-100'
+						'bg-white group flex items-center space-x-3 space-y-0 rounded-lg p-4 border border-zinc-200 hover:shadow-lg hover:border-primary/40 select-none cursor-pointer',
+						privacy === option.value && 'border-primary hover:border-primary'
 					)}
 					onClick={() => handleOnChange(option.value as PollPrivacy)}
 				>
