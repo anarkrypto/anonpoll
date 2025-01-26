@@ -42,7 +42,9 @@ https://zeropoll.xyz
 
 ## Quick start
 
-The monorepo contains 1 package and 1 app:
+**Overview:**
+
+The monorepo contains:
 
 - `packages/chain` contains everything related to our app-chain
 - `packages/core` contains the core logic of ZeroPoll
