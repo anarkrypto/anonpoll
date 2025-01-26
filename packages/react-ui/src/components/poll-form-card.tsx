@@ -173,7 +173,7 @@ export function PollFormCard({
 	return (
 		<Card
 			className={cn(
-				'mx-auto max-w-2xl rounded-lg bg-white shadow-md lg:p-6 card-3d',
+				'mx-auto max-w-2xl rounded-lg bg-white shadow-md py-6 lg:px-6 card-3d',
 				className
 			)}
 		>
