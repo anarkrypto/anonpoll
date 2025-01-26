@@ -20,8 +20,7 @@ export default function LandingPage() {
 					</span>
 				</h1>
 				<p className="animate-slide-up mx-auto mb-8 max-w-2xl text-xl text-zinc-600">
-					Experience the future of voting with zero-knowledge proof technology.
-					Create polls, cast votes, and verify results anonymously.
+					Create polls, cast votes and verify results anonymously.
 				</p>
 				<Link href="/new">
 					<Button className="button-3d rounded-lg bg-primary px-8 py-6 text-lg text-white hover:bg-primary/90">
