@@ -11,11 +11,15 @@ export function ChainStatus() {
 			<div
 				className={cn(
 					'mr-1 h-2 w-2 rounded-full',
-					loading ? 'bg-yellow-500' : online ? 'bg-green-500' : 'bg-red-500'
+					loading
+						? 'animate-ping bg-yellow-500'
+						: online
+							? 'bg-green-500'
+							: 'bg-red-500'
 				)}
 			></div>
 			<div className="hidden text-xs text-slate-600 sm:block">
-				{block.height ?? '-'}
+				{!loading && block.height}
 			</div>
 		</div>
 	);
