@@ -73,7 +73,7 @@ module.exports = {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'fade-in': 'fadeIn 1s ease-out',
+				'fade-in': 'fadeIn 1s forwards',
 				'slide-up': 'slideUp 1s ease-out',
 			},
 			fontFamily: {
