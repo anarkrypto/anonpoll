@@ -24,7 +24,7 @@ import { useForm, UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useCallback, useState } from 'react';
 import { PollMetadata, pollMetadataSchema } from '@zeropoll/core/schemas';
-import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from '@zeropoll/core/constants';
+import { MAX_POLL_OPTIONS } from '@zeropoll/core/constants';
 import { useCreatePoll, UseCreatePollOptions } from '@zeropoll/react';
 import { cn } from '@/lib/cn';
 import { generateSalt, isValidPublicKey } from '@zeropoll/core/utils';
@@ -49,6 +49,8 @@ const STEP_TITLES: Record<Step, string> = {
 	[STEPS.POLL]: 'Create a New Poll',
 	[STEPS.VOTERS]: 'Add Voters Wallets',
 };
+
+const MAX_POLL_VOTERS = Infinity;
 
 // Utilities
 const checkDuplicateOptions = (options: string[]): string | null => {

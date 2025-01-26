@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { MAX_POLL_OPTIONS, MAX_POLL_VOTERS } from '@/constants';
+import { MAX_POLL_OPTIONS } from '@/constants';
 import { PublicKey } from 'o1js';
 
 export const pollMetadataSchema = z.object({
@@ -27,7 +27,6 @@ export const pollMetadataSchema = z.object({
 			)
 		)
 		.min(1)
-		.max(MAX_POLL_VOTERS)
 		.optional(),
 });
 
