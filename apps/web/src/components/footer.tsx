@@ -8,7 +8,7 @@ export function Footer() {
 						<a
 							href="https://github.com/anarkrypto/zeropoll"
 							target="_blank"
-							className="flex items-center gap-1.5 hover:text-violet-600"
+							className="flex items-center gap-1.5 hover:text-primary"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"

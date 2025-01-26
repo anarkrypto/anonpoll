@@ -17,7 +17,7 @@ export default function InstallAuroWalletModal(props: DialogProps) {
 			<DialogContent className="bg-white text-zinc-800 sm:max-w-[425px]">
 				<DialogHeader>
 					<DialogTitle className="text-2xl font-bold text-zinc-700">
-						Install <span className="text-violet-700">Auro Wallet</span>
+						Install <span className="text-primary">Auro Wallet</span>
 					</DialogTitle>
 					<DialogDescription className="text-zinc-700">
 						To interact with this site, you need to install the Auro Wallet
@@ -39,7 +39,7 @@ export default function InstallAuroWalletModal(props: DialogProps) {
 					<Button
 						variant="ghost"
 						onClick={() => props.onOpenChange?.(false)}
-						className="w-full text-violet-700 hover:bg-violet-200 hover:text-violet-800 sm:w-auto"
+						className="w-full text-primary hover:bg-violet-200 hover:text-violet-800 sm:w-auto"
 					>
 						Close
 					</Button>

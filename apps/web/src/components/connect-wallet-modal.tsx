@@ -59,7 +59,7 @@ export function ConnectWalletModal({
 			<DialogContent className="bg-white text-zinc-800 sm:max-w-[425px]">
 				<DialogHeader>
 					<DialogTitle className="text-2xl font-bold text-zinc-700">
-						Connect your <span className="text-violet-700">Auro Wallet</span>
+						Connect your <span className="text-primary">Auro Wallet</span>
 					</DialogTitle>
 					<DialogDescription>
 						To interact with this site, you need to connect your Auro Wallet.
