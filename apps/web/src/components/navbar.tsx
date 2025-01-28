@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { useWallet } from '@zeropoll/react';
 import { useToast } from './ui/use-toast';
 import { useCallback, useState } from 'react';
-import InstallAuroWalletModal from './install-auro-wallet-modal';
+import { ConnectWalletModal } from './connect-wallet-modal';
 
 const montserrat = Montserrat({
 	subsets: ['latin'],
@@ -22,11 +22,11 @@ export function Navbar() {
 		account,
 		loading,
 		initialized: walletInitialized,
+		isInstalled: walletInstalled,
 		connect,
 		connected,
 	} = useWallet();
-	const [openInstallAuroWalletModal, setOpenInstallAuroWalletModal] =
-		useState(false);
+	const [openConnectWalletModal, setOpenConnectWalletModal] = useState(false);
 
 	const { toast } = useToast();
 
@@ -34,8 +34,8 @@ export function Navbar() {
 
 	const handleConnect = useCallback(async () => {
 		try {
-			if (!walletInitialized) {
-				setOpenInstallAuroWalletModal(true);
+			if (!walletInitialized || !walletInstalled) {
+				setOpenConnectWalletModal(true);
 				return;
 			}
 			await connect();
@@ -93,9 +93,9 @@ export function Navbar() {
 					</div>
 				</div>
 			</nav>
-			<InstallAuroWalletModal
-				open={openInstallAuroWalletModal}
-				onOpenChange={setOpenInstallAuroWalletModal}
+			<ConnectWalletModal
+				open={openConnectWalletModal}
+				onOpenChange={setOpenConnectWalletModal}
 			/>
 		</>
 	);
