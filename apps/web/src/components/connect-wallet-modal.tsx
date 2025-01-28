@@ -13,6 +13,8 @@ import {
 	DialogDescription,
 	DialogContent,
 } from './ui/dialog';
+import { ContinueWithAuroWalletMobileModal } from './continue-with-auro-wallet-mobile';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 export function ConnectWalletModal({
 	onConnected,
@@ -22,6 +24,7 @@ export function ConnectWalletModal({
 } & DialogProps) {
 	const {
 		initialized: walletInitialized,
+		isInstalled: walletInstalled,
 		connect,
 		connected,
 		loading,
@@ -34,6 +37,8 @@ export function ConnectWalletModal({
 			onConnected?.();
 		}
 	}, [connected, onConnected]);
+
+	const { isMobile } = useIsMobile();
 
 	const handleConnect = useCallback(async () => {
 		try {
@@ -50,7 +55,8 @@ export function ConnectWalletModal({
 		}
 	}, [toast, connect]);
 
-	if (!walletInitialized) {
+	if (!walletInstalled || !walletInitialized) {
+		if (isMobile) return <ContinueWithAuroWalletMobileModal {...props} />;
 		return <InstallAuroWalletModal {...props} />;
 	}
 
