@@ -11,9 +11,7 @@ export default function PollFormPage() {
 	const router = useRouter();
 	const { toast } = useToast();
 
-	const { connected, initialized } = useWallet();
-
-	const openConnectWalletModal = initialized && !connected;
+	const { connected } = useWallet();
 
 	const onSuccess = ({ id, encryptionKey }: CreatePollResult) => {
 		router.push(`/polls/${id}?key=${encryptionKey}`);
@@ -34,12 +32,12 @@ export default function PollFormPage() {
 	return (
 		<>
 			<PollFormCard
-				className={cn(openConnectWalletModal && 'blur-sm')}
+				className={cn(!connected && 'blur-sm')}
 				onSuccess={onSuccess}
 				onError={onError}
 			/>
 			<ConnectWalletModal
-				open={openConnectWalletModal}
+				open={!connected}
 				onOpenChange={open => !open && onCloseConnectWalletModal()}
 			/>
 		</>
