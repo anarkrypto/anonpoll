@@ -23,7 +23,6 @@ export function ConnectWalletModal({
 	onConnected?: () => void;
 } & DialogProps) {
 	const {
-		initialized: walletInitialized,
 		isInstalled: walletInstalled,
 		connect,
 		connected,
@@ -55,7 +54,7 @@ export function ConnectWalletModal({
 		}
 	}, [toast, connect]);
 
-	if (!walletInstalled || !walletInitialized) {
+	if (!walletInstalled) {
 		if (isMobile) return <ContinueWithAuroWalletMobileModal {...props} />;
 		return <InstallAuroWalletModal {...props} />;
 	}

@@ -21,7 +21,6 @@ export function Navbar() {
 	const {
 		account,
 		loading,
-		initialized: walletInitialized,
 		isInstalled: walletInstalled,
 		connect,
 		connected,
@@ -34,7 +33,7 @@ export function Navbar() {
 
 	const handleConnect = useCallback(async () => {
 		try {
-			if (!walletInitialized || !walletInstalled) {
+			if (!walletInstalled) {
 				setOpenConnectWalletModal(true);
 				return;
 			}
@@ -49,7 +48,7 @@ export function Navbar() {
 				variant: 'destructive',
 			});
 		}
-	}, [connect, toast, walletInitialized]);
+	}, [connect, toast, walletInstalled]);
 
 	return (
 		<>
