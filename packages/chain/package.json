@@ -63,7 +63,7 @@
 	},
 	"devDependencies": {
 		"@jest/globals": "^29.6.1",
-		"@prisma/client": "^5.7.1",
+		"@prisma/client": "6.2.1",
 		"@types/jest": "^29.5.7",
 		"@types/node": "^20.8.10",
 		"@types/yargs": "^17.0.32",
@@ -80,7 +80,7 @@
 		"nodemon": "^3.1.4",
 		"npm-watch": "^0.11.0",
 		"path-browserify": "^1.0.1",
-		"prisma": "^5.7.1",
+		"prisma": "6.2.1",
 		"process": "^0.11.10",
 		"rimraf": "^6.0.1",
 		"stream-browserify": "^3.0.0",
