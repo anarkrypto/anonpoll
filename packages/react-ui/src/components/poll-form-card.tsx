@@ -187,7 +187,7 @@ export function PollFormCard({
 	return (
 		<Card
 			className={cn(
-				'mx-auto max-w-xl rounded-none bg-transparent border-none shadow-none',
+				'mx-auto w-full max-w-xl rounded-none bg-transparent border-none shadow-none',
 				className
 			)}
 		>
@@ -275,14 +275,14 @@ function PrivacyStep({
 				<FormItem
 					key={option.value}
 					className={cn(
-						'bg-white group flex items-center rounded-lg p-4 border border-zinc-200 hover:shadow-lg hover:border-primary/40 select-none cursor-pointer',
+						'bg-white group flex items-center rounded-lg px-4 py-6 sm:px-6 border border-zinc-200 hover:shadow-lg hover:border-primary/40 select-none cursor-pointer',
 						privacy === option.value && 'border-primary hover:border-primary'
 					)}
 					onClick={() => handleOnChange(option.value as PollPrivacy)}
 				>
 					<FormLabel
 						htmlFor={option.value}
-						className="flex-1 flex space-x-4 cursor-pointer"
+						className="flex-1 flex space-x-4 sm:space-x-6 cursor-pointer"
 					>
 						{React.cloneElement(option.icon, {
 							className: cn(option.icon.props.className, 'mt-2'),
