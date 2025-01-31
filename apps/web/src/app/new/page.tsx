@@ -6,6 +6,7 @@ import { ConnectWalletModal } from '@/components/connect-wallet-modal';
 import { cn } from '@/lib/cn';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/use-toast';
+import { PrivacyTip } from '@/components/privacy-tip';
 
 export default function PollFormPage() {
 	const router = useRouter();
@@ -36,6 +37,7 @@ export default function PollFormPage() {
 				onSuccess={onSuccess}
 				onError={onError}
 			/>
+			<PrivacyTip className="mt-4" />
 			<ConnectWalletModal
 				open={!connected}
 				onOpenChange={open => !open && onCloseConnectWalletModal()}

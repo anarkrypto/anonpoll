@@ -1,5 +1,6 @@
 'use client';
 
+import { PrivacyTip } from '@/components/privacy-tip';
 import { useToast } from '@/components/ui/use-toast';
 import { PollCard } from '@zeropoll/react-ui';
 import { use } from 'react';
@@ -14,16 +15,19 @@ export default function PollPage(props: {
 	const params = use(props.params);
 
 	return (
-		<PollCard
-			id={params.id}
-			encryptionKey={searchParams.key}
-			onVoteError={message => {
-				toast({
-					title: 'Error Voting',
-					description: message,
-					variant: 'destructive',
-				});
-			}}
-		/>
+		<>
+			<PollCard
+				id={params.id}
+				encryptionKey={searchParams.key}
+				onVoteError={message => {
+					toast({
+						title: 'Error Voting',
+						description: message,
+						variant: 'destructive',
+					});
+				}}
+			/>
+			<PrivacyTip className="mt-4" />
+		</>
 	);
 }
