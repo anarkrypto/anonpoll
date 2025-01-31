@@ -128,14 +128,19 @@ export function PollCard({
 
 	return (
 		<>
-			<Card className={cn('w-full max-w-xl sm:p-4', className)}>
-				<CardHeader>
-					<CardTitle>{metadata.title}</CardTitle>
+			<Card
+				className={cn(
+					'mx-auto w-full max-w-xl rounded-none bg-transparent border-none shadow-none',
+					className
+				)}
+			>
+				<CardHeader className="px-0 text-center">
+					<CardTitle className="font-bold">{metadata.title}</CardTitle>
 					{metadata.description?.trim() && (
 						<CardDescription>{metadata!.description}</CardDescription>
 					)}
 				</CardHeader>
-				<CardContent>
+				<CardContent className="px-0">
 					<div className="flex flex-col gap-4">
 						<ul className="flex flex-col gap-4">
 							{options.map((option, index) => (
@@ -143,7 +148,7 @@ export function PollCard({
 									<Button
 										size="lg"
 										className={cn(
-											'group relative w-full pl-10 pr-14 sm:pr-28 h-auto sm:pl-12 py-4 hover:border-primary/40 hover:bg-white hover:shadow-lg overflow-hidden',
+											'group relative rounded-lg w-full pl-10 pr-14 sm:pr-28 h-auto sm:pl-12 py-6 hover:border-primary/40 hover:bg-white hover:shadow-lg overflow-hidden',
 											activeOptionHash === option.hash &&
 												'overflow-hidden rounded-lg !border-[1.5px] !border-primary/50',
 											'disabled:opacity-100'
@@ -212,7 +217,7 @@ export function PollCard({
 						)}
 					</div>
 				</CardContent>
-				<CardFooter className="flex gap-2 -mt-2">
+				<CardFooter className="flex gap-2 -mt-2 px-0">
 					{!!metadata.votersWallets && (
 						<Button
 							className="w-full button-3d after:border-border"
