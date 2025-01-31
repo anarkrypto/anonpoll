@@ -11,7 +11,13 @@ import {
 	PlusIcon,
 	TrashIcon,
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from '@/components/ui/card';
 import {
 	Form,
 	FormControl,
@@ -45,9 +51,15 @@ const STEPS = {
 };
 
 const STEP_TITLES: Record<Step, string> = {
-	[STEPS.PRIVACY]: 'Select Poll Privacy',
-	[STEPS.POLL]: 'Create a New Poll',
-	[STEPS.VOTERS]: 'Add Voters Wallets',
+	[STEPS.PRIVACY]: 'Poll Privacy',
+	[STEPS.POLL]: 'Create Your Poll',
+	[STEPS.VOTERS]: 'Voters Wallets',
+};
+
+const STEP_DESCRIPTIONS: Record<Step, string> = {
+	[STEPS.PRIVACY]: 'Choose how you want to manage access to your poll.',
+	[STEPS.POLL]: 'Fill in your poll information',
+	[STEPS.VOTERS]: 'Which wallets will be allowed to vote',
 };
 
 const MAX_POLL_VOTERS = Infinity;
@@ -175,13 +187,13 @@ export function PollFormCard({
 	return (
 		<Card
 			className={cn(
-				'mx-auto max-w-xl rounded-lg bg-white shadow-md py-6 sm:px-4 card-3d',
+				'mx-auto max-w-xl rounded-none bg-transparent border-none shadow-none',
 				className
 			)}
 		>
-			<CardHeader className="relative pt-4">
+			<CardHeader className="relative px-0">
 				{step !== STEPS.PRIVACY && (
-					<div className="absolute top-4 left-4 bg-white">
+					<div className="absolute top-2 left-0 bg-white">
 						<Button
 							variant="outline"
 							size="icon"
@@ -195,11 +207,14 @@ export function PollFormCard({
 						</Button>
 					</div>
 				)}
-				<CardTitle className="text-center text-2xl text-secondary">
+				<CardTitle className="text-center text-3xl font-bold text-secondary">
 					{STEP_TITLES[step]}
 				</CardTitle>
+				<CardDescription className="text-center font-medium">
+					{STEP_DESCRIPTIONS[step]}
+				</CardDescription>
 			</CardHeader>
-			<CardContent>
+			<CardContent className="px-0">
 				<Form {...form}>
 					<form
 						onSubmit={form.handleSubmit(handleSubmit)}
@@ -236,16 +251,16 @@ function PrivacyStep({
 	const options = [
 		{
 			value: 'open',
-			icon: <GlobeIcon className="h-5 w-5 text-zinc-500" />,
+			icon: <GlobeIcon className="h-5 w-5 text-primary" />,
 			title: 'Open Poll',
-			description: 'Votes are anonymous, but anyone can find the poll and vote',
+			description: 'Anonymous voting, public poll, anyone can vote',
 		},
 		{
 			value: 'invite-only',
-			icon: <LockIcon className="h-5 w-5 text-zinc-500" />,
+			icon: <LockIcon className="h-5 w-5 text-primary" />,
 			title: 'Invite-only Poll',
 			description:
-				'Votes are anonymous, poll is encrypted and only specific wallets can vote',
+				'Anonymous voting, encrypted poll, only invited wallets can vote',
 		},
 	];
 
@@ -260,23 +275,23 @@ function PrivacyStep({
 				<FormItem
 					key={option.value}
 					className={cn(
-						'bg-white group flex items-center space-x-3 space-y-0 rounded-lg p-4 border border-zinc-200 hover:shadow-lg hover:border-primary/40 select-none cursor-pointer',
+						'bg-white group flex items-center rounded-lg p-4 border border-zinc-200 hover:shadow-lg hover:border-primary/40 select-none cursor-pointer',
 						privacy === option.value && 'border-primary hover:border-primary'
 					)}
 					onClick={() => handleOnChange(option.value as PollPrivacy)}
 				>
 					<FormLabel
 						htmlFor={option.value}
-						className="flex-1 flex space-x-3 cursor-pointer"
+						className="flex-1 flex space-x-4 cursor-pointer"
 					>
 						{React.cloneElement(option.icon, {
 							className: cn(option.icon.props.className, 'mt-2'),
 						})}
 						<div className="flex-1">
-							<h3 className="text-xl font-semibold text-zinc-700">
+							<h3 className="text-xl font-bold text-zinc-700 mb-2">
 								{option.title}
 							</h3>
-							<p className="text-zinc-600 max-w-80 font-normal">
+							<p className="text-zinc-600 font-normal leading-5">
 								{option.description}
 							</p>
 						</div>
