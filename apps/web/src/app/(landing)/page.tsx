@@ -10,7 +10,7 @@ export default function LandingPage() {
 		<main className="mx-auto flex max-w-7xl flex-1 flex-col gap-12 p-4 sm:p-6 lg:px-8">
 			{/* Hero Section */}
 			<section className="flex flex-1 flex-col items-center justify-center text-center">
-				<h1 className="mb-4 animate-fade-in text-3xl font-bold text-zinc-700 md:text-4xl lg:text-5xl">
+				<h1 className="mb-4 animate-fade-in text-3xl font-bold text-zinc-700 md:!text-4xl lg:!text-5xl">
 					A Private Voting System
 					<span className="block">
 						Powered by{' '}
