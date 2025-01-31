@@ -27,7 +27,7 @@ export default function PollPage(props: {
 					});
 				}}
 			/>
-			<PrivacyTip className="mt-4" />
+			<PrivacyTip />
 		</>
 	);
 }

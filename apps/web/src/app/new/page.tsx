@@ -37,7 +37,7 @@ export default function PollFormPage() {
 				onSuccess={onSuccess}
 				onError={onError}
 			/>
-			<PrivacyTip className="mt-4" />
+			<PrivacyTip />
 			<ConnectWalletModal
 				open={!connected}
 				onOpenChange={open => !open && onCloseConnectWalletModal()}
