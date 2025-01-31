@@ -66,7 +66,7 @@ export default function RootLayout({
 					ipfsApiUrl={process.env.NEXT_PUBLIC_IPFS_API_URL!}
 				>
 					<Navbar />
-					<div className="my-10 flex flex-1 flex-col">{children}</div>
+					<div className="my-4 flex flex-1 flex-col">{children}</div>
 					<Footer />
 					<Toaster />
 					<TransactionNotifications />

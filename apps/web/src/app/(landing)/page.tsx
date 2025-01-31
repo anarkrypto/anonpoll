@@ -7,10 +7,10 @@ import Link from 'next/link';
 
 export default function LandingPage() {
 	return (
-		<main className="mx-auto flex max-w-7xl flex-1 flex-col gap-12 px-4 sm:px-6 lg:px-8">
+		<main className="mx-auto flex max-w-7xl flex-1 flex-col gap-12 p-4 sm:p-6 lg:px-8">
 			{/* Hero Section */}
 			<section className="flex flex-1 flex-col items-center justify-center text-center">
-				<h1 className="animate-fade-in mb-4 text-3xl font-bold text-zinc-700 md:text-4xl lg:text-5xl">
+				<h1 className="mb-4 animate-fade-in text-3xl font-bold text-zinc-700 md:text-4xl lg:text-5xl">
 					A Private Voting System
 					<span className="block">
 						Powered by{' '}
@@ -19,7 +19,7 @@ export default function LandingPage() {
 						</span>
 					</span>
 				</h1>
-				<p className="animate-slide-up mx-auto mb-8 max-w-2xl text-xl text-zinc-600">
+				<p className="mx-auto mb-8 max-w-2xl animate-slide-up text-xl text-zinc-600">
 					Create polls, cast votes and verify results anonymously.
 				</p>
 				<Link href="/new">
