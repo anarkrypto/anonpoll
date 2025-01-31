@@ -50,14 +50,14 @@
 }
 
 
-.button-3d, .card-3d {
+.button-3d {
 	position: relative;
 	border-radius: 4px 1px !important;
 	border: 1px solid hsl(var(--zeropoll-border));
 	transform-style: preserve-3d;
 }
 
-.button-3d:after, .card-3d:after {
+.button-3d:after {
 	content: "";
 	position: absolute;
 	border: 1px solid hsl(var(--zeropoll-primary));
@@ -75,13 +75,4 @@
 
 .button-3d:disabled:after {
 	border: 0 solid transparent;
-}
-
-.card-3d:after {
-	border: 1px solid hsl(var(--zeropoll-border));
-}
-
-.card-3d:after {
-	inset: .5rem -.5rem -.5rem .5rem;
-	z-index: -1;
 }

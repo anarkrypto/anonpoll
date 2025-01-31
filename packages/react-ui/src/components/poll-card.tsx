@@ -128,7 +128,7 @@ export function PollCard({
 
 	return (
 		<>
-			<Card className={cn('w-full max-w-xl sm:p-4 card-3d', className)}>
+			<Card className={cn('w-full max-w-xl sm:p-4', className)}>
 				<CardHeader>
 					<CardTitle>{metadata.title}</CardTitle>
 					{metadata.description?.trim() && (
